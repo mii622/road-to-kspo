@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ROAD TO KSPO</title>
+
 <style>
 * { box-sizing: border-box; }
 
@@ -18,7 +19,7 @@ body {
 header { padding: 20px 10px 5px; }
 
 h1 {
-  color: #eeeee;
+  color: #6b7cff;
   letter-spacing: 2px;
   margin-bottom: 5px;
 }
@@ -30,6 +31,16 @@ h1 {
   padding: 0 10px;
 }
 
+#info {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 0;
+  font-weight: bold;
+  font-size: 14px;
+}
+
 canvas {
   width: 100%;
   display: block;
@@ -39,11 +50,21 @@ canvas {
   touch-action: none;
 }
 
-#info {
-  display: flex;
-  justify-content: space-around;
-  padding: 12px 0;
-  font-weight: bold;
+#progress {
+  width: 100%;
+  height: 9px;
+  background: #d0dfeb;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 5px 0 10px;
+}
+
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: #6b7cff;
+  border-radius: 10px;
+  transition: width 0.1s linear;
 }
 
 button {
@@ -84,16 +105,24 @@ button {
 </header>
 
 <div id="game">
+
   <div id="info">
     <span>SCORE: <span id="score">0</span></span>
-    <span>TIME: <span id="time">60</span></span>
+    <span>TIME: <span id="time">00:00</span></span>
+    <span>DISTANCE: <span id="distance">0%</span></span>
+  </div>
+
+  <div id="progress">
+    <div id="progressBar"></div>
   </div>
 
   <canvas id="canvas" width="800" height="360"></canvas>
 
   <div id="message">KSPO DOMEを目指して走ろう！</div>
+
   <button id="start">START</button>
   <button id="pause">PAUSE</button>
+
   <p class="small">画面をタップしてジャンプ！</p>
 </div>
 
@@ -103,6 +132,8 @@ const ctx = canvas.getContext("2d");
 
 const scoreEl = document.getElementById("score");
 const timeEl = document.getElementById("time");
+const distanceEl = document.getElementById("distance");
+const progressBar = document.getElementById("progressBar");
 const message = document.getElementById("message");
 const startBtn = document.getElementById("start");
 const pauseBtn = document.getElementById("pause");
@@ -110,17 +141,27 @@ const pauseBtn = document.getElementById("pause");
 const W = 800;
 const H = 360;
 const ground = 285;
-const GAME_DURATION = 60;
+
+// ゴールまでの距離
+const TOTAL_DISTANCE = 18000;
+
+// 走行速度
+const BASE_SPEED = 300;
 
 let state = "ready";
 let score = 0;
 let elapsed = 0;
+let distance = 0;
 let lastTime = 0;
+
 let obstacles = [];
 let items = [];
+
 let spawnTimer = 0;
 let itemTimer = 0;
 let hitFlash = 0;
+let hitCount = 0;
+let collectedCount = 0;
 
 const player = {
   x: 110,
@@ -131,14 +172,31 @@ const player = {
   jumping: false
 };
 
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+
+  return (
+    String(minutes).padStart(2, "0") +
+    ":" +
+    String(secs).padStart(2, "0")
+  );
+}
+
 function resetGame() {
   score = 0;
   elapsed = 0;
+  distance = 0;
+
   obstacles = [];
   items = [];
-  spawnTimer = 1.2;
+
+  spawnTimer = 1.8;
   itemTimer = 1.5;
+
   hitFlash = 0;
+  hitCount = 0;
+  collectedCount = 0;
 
   player.y = ground - player.h;
   player.vy = 0;
@@ -149,26 +207,37 @@ function resetGame() {
 
 function startGame() {
   resetGame();
+
   state = "running";
+
   message.textContent = "GO! RUN TO KSPO!";
+
   startBtn.style.display = "none";
   pauseBtn.style.display = "inline-block";
   pauseBtn.textContent = "PAUSE";
+
   lastTime = performance.now();
+
   requestAnimationFrame(loop);
 }
 
 function togglePause() {
   if (state === "running") {
     state = "paused";
+
     message.textContent = "PAUSED";
     pauseBtn.textContent = "RESUME";
+
     draw();
+
   } else if (state === "paused") {
     state = "running";
+
     message.textContent = "GO! RUN TO KSPO!";
     pauseBtn.textContent = "PAUSE";
+
     lastTime = performance.now();
+
     requestAnimationFrame(loop);
   }
 }
@@ -193,25 +262,26 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-startBtn.addEventListener("click", () => {
-  startGame();
-});
-
-pauseBtn.addEventListener("click", () => {
-  togglePause();
-});
+startBtn.addEventListener("click", startGame);
+pauseBtn.addEventListener("click", togglePause);
 
 function updateInfo() {
   scoreEl.textContent = score;
-  timeEl.textContent =
-    Math.max(0, Math.ceil(GAME_DURATION - elapsed));
-}
+  timeEl.textContent = formatTime(elapsed);
 
+  const percent = Math.min(
+    100,
+    (distance / TOTAL_DISTANCE) * 100
+  );
+
+  distanceEl.textContent = Math.floor(percent) + "%";
+  progressBar.style.width = percent + "%";
+}
 
 function spawnObstacle() {
   const spawnX = W + 20;
 
-  // アイテムの前後220px以内には障害物を出さない
+  // アイテムの近くには障害物を出さない
   const blocked = items.some(item =>
     Math.abs(item.x - spawnX) < 220
   );
@@ -240,16 +310,13 @@ function spawnObstacle() {
   return true;
 }
 
-
 function spawnItem() {
   const spawnX = W + 20;
 
-  // 障害物の前後220px以内にはアイテムを出さない
   const obstacleNearby = obstacles.some(o =>
     Math.abs(o.x - spawnX) < 220
   );
 
-  // アイテム同士も130px以上離す
   const itemNearby = items.some(item =>
     Math.abs(item.x - spawnX) < 130
   );
@@ -266,12 +333,24 @@ function spawnItem() {
     Math.floor(Math.random() * types.length)
   ];
 
-  // 80%は取りやすい高さ、20%は少し難しい高さ
-  const isRare = Math.random() < 0.2;
+  const r = Math.random();
+
+  let y;
+
+  if (r < 0.35) {
+    // 足元
+    y = ground - 8;
+  } else if (r < 0.70) {
+    // 中段
+    y = ground - 45;
+  } else {
+    // 高段：ジャンプ必須
+    y = ground - 140;
+  }
 
   items.push({
     x: spawnX,
-    y: isRare ? ground - 100 : ground - 70,
+    y: y,
     w: 25,
     h: 25,
     points: type.points,
@@ -294,14 +373,21 @@ function overlap(a, b) {
 function update(dt) {
   elapsed += dt;
 
-  if (elapsed >= GAME_DURATION) {
-    elapsed = GAME_DURATION;
+  // 進行度によって少しずつスピードアップ
+  const progress = distance / TOTAL_DISTANCE;
+  const speed = BASE_SPEED + progress * 15;
+
+  distance += speed * dt;
+
+  // ゴール到着
+  if (distance >= TOTAL_DISTANCE) {
+    distance = TOTAL_DISTANCE;
+    updateInfo();
     finishGame();
     return;
   }
 
-  const speed = 300 + elapsed * 1.2;
-
+  // ジャンプ
   player.vy += 1700 * dt;
   player.y += player.vy * dt;
 
@@ -311,14 +397,16 @@ function update(dt) {
     player.jumping = false;
   }
 
-spawnTimer -= dt;
-if (spawnTimer <= 0) {
-  const spawned = spawnObstacle();
+  // 障害物出現（少し減らす）
+  spawnTimer -= dt;
 
-  spawnTimer = spawned
-    ? 1.3 + Math.random() * 0.8
-    : 0.25;
-}
+  if (spawnTimer <= 0) {
+    const spawned = spawnObstacle();
+
+    spawnTimer = spawned
+      ? 2.0 + Math.random() * 0.8
+      : 0.25;
+  }
 
   obstacles.forEach(o => {
     o.x -= speed * dt;
@@ -326,27 +414,41 @@ if (spawnTimer <= 0) {
     if (!o.passed && overlap(player, o)) {
       score = Math.max(0, score - 100);
       o.passed = true;
+      hitCount++;
       hitFlash = 0.2;
     }
   });
 
-  obstacles = obstacles.filter(o => o.x + o.w > 0);
+  obstacles = obstacles.filter(o =>
+    o.x + o.w > 0
+  );
 
+  // アイテム出現
   itemTimer -= dt;
-if (itemTimer <= 0) {
-  const spawned = spawnItem();
 
-  itemTimer = spawned
-    ? 1.2 + Math.random() * 1.1
-    : 0.25;
-}
+  if (itemTimer <= 0) {
+    const spawned = spawnItem();
+
+    itemTimer = spawned
+      ? 1.5 + Math.random() * 1.0
+      : 0.25;
+  }
 
   items.forEach(item => {
     item.x -= speed * dt;
 
-    if (overlap(player, item)) {
+    // 横方向に少しだけ取得判定を広げる
+    const itemHitbox = {
+      x: item.x - 8,
+      y: item.y,
+      w: item.w + 16,
+      h: item.h
+    };
+
+    if (overlap(player, itemHitbox)) {
       score += item.points;
       item.collected = true;
+      collectedCount++;
     }
   });
 
@@ -355,6 +457,7 @@ if (itemTimer <= 0) {
   );
 
   hitFlash = Math.max(0, hitFlash - dt);
+
   updateInfo();
 }
 
@@ -362,9 +465,14 @@ function drawBackground() {
   ctx.fillStyle = "#dff1ff";
   ctx.fillRect(0, 0, W, H);
 
+  // 雲
   ctx.fillStyle = "#ffffff";
+
   for (let i = 0; i < 5; i++) {
-    const x = (i * 190 - elapsed * 20) % 950;
+    const x = (
+      i * 190 - distance * 0.07
+    ) % 950;
+
     ctx.beginPath();
     ctx.arc(x, 75, 22, 0, Math.PI * 2);
     ctx.arc(x + 25, 70, 28, 0, Math.PI * 2);
@@ -372,24 +480,34 @@ function drawBackground() {
     ctx.fill();
   }
 
+  // 街並み
   for (let i = 0; i < 9; i++) {
-    const x = (i * 110 - elapsed * 45) % 1000;
+    const x = (
+      i * 110 - distance * 0.15
+    ) % 1000;
+
     ctx.fillStyle = "#afcbda";
     ctx.fillRect(x, 180, 65, 105);
 
     ctx.fillStyle = "#eaf3fa";
+
     for (let j = 0; j < 3; j++) {
       ctx.fillRect(x + 12, 195 + j * 25, 12, 12);
       ctx.fillRect(x + 38, 195 + j * 25, 12, 12);
     }
   }
 
+  // 地面
   ctx.fillStyle = "#8ab4a0";
   ctx.fillRect(0, ground, W, H - ground);
 
   ctx.fillStyle = "#ffffff";
+
   for (let i = 0; i < 15; i++) {
-    const x = (i * 75 - elapsed * 300) % 850;
+    const x = (
+      i * 75 - distance * 0.7
+    ) % 850;
+
     ctx.fillRect(x, ground + 35, 35, 5);
   }
 }
@@ -398,22 +516,27 @@ function drawPlayer() {
   const x = player.x;
   const y = player.y;
 
+  // 頭
   ctx.fillStyle = "#f1c9a5";
   ctx.beginPath();
   ctx.arc(x + 18, y + 9, 10, 0, Math.PI * 2);
   ctx.fill();
 
+  // 髪
   ctx.fillStyle = "#343b4c";
   ctx.beginPath();
   ctx.arc(x + 18, y + 5, 10, Math.PI, Math.PI * 2);
   ctx.fill();
 
+  // ライブTシャツ
   ctx.fillStyle = "#6b7cff";
   ctx.fillRect(x + 5, y + 20, 26, 22);
 
+  // シャツの柄
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(x + 13, y + 27, 10, 3);
 
+  // 足
   ctx.strokeStyle = "#263b55";
   ctx.lineWidth = 5;
   ctx.beginPath();
@@ -428,28 +551,38 @@ function drawObstacle(o) {
   if (o.name === "CASE") {
     ctx.fillStyle = "#48566b";
     ctx.fillRect(o.x, o.y, o.w, o.h);
+
     ctx.strokeStyle = "#afcbda";
     ctx.lineWidth = 3;
-    ctx.strokeRect(o.x + 5, o.y + 5, o.w - 10, o.h - 10);
+    ctx.strokeRect(
+      o.x + 5, o.y + 5,
+      o.w - 10, o.h - 10
+    );
   }
 
   if (o.name === "CABLE") {
     ctx.strokeStyle = "#263b55";
     ctx.lineWidth = 8;
     ctx.beginPath();
+
     ctx.moveTo(o.x, o.y + 10);
     ctx.quadraticCurveTo(
       o.x + 30, o.y - 5,
       o.x + o.w, o.y + 10
     );
+
     ctx.stroke();
   }
 
   if (o.name === "BARRIER") {
     ctx.fillStyle = "#e58b75";
     ctx.fillRect(o.x, o.y, o.w, o.h);
+
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(o.x + 5, o.y + 15, o.w - 10, 10);
+    ctx.fillRect(
+      o.x + 5, o.y + 15,
+      o.w - 10, 10
+    );
   }
 }
 
@@ -459,10 +592,13 @@ function drawItem(item) {
   if (item.name === "BOTTLE") {
     ctx.fillRect(item.x + 7, item.y + 4, 13, 21);
     ctx.fillRect(item.x + 10, item.y, 7, 5);
+
   } else if (item.name === "TOWEL") {
     ctx.fillRect(item.x, item.y + 5, 25, 15);
+
   } else {
     ctx.fillRect(item.x + 5, item.y, 17, 20);
+
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(item.x + 9, item.y + 8, 9, 3);
   }
@@ -473,6 +609,7 @@ function draw() {
 
   obstacles.forEach(drawObstacle);
   items.forEach(drawItem);
+
   drawPlayer();
 
   if (hitFlash > 0) {
@@ -498,27 +635,46 @@ function draw() {
   }
 
   if (state === "finished") {
-    ctx.fillStyle = "#263b55";
-    ctx.font = "bold 40px Arial";
+    ctx.fillStyle = "rgba(38,59,85,0.35)";
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
-    ctx.fillText("YOU MADE IT!", W / 2, 145);
+
+    ctx.font = "bold 40px Arial";
+    ctx.fillText("YOU MADE IT!", W / 2, 135);
+
+    ctx.font = "bold 22px Arial";
+    ctx.fillText("KSPO DOME", W / 2, 175);
   }
 }
 
 function finishGame() {
   state = "finished";
+
   message.textContent =
-    "GOAL! 最終スコア：" + score + "点";
+    "GOAL! 完走タイム：" +
+    formatTime(elapsed) +
+    " ／ SCORE：" +
+    score +
+    "点";
+
   startBtn.textContent = "RETRY";
   startBtn.style.display = "inline-block";
+
   pauseBtn.style.display = "none";
+
   draw();
 }
 
 function loop(now) {
   if (state !== "running") return;
 
-  const dt = Math.min((now - lastTime) / 1000, 0.04);
+  const dt = Math.min(
+    (now - lastTime) / 1000,
+    0.04
+  );
+
   lastTime = now;
 
   update(dt);
@@ -529,7 +685,9 @@ function loop(now) {
   }
 }
 
+updateInfo();
 draw();
+
 </script>
 
 </body>
