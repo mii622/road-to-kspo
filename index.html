@@ -2,10 +2,467 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>TEST</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROAD TO KSPO</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #eaf3fa;
+  color: #263b55;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+header { padding: 20px 10px 5px; }
+
+h1 {
+  color: #6b7cff;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+}
+
+#game {
+  width: 100%;
+  max-width: 800px;
+  margin: 10px auto;
+  padding: 0 10px;
+}
+
+canvas {
+  width: 100%;
+  display: block;
+  background: #dff1ff;
+  border: 3px solid #afcbda;
+  border-radius: 12px;
+  touch-action: none;
+}
+
+#info {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+  font-weight: bold;
+}
+
+button {
+  background: #6b7cff;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 13px 40px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#message {
+  padding: 12px;
+  min-height: 45px;
+}
+
+.small {
+  font-size: 12px;
+  color: #71849a;
+}
+</style>
 </head>
-<body style="background:#eaf3fa; text-align:center; padding:50px;">
-<h1>ROAD TO KSPO</h1>
-<p>ページ表示テスト成功！</p>
+
+<body>
+
+<header>
+  <h1>ROAD TO KSPO</h1>
+  <div class="small">RUN TO YOUR FAVORITE STAGE!</div>
+</header>
+
+<div id="game">
+  <div id="info">
+    <span>SCORE: <span id="score">0</span></span>
+    <span>TIME: <span id="time">90</span></span>
+  </div>
+
+  <canvas id="canvas" width="800" height="360"></canvas>
+
+  <div id="message">KSPO DOMEを目指して走ろう！</div>
+  <button id="start">START</button>
+  <p class="small">画面をタップしてジャンプ！</p>
+</div>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const scoreEl = document.getElementById("score");
+const timeEl = document.getElementById("time");
+const message = document.getElementById("message");
+const startBtn = document.getElementById("start");
+
+const W = 800;
+const H = 360;
+const ground = 285;
+
+let state = "ready";
+let score = 0;
+let elapsed = 0;
+let lastTime = 0;
+let obstacles = [];
+let items = [];
+let spawnTimer = 0;
+let itemTimer = 0;
+let hitFlash = 0;
+
+const player = {
+  x: 110,
+  y: ground - 52,
+  w: 36,
+  h: 52,
+  vy: 0,
+  jumping: false
+};
+
+function resetGame() {
+  score = 0;
+  elapsed = 0;
+  obstacles = [];
+  items = [];
+  spawnTimer = 1.2;
+  itemTimer = 1.5;
+  hitFlash = 0;
+
+  player.y = ground - player.h;
+  player.vy = 0;
+  player.jumping = false;
+
+  updateInfo();
+}
+
+function startGame() {
+  resetGame();
+  state = "running";
+  message.textContent = "GO! RUN TO KSPO!";
+  startBtn.style.display = "none";
+  lastTime = performance.now();
+  requestAnimationFrame(loop);
+}
+
+function jump() {
+  if (state !== "running") return;
+  if (player.jumping) return;
+
+  player.vy = -650;
+  player.jumping = true;
+}
+
+canvas.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  jump();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.code === "Space" || e.code === "ArrowUp") {
+    e.preventDefault();
+    jump();
+  }
+});
+
+startBtn.addEventListener("click", () => {
+  startGame();
+});
+
+function updateInfo() {
+  scoreEl.textContent = score;
+  timeEl.textContent =
+    Math.max(0, Math.ceil(90 - elapsed));
+}
+
+function spawnObstacle() {
+  const types = [
+    { name: "CASE", w: 48, h: 55 },
+    { name: "CABLE", w: 65, h: 18 },
+    { name: "BARRIER", w: 55, h: 65 }
+  ];
+
+  const type = types[
+    Math.floor(Math.random() * types.length)
+  ];
+
+  obstacles.push({
+    x: W + 20,
+    y: ground - type.h,
+    w: type.w,
+    h: type.h,
+    name: type.name,
+    passed: false
+  });
+}
+
+function spawnItem() {
+  const types = [
+    { name: "BOTTLE", points: 100, color: "#55a9df" },
+    { name: "TOWEL", points: 150, color: "#ff9ab8" },
+    { name: "FLAG", points: 200, color: "#6b7cff" }
+  ];
+
+  const type = types[
+    Math.floor(Math.random() * types.length)
+  ];
+
+  items.push({
+    x: W + 20,
+    y: Math.random() < 0.5 ? ground - 35 : ground - 105,
+    w: 25,
+    h: 25,
+    points: type.points,
+    name: type.name,
+    color: type.color
+  });
+}
+
+function overlap(a, b) {
+  return (
+    a.x < b.x + b.w &&
+    a.x + a.w > b.x &&
+    a.y < b.y + b.h &&
+    a.y + a.h > b.y
+  );
+}
+
+function update(dt) {
+  elapsed += dt;
+
+  // 90秒でゴール
+  if (elapsed >= 90) {
+    elapsed = 90;
+    finishGame();
+    return;
+  }
+
+  const speed = 300 + elapsed * 1.2;
+
+  // ジャンプ
+  player.vy += 1700 * dt;
+  player.y += player.vy * dt;
+
+  if (player.y >= ground - player.h) {
+    player.y = ground - player.h;
+    player.vy = 0;
+    player.jumping = false;
+  }
+
+  // 障害物
+  spawnTimer -= dt;
+  if (spawnTimer <= 0) {
+    spawnObstacle();
+    spawnTimer = 1.3 + Math.random() * 0.8;
+  }
+
+  obstacles.forEach(o => {
+    o.x -= speed * dt;
+
+    if (!o.passed && overlap(player, o)) {
+      score = Math.max(0, score - 100);
+      o.passed = true;
+      hitFlash = 0.2;
+    }
+  });
+
+  obstacles = obstacles.filter(o => o.x + o.w > 0);
+
+  // アイテム
+  itemTimer -= dt;
+  if (itemTimer <= 0) {
+    spawnItem();
+    itemTimer = 1.2 + Math.random() * 1.1;
+  }
+
+  items.forEach(item => {
+    item.x -= speed * dt;
+
+    if (overlap(player, item)) {
+      score += item.points;
+      item.collected = true;
+    }
+  });
+
+  items = items.filter(item =>
+    item.x + item.w > 0 && !item.collected
+  );
+
+  hitFlash = Math.max(0, hitFlash - dt);
+  updateInfo();
+}
+
+function drawBackground() {
+  ctx.fillStyle = "#dff1ff";
+  ctx.fillRect(0, 0, W, H);
+
+  // 雲
+  ctx.fillStyle = "#ffffff";
+  for (let i = 0; i < 5; i++) {
+    const x = (i * 190 - elapsed * 20) % 950;
+    ctx.beginPath();
+    ctx.arc(x, 75, 22, 0, Math.PI * 2);
+    ctx.arc(x + 25, 70, 28, 0, Math.PI * 2);
+    ctx.arc(x + 50, 78, 20, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 仮の街並み
+  for (let i = 0; i < 9; i++) {
+    const x = (i * 110 - elapsed * 45) % 1000;
+    ctx.fillStyle = "#afcbda";
+    ctx.fillRect(x, 180, 65, 105);
+
+    ctx.fillStyle = "#eaf3fa";
+    for (let j = 0; j < 3; j++) {
+      ctx.fillRect(x + 12, 195 + j * 25, 12, 12);
+      ctx.fillRect(x + 38, 195 + j * 25, 12, 12);
+    }
+  }
+
+  // 地面
+  ctx.fillStyle = "#8ab4a0";
+  ctx.fillRect(0, ground, W, H - ground);
+
+  ctx.fillStyle = "#ffffff";
+  for (let i = 0; i < 15; i++) {
+    const x = (i * 75 - elapsed * 300) % 850;
+    ctx.fillRect(x, ground + 35, 35, 5);
+  }
+}
+
+function drawPlayer() {
+  const x = player.x;
+  const y = player.y;
+
+  // 頭
+  ctx.fillStyle = "#f1c9a5";
+  ctx.beginPath();
+  ctx.arc(x + 18, y + 9, 10, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 髪
+  ctx.fillStyle = "#343b4c";
+  ctx.beginPath();
+  ctx.arc(x + 18, y + 5, 10, Math.PI, Math.PI * 2);
+  ctx.fill();
+
+  // ライブTシャツ
+  ctx.fillStyle = "#6b7cff";
+  ctx.fillRect(x + 5, y + 20, 26, 22);
+
+  // シャツの柄
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(x + 13, y + 27, 10, 3);
+
+  // 足
+  ctx.strokeStyle = "#263b55";
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(x + 12, y + 42);
+  ctx.lineTo(x + 9, y + 51);
+  ctx.moveTo(x + 25, y + 42);
+  ctx.lineTo(x + 28, y + 51);
+  ctx.stroke();
+}
+
+function drawObstacle(o) {
+  if (o.name === "CASE") {
+    ctx.fillStyle = "#48566b";
+    ctx.fillRect(o.x, o.y, o.w, o.h);
+    ctx.strokeStyle = "#afcbda";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(o.x + 5, o.y + 5, o.w - 10, o.h - 10);
+  }
+
+  if (o.name === "CABLE") {
+    ctx.strokeStyle = "#263b55";
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.moveTo(o.x, o.y + 10);
+    ctx.quadraticCurveTo(
+      o.x + 30, o.y - 5,
+      o.x + o.w, o.y + 10
+    );
+    ctx.stroke();
+  }
+
+  if (o.name === "BARRIER") {
+    ctx.fillStyle = "#e58b75";
+    ctx.fillRect(o.x, o.y, o.w, o.h);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(o.x + 5, o.y + 15, o.w - 10, 10);
+  }
+}
+
+function drawItem(item) {
+  ctx.fillStyle = item.color;
+
+  if (item.name === "BOTTLE") {
+    ctx.fillRect(item.x + 7, item.y + 4, 13, 21);
+    ctx.fillRect(item.x + 10, item.y, 7, 5);
+  } else if (item.name === "TOWEL") {
+    ctx.fillRect(item.x, item.y + 5, 25, 15);
+  } else {
+    ctx.fillRect(item.x + 5, item.y, 17, 20);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(item.x + 9, item.y + 8, 9, 3);
+  }
+}
+
+function draw() {
+  drawBackground();
+
+  obstacles.forEach(drawObstacle);
+  items.forEach(drawItem);
+  drawPlayer();
+
+  if (hitFlash > 0) {
+    ctx.fillStyle = "rgba(255,80,80,0.18)";
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  if (state === "ready") {
+    ctx.fillStyle = "#263b55";
+    ctx.font = "bold 32px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("READY TO RUN?", W / 2, 125);
+  }
+
+  if (state === "finished") {
+    ctx.fillStyle = "#263b55";
+    ctx.font = "bold 40px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("YOU MADE IT!", W / 2, 145);
+  }
+}
+
+function finishGame() {
+  state = "finished";
+  message.textContent =
+    "GOAL! 最終スコア：" + score + "点";
+  startBtn.textContent = "RETRY";
+  startBtn.style.display = "inline-block";
+  draw();
+}
+
+function loop(now) {
+  if (state !== "running") return;
+
+  const dt = Math.min((now - lastTime) / 1000, 0.04);
+  lastTime = now;
+
+  update(dt);
+  draw();
+
+  if (state === "running") {
+    requestAnimationFrame(loop);
+  }
+}
+
+draw();
+</script>
+
 </body>
 </html>
