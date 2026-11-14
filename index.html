@@ -55,6 +55,13 @@ button {
   font-size: 17px;
   font-weight: bold;
   cursor: pointer;
+  margin: 5px;
+}
+
+#pause {
+  background: #71849a;
+  display: none;
+  padding: 13px 30px;
 }
 
 #message {
@@ -79,13 +86,14 @@ button {
 <div id="game">
   <div id="info">
     <span>SCORE: <span id="score">0</span></span>
-    <span>TIME: <span id="time">90</span></span>
+    <span>TIME: <span id="time">60</span></span>
   </div>
 
   <canvas id="canvas" width="800" height="360"></canvas>
 
   <div id="message">KSPO DOMEを目指して走ろう！</div>
   <button id="start">START</button>
+  <button id="pause">PAUSE</button>
   <p class="small">画面をタップしてジャンプ！</p>
 </div>
 
@@ -97,10 +105,12 @@ const scoreEl = document.getElementById("score");
 const timeEl = document.getElementById("time");
 const message = document.getElementById("message");
 const startBtn = document.getElementById("start");
+const pauseBtn = document.getElementById("pause");
 
 const W = 800;
 const H = 360;
 const ground = 285;
+const GAME_DURATION = 60;
 
 let state = "ready";
 let score = 0;
@@ -142,8 +152,25 @@ function startGame() {
   state = "running";
   message.textContent = "GO! RUN TO KSPO!";
   startBtn.style.display = "none";
+  pauseBtn.style.display = "inline-block";
+  pauseBtn.textContent = "PAUSE";
   lastTime = performance.now();
   requestAnimationFrame(loop);
+}
+
+function togglePause() {
+  if (state === "running") {
+    state = "paused";
+    message.textContent = "PAUSED";
+    pauseBtn.textContent = "RESUME";
+    draw();
+  } else if (state === "paused") {
+    state = "running";
+    message.textContent = "GO! RUN TO KSPO!";
+    pauseBtn.textContent = "PAUSE";
+    lastTime = performance.now();
+    requestAnimationFrame(loop);
+  }
 }
 
 function jump() {
@@ -170,10 +197,14 @@ startBtn.addEventListener("click", () => {
   startGame();
 });
 
+pauseBtn.addEventListener("click", () => {
+  togglePause();
+});
+
 function updateInfo() {
   scoreEl.textContent = score;
   timeEl.textContent =
-    Math.max(0, Math.ceil(90 - elapsed));
+    Math.max(0, Math.ceil(GAME_DURATION - elapsed));
 }
 
 function spawnObstacle() {
@@ -231,16 +262,14 @@ function overlap(a, b) {
 function update(dt) {
   elapsed += dt;
 
-  // 90秒でゴール
-  if (elapsed >= 90) {
-    elapsed = 90;
+  if (elapsed >= GAME_DURATION) {
+    elapsed = GAME_DURATION;
     finishGame();
     return;
   }
 
   const speed = 300 + elapsed * 1.2;
 
-  // ジャンプ
   player.vy += 1700 * dt;
   player.y += player.vy * dt;
 
@@ -250,7 +279,6 @@ function update(dt) {
     player.jumping = false;
   }
 
-  // 障害物
   spawnTimer -= dt;
   if (spawnTimer <= 0) {
     spawnObstacle();
@@ -269,7 +297,6 @@ function update(dt) {
 
   obstacles = obstacles.filter(o => o.x + o.w > 0);
 
-  // アイテム
   itemTimer -= dt;
   if (itemTimer <= 0) {
     spawnItem();
@@ -297,7 +324,6 @@ function drawBackground() {
   ctx.fillStyle = "#dff1ff";
   ctx.fillRect(0, 0, W, H);
 
-  // 雲
   ctx.fillStyle = "#ffffff";
   for (let i = 0; i < 5; i++) {
     const x = (i * 190 - elapsed * 20) % 950;
@@ -308,7 +334,6 @@ function drawBackground() {
     ctx.fill();
   }
 
-  // 仮の街並み
   for (let i = 0; i < 9; i++) {
     const x = (i * 110 - elapsed * 45) % 1000;
     ctx.fillStyle = "#afcbda";
@@ -321,7 +346,6 @@ function drawBackground() {
     }
   }
 
-  // 地面
   ctx.fillStyle = "#8ab4a0";
   ctx.fillRect(0, ground, W, H - ground);
 
@@ -336,27 +360,22 @@ function drawPlayer() {
   const x = player.x;
   const y = player.y;
 
-  // 頭
   ctx.fillStyle = "#f1c9a5";
   ctx.beginPath();
   ctx.arc(x + 18, y + 9, 10, 0, Math.PI * 2);
   ctx.fill();
 
-  // 髪
   ctx.fillStyle = "#343b4c";
   ctx.beginPath();
   ctx.arc(x + 18, y + 5, 10, Math.PI, Math.PI * 2);
   ctx.fill();
 
-  // ライブTシャツ
   ctx.fillStyle = "#6b7cff";
   ctx.fillRect(x + 5, y + 20, 26, 22);
 
-  // シャツの柄
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(x + 13, y + 27, 10, 3);
 
-  // 足
   ctx.strokeStyle = "#263b55";
   ctx.lineWidth = 5;
   ctx.beginPath();
@@ -430,6 +449,16 @@ function draw() {
     ctx.fillText("READY TO RUN?", W / 2, 125);
   }
 
+  if (state === "paused") {
+    ctx.fillStyle = "rgba(38,59,85,0.55)";
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 40px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("PAUSED", W / 2, 170);
+  }
+
   if (state === "finished") {
     ctx.fillStyle = "#263b55";
     ctx.font = "bold 40px Arial";
@@ -444,6 +473,7 @@ function finishGame() {
     "GOAL! 最終スコア：" + score + "点";
   startBtn.textContent = "RETRY";
   startBtn.style.display = "inline-block";
+  pauseBtn.style.display = "none";
   draw();
 }
 
