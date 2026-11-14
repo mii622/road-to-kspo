@@ -145,8 +145,14 @@ const ground = 285;
 // ゴールまでの距離
 const TOTAL_DISTANCE = 18000;
 
-// 走行速度
-const BASE_SPEED = 300;
+// 基本スピード
+const SPEED_EARLY = 300;
+const SPEED_MIDDLE = 340;
+const SPEED_LATE = 380;
+
+// アイテム取得時の加速
+const BOOST_AMOUNT = 30;
+const BOOST_DURATION = 3;
 
 let state = "ready";
 let score = 0;
@@ -160,8 +166,12 @@ let items = [];
 let spawnTimer = 0;
 let itemTimer = 0;
 let hitFlash = 0;
+
 let hitCount = 0;
 let collectedCount = 0;
+
+// 加速残り時間
+let boostTimer = 0;
 
 const player = {
   x: 110,
@@ -197,6 +207,7 @@ function resetGame() {
   hitFlash = 0;
   hitCount = 0;
   collectedCount = 0;
+  boostTimer = 0;
 
   player.y = ground - player.h;
   player.vy = 0;
@@ -278,6 +289,32 @@ function updateInfo() {
   progressBar.style.width = percent + "%";
 }
 
+// 進行度に応じた基本スピード
+function getBaseSpeed() {
+  const progress = distance / TOTAL_DISTANCE;
+
+  if (progress < 1 / 3) {
+    return SPEED_EARLY;
+  }
+
+  if (progress < 2 / 3) {
+    return SPEED_MIDDLE;
+  }
+
+  return SPEED_LATE;
+}
+
+// 現在のスピード
+function getSpeed() {
+  return getBaseSpeed() +
+    (boostTimer > 0 ? BOOST_AMOUNT : 0);
+}
+
+// アイテム取得時の加速
+function activateBoost() {
+  boostTimer = BOOST_DURATION;
+}
+
 function spawnObstacle() {
   const spawnX = W + 20;
 
@@ -338,13 +375,15 @@ function spawnItem() {
   let y;
 
   if (r < 0.35) {
-    // 足元
-    y = ground - 8;
+    // 足元：地面に埋まらない位置
+    y = ground - 20;
+
   } else if (r < 0.70) {
     // 中段
     y = ground - 45;
+
   } else {
-    // 高段：ジャンプ必須
+    // 高段：ジャンプして取得
     y = ground - 140;
   }
 
@@ -373,10 +412,14 @@ function overlap(a, b) {
 function update(dt) {
   elapsed += dt;
 
-  // 進行度によって少しずつスピードアップ
-  const progress = distance / TOTAL_DISTANCE;
-  const speed = BASE_SPEED + progress * 15;
+  // 加速時間を減らす
+  if (boostTimer > 0) {
+    boostTimer = Math.max(0, boostTimer - dt);
+  }
 
+  const speed = getSpeed();
+
+  // 距離を進める
   distance += speed * dt;
 
   // ゴール到着
@@ -397,7 +440,7 @@ function update(dt) {
     player.jumping = false;
   }
 
-  // 障害物出現（少し減らす）
+  // 障害物出現
   spawnTimer -= dt;
 
   if (spawnTimer <= 0) {
@@ -437,7 +480,7 @@ function update(dt) {
   items.forEach(item => {
     item.x -= speed * dt;
 
-    // 横方向に少しだけ取得判定を広げる
+    // 横方向に少し取得判定を広げる
     const itemHitbox = {
       x: item.x - 8,
       y: item.y,
@@ -449,6 +492,9 @@ function update(dt) {
       score += item.points;
       item.collected = true;
       collectedCount++;
+
+      // アイテム取得で一時加速
+      activateBoost();
     }
   });
 
@@ -611,6 +657,14 @@ function draw() {
   items.forEach(drawItem);
 
   drawPlayer();
+
+  // 加速中の表示
+  if (boostTimer > 0 && state === "running") {
+    ctx.fillStyle = "#6b7cff";
+    ctx.font = "bold 20px Arial";
+    ctx.textAlign = "left";
+    ctx.fillText("SPEED UP!", 20, 35);
+  }
 
   if (hitFlash > 0) {
     ctx.fillStyle = "rgba(255,80,80,0.18)";
