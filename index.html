@@ -708,8 +708,8 @@ function drawBackground() {
 
   for (let i = 0; i < 25; i++) {
     const x = (
-      i * 55 - distance * 0.7 + 1000
-    ) % 1000;
+  (i * 55 - distance * 0.7 + 1000) % 1000 + 1000
+) % 1000;
 
     ctx.fillRect(x, ground + 17, 12, 4);
     ctx.fillRect(x + 20, ground + 31, 7, 4);
@@ -720,9 +720,8 @@ function drawBackground() {
 
   for (let i = 0; i < 15; i++) {
     const x = (
-      i * 75 - distance * 0.7 + 850
-    ) % 850;
-
+  (i * 75 - distance * 0.7 + 850) % 850 + 850
+) % 850;
     ctx.fillRect(x, ground + 48, 35, 4);
   }
 }
