@@ -646,6 +646,56 @@ function drawBackground() {
     }
   }
 
+    // KSPO DOME周辺エリア
+  const venueProgress = Math.max(
+    0,
+    Math.min(1, (distance / TOTAL_DISTANCE - 0.72) / 0.08)
+  );
+
+  if (venueProgress > 0) {
+    ctx.save();
+    ctx.globalAlpha = venueProgress;
+
+    // 街灯
+    for (let i = 0; i < 5; i++) {
+      const x = (
+        i * 230 - distance * 0.25 + 1200
+      ) % 1200;
+
+      // 支柱
+      ctx.fillStyle = "#71849a";
+      ctx.fillRect(x, 175, 5, ground - 175);
+
+      // ライト部分
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x - 9, 169, 23, 7);
+      ctx.fillRect(x - 5, 165, 15, 4);
+
+      // 光
+      ctx.fillStyle = "#fff4c2";
+      ctx.fillRect(x - 5, 176, 15, 3);
+    }
+
+    // 会場周辺のフラッグ
+    for (let i = 0; i < 4; i++) {
+      const x = (
+        i * 280 - distance * 0.32 + 1200
+      ) % 1200;
+
+      ctx.fillStyle = "#71849a";
+      ctx.fillRect(x, 205, 3, 45);
+
+      ctx.fillStyle = "#6b7cff";
+      ctx.fillRect(x + 3, 207, 22, 14);
+      ctx.fillRect(x + 3, 221, 16, 3);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x + 9, 211, 5, 5);
+    }
+
+    ctx.restore();
+  }
+
   // 地面
   ctx.fillStyle = "#8ab4a0";
   ctx.fillRect(0, ground, W, H - ground);
@@ -685,7 +735,6 @@ function drawKspoDome() {
   // ゴールまで残り約4秒になったら登場
   if (remainingDistance > speed * 4) return;
 
-  // 近づくほど大きく、左に移動する
   const progress = Math.max(
     0,
     Math.min(1, 1 - remainingDistance / (speed * 4))
@@ -698,56 +747,69 @@ function drawKspoDome() {
   ctx.translate(x, ground);
   ctx.scale(scale, scale);
 
-  // ドーム外側
+  // ドーム本体の外側
   ctx.fillStyle = "#263b55";
-  ctx.fillRect(20, -75, 180, 75);
+  ctx.fillRect(10, -70, 220, 70);
 
-  // 屋根の段差
-  ctx.fillRect(40, -88, 140, 13);
-  ctx.fillRect(60, -98, 100, 10);
-  ctx.fillRect(80, -105, 60, 7);
+  // 丸みのある屋根
+  ctx.fillRect(25, -82, 190, 12);
+  ctx.fillRect(45, -96, 150, 14);
+  ctx.fillRect(65, -108, 110, 12);
+  ctx.fillRect(85, -117, 70, 9);
+  ctx.fillRect(105, -122, 30, 5);
 
-  // ドーム本体
+  // 屋根の明るい部分
   ctx.fillStyle = "#afcbda";
-  ctx.fillRect(25, -70, 170, 70);
+  ctx.fillRect(30, -79, 180, 9);
+  ctx.fillRect(50, -93, 140, 9);
+  ctx.fillRect(70, -105, 100, 8);
+  ctx.fillRect(90, -114, 60, 6);
+  ctx.fillRect(108, -119, 24, 3);
 
-  // 屋根の内側
+  // 建物正面
   ctx.fillStyle = "#71849a";
-  ctx.fillRect(45, -82, 130, 12);
-  ctx.fillRect(65, -92, 90, 10);
-  ctx.fillRect(85, -99, 50, 7);
+  ctx.fillRect(25, -70, 190, 70);
 
-  // 正面の壁
+  // 正面の横ライン
   ctx.fillStyle = "#dff1ff";
-  ctx.fillRect(40, -58, 140, 58);
+  ctx.fillRect(35, -62, 170, 4);
+  ctx.fillRect(35, -12, 170, 4);
 
   // 窓
   ctx.fillStyle = "#6b7cff";
-  ctx.fillRect(50, -48, 18, 25);
-  ctx.fillRect(75, -48, 18, 25);
-  ctx.fillRect(145, -48, 18, 25);
-  ctx.fillRect(170, -48, 5, 25);
+  ctx.fillRect(42, -48, 20, 25);
+  ctx.fillRect(70, -48, 20, 25);
+  ctx.fillRect(160, -48, 20, 25);
+  ctx.fillRect(188, -48, 15, 25);
 
-  // 入り口
+  // 入口
   ctx.fillStyle = "#263b55";
-  ctx.fillRect(105, -42, 30, 42);
+  ctx.fillRect(105, -48, 40, 48);
+
+  ctx.fillStyle = "#afcbda";
+  ctx.fillRect(110, -43, 30, 43);
 
   // 看板
   ctx.fillStyle = "#6b7cff";
-  ctx.fillRect(75, -65, 70, 13);
+  ctx.fillRect(78, -67, 74, 13);
 
   ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 9px Arial";
+  ctx.font = 'bold 9px Arial';
   ctx.textAlign = "center";
-  ctx.fillText("KSPO DOME", 110, -55);
+  ctx.fillText("KSPO DOME", 115, -58);
+
+  // 屋根のライト
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(70, -106, 5, 3);
+  ctx.fillRect(155, -106, 5, 3);
 
   // 地面との境目
   ctx.fillStyle = "#263b55";
-  ctx.fillRect(15, -3, 190, 3);
+  ctx.fillRect(5, -3, 230, 3);
 
   ctx.restore();
 }
-
+  
 function drawPlayer() {
   const x = Math.round(player.x);
   const y = Math.round(player.y);
