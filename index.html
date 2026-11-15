@@ -227,9 +227,9 @@ let runAnimationTime = 0;
 
 const player = {
   x: 110,
-  y: ground - 52,
-  w: 36,
-  h: 52,
+  y: ground - 64,
+  w: 48,
+  h: 64,
   vy: 0,
   jumping: false
 };
@@ -698,85 +698,100 @@ function drawKspoDome() {
 }
 
 function drawPlayer() {
-  const x = player.x;
-  const y = player.y;
+  const x = Math.round(player.x);
+  const y = Math.round(player.y);
 
-  // ドット絵の頭・顔
+  // 走るアニメーション
+  const running = state === "running" && !player.jumping;
+  const phase = running ? runAnimationTime * 14 : 0;
+
+  // 左右の足の動き
+  const swing = running ? Math.sin(phase) : 0;
+  const lift = running ? Math.max(0, Math.cos(phase)) * 4 : 0;
+
+  const leftX = Math.round(swing * 5);
+  const rightX = Math.round(-swing * 5);
+  const leftY = Math.round(lift);
+  const rightY = Math.round(4 - lift);
+
+  // 足（奥側）
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(x + 29 + rightX, y + 49 + rightY, 7, 9);
+  ctx.fillRect(x + 27 + rightX, y + 57 + rightY, 11, 5);
+
+  // 足（手前側）
+  ctx.fillRect(x + 15 + leftX, y + 49 + leftY, 7, 9);
+  ctx.fillRect(x + 12 + leftX, y + 57 + leftY, 12, 5);
+
+  // 腕（奥側）
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(x + 6, y + 33, 7, 13);
+  ctx.fillRect(x + 5, y + 43, 7, 7);
+
+  // 手
+  ctx.fillStyle = "#f1c9a5";
+  ctx.fillRect(x + 5, y + 48, 7, 5);
+
+  // Tシャツ本体
+  ctx.fillStyle = "#8ed7f5";
+  ctx.fillRect(x + 9, y + 30, 30, 21);
+  ctx.fillRect(x + 5, y + 32, 8, 13);
+  ctx.fillRect(x + 35, y + 32, 8, 13);
+
+  // シャツの影
+  ctx.fillStyle = "#55a9df";
+  ctx.fillRect(x + 10, y + 47, 28, 4);
+
+  // Tシャツの胸元マーク
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(x + 21, y + 36, 7, 3);
+  ctx.fillRect(x + 23, y + 39, 3, 3);
+
+  // 腕（手前側）
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(x + 36, y + 33, 7, 13);
+  ctx.fillRect(x + 37, y + 43, 7, 7);
+
+  // 手
+  ctx.fillStyle = "#f1c9a5";
+  ctx.fillRect(x + 37, y + 48, 7, 5);
+
+  // 髪の後ろ
   ctx.fillStyle = "#343b4c";
-
-  // 髪
-  ctx.fillRect(x + 7, y + 1, 22, 5);
-  ctx.fillRect(x + 4, y + 6, 28, 7);
-  ctx.fillRect(x + 7, y + 13, 24, 3);
-  ctx.fillRect(x + 4, y + 6, 4, 7);
+  ctx.fillRect(x + 7, y + 5, 34, 25);
+  ctx.fillRect(x + 4, y + 11, 7, 17);
+  ctx.fillRect(x + 10, y + 25, 28, 7);
 
   // 顔
   ctx.fillStyle = "#f1c9a5";
-  ctx.fillRect(x + 9, y + 8, 18, 14);
-  ctx.fillRect(x + 12, y + 5, 12, 3);
+  ctx.fillRect(x + 12, y + 9, 24, 22);
+  ctx.fillRect(x + 15, y + 5, 18, 5);
 
   // 前髪
   ctx.fillStyle = "#343b4c";
-  ctx.fillRect(x + 8, y + 5, 5, 5);
-  ctx.fillRect(x + 14, y + 5, 6, 3);
-  ctx.fillRect(x + 23, y + 6, 5, 4);
+  ctx.fillRect(x + 9, y + 5, 9, 9);
+  ctx.fillRect(x + 17, y + 3, 10, 7);
+  ctx.fillRect(x + 28, y + 6, 9, 7);
+
+  // 髪のハイライト
+  ctx.fillStyle = "#526078";
+  ctx.fillRect(x + 14, y + 6, 7, 2);
+  ctx.fillRect(x + 29, y + 9, 4, 2);
 
   // 目
   ctx.fillStyle = "#263b55";
-  ctx.fillRect(x + 13, y + 13, 3, 3);
-  ctx.fillRect(x + 23, y + 13, 3, 3);
+  ctx.fillRect(x + 17, y + 17, 3, 4);
+  ctx.fillRect(x + 29, y + 17, 3, 4);
 
-  // ライブTシャツ
-  ctx.fillStyle = "#6b7cff";
-  ctx.fillRect(x + 5, y + 23, 26, 19);
-  ctx.fillRect(x + 1, y + 24, 5, 10);
-  ctx.fillRect(x + 30, y + 24, 5, 10);
+  // ほっぺ
+  ctx.fillStyle = "#e99e9e";
+  ctx.fillRect(x + 13, y + 23, 4, 2);
+  ctx.fillRect(x + 32, y + 23, 4, 2);
 
-  // 腕（固定ポーズ）
-  // 奥側の腕
-  ctx.fillStyle = "#263b55";
-  ctx.fillRect(x + 2, y + 27, 5, 10);
-  ctx.fillRect(x + 3, y + 35, 5, 6);
-
-  // 奥側の手
-  ctx.fillStyle = "#f1c9a5";
-  ctx.fillRect(x + 3, y + 40, 5, 4);
-
-  // 手前側の腕
-  ctx.fillStyle = "#263b55";
-  ctx.fillRect(x + 29, y + 27, 5, 10);
-  ctx.fillRect(x + 28, y + 35, 5, 6);
-
-  // 手前側の手
-  ctx.fillStyle = "#f1c9a5";
-  ctx.fillRect(x + 28, y + 40, 5, 4);
-  
-  // シャツの柄
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(x + 12, y + 29, 12, 3);
-  ctx.fillRect(x + 15, y + 34, 6, 2);
-
-  // 足の動き
-  let leftLegX = 0;
-  let rightLegX = 0;
-
-  if (state === "running" && !player.jumping) {
-    const swing = Math.sin(runAnimationTime * 14);
-
-    leftLegX = Math.round(swing * 4);
-    rightLegX = Math.round(-swing * 4);
-  }
-
-  // 左足
-  ctx.fillStyle = "#263b55";
-  ctx.fillRect(x + 10 + leftLegX, y + 42, 5, 7);
-  ctx.fillRect(x + 8 + leftLegX, y + 49, 8, 3);
-
-  // 右足
-  ctx.fillRect(x + 23 + rightLegX, y + 42, 5, 7);
-  ctx.fillRect(x + 23 + rightLegX, y + 49, 8, 3);
+  // 口
+  ctx.fillStyle = "#a75e67";
+  ctx.fillRect(x + 23, y + 25, 3, 2);
 }
-
 
 function drawObstacle(o) {
   const x = Math.round(o.x);
