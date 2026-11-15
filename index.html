@@ -576,38 +576,74 @@ if (remainingDistance <= 50) {
 }
 
 function drawBackground() {
+function drawBackground() {
+  // 空
   ctx.fillStyle = "#dff1ff";
   ctx.fillRect(0, 0, W, H);
 
-  // 雲
-  ctx.fillStyle = "#ffffff";
+  // 遠くの空の模様
+  ctx.fillStyle = "#c9e5f5";
+  ctx.fillRect(0, 130, W, 2);
 
+  // ドット雲
   for (let i = 0; i < 5; i++) {
     const x = (
-      i * 190 - distance * 0.07
-    ) % 950;
-
-    ctx.beginPath();
-    ctx.arc(x, 75, 22, 0, Math.PI * 2);
-    ctx.arc(x + 25, 70, 28, 0, Math.PI * 2);
-    ctx.arc(x + 50, 78, 20, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // 街並み
-  for (let i = 0; i < 9; i++) {
-    const x = (
-      i * 110 - distance * 0.15
+      i * 190 - distance * 0.07 + 1000
     ) % 1000;
 
+    const y = 65 + (i % 2) * 25;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x, y + 8, 54, 16);
+    ctx.fillRect(x + 8, y, 30, 8);
+    ctx.fillRect(x + 18, y - 5, 18, 8);
+    ctx.fillRect(x + 45, y + 3, 12, 10);
+
     ctx.fillStyle = "#afcbda";
-    ctx.fillRect(x, 180, 65, 105);
+    ctx.fillRect(x + 5, y + 20, 45, 3);
+  }
+
+  // 遠くの建物
+  for (let i = 0; i < 12; i++) {
+    const x = (
+      i * 95 - distance * 0.09 + 1200
+    ) % 1200;
+
+    const h = 55 + (i % 4) * 14;
+    const y = 285 - h;
+
+    ctx.fillStyle = "#c2dce9";
+    ctx.fillRect(x, y, 65, h);
 
     ctx.fillStyle = "#eaf3fa";
-
     for (let j = 0; j < 3; j++) {
-      ctx.fillRect(x + 12, 195 + j * 25, 12, 12);
-      ctx.fillRect(x + 38, 195 + j * 25, 12, 12);
+      ctx.fillRect(x + 12, y + 12 + j * 15, 8, 7);
+      ctx.fillRect(x + 36, y + 12 + j * 15, 8, 7);
+    }
+  }
+
+  // 手前の建物
+  for (let i = 0; i < 9; i++) {
+    const x = (
+      i * 120 - distance * 0.17 + 1200
+    ) % 1200;
+
+    const h = 75 + (i % 3) * 15;
+    const y = ground - h;
+
+    ctx.fillStyle = "#afcbda";
+    ctx.fillRect(x, y, 78, h);
+
+    // 屋上
+    ctx.fillStyle = "#71849a";
+    ctx.fillRect(x + 5, y - 5, 68, 5);
+
+    // 窓
+    ctx.fillStyle = "#eaf3fa";
+    for (let j = 0; j < 3; j++) {
+      ctx.fillRect(x + 12, y + 12 + j * 20, 12, 10);
+      ctx.fillRect(x + 34, y + 12 + j * 20, 12, 10);
+      ctx.fillRect(x + 56, y + 12 + j * 20, 10, 10);
     }
   }
 
@@ -615,17 +651,33 @@ function drawBackground() {
   ctx.fillStyle = "#8ab4a0";
   ctx.fillRect(0, ground, W, H - ground);
 
+  // 地面の上端
+  ctx.fillStyle = "#d4eadb";
+  ctx.fillRect(0, ground, W, 5);
+
+  // 地面のドット模様
+  ctx.fillStyle = "#6d9d88";
+
+  for (let i = 0; i < 25; i++) {
+    const x = (
+      i * 55 - distance * 0.7 + 1000
+    ) % 1000;
+
+    ctx.fillRect(x, ground + 17, 12, 4);
+    ctx.fillRect(x + 20, ground + 31, 7, 4);
+  }
+
+  // 道の白いライン
   ctx.fillStyle = "#ffffff";
 
   for (let i = 0; i < 15; i++) {
     const x = (
-      i * 75 - distance * 0.7
+      i * 75 - distance * 0.7 + 850
     ) % 850;
 
-    ctx.fillRect(x, ground + 35, 35, 5);
+    ctx.fillRect(x, ground + 48, 35, 4);
   }
 }
-
 
 function drawKspoDome() {
   const remainingDistance = TOTAL_DISTANCE - distance;
