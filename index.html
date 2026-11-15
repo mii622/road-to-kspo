@@ -823,44 +823,47 @@ function drawObstacle(o) {
     ctx.fillRect(x + 37, y + 55, 9, 5);
   }
 
-    // ケーブル
+    // ステージモニター
   else if (o.name === "CABLE") {
-    // ケーブル本体
+    // 本体の黒い輪郭
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 8, y + 5, 10, 6);
-    ctx.fillRect(x + 16, y + 9, 10, 7);
-    ctx.fillRect(x + 24, y + 13, 22, 7);
-    ctx.fillRect(x + 44, y + 9, 10, 7);
-    ctx.fillRect(x + 52, y + 5, 10, 6);
+    ctx.fillRect(x + 1, y + 17, 68, 7);
+    ctx.fillRect(x + 5, y + 11, 60, 7);
+    ctx.fillRect(x + 10, y + 5, 50, 8);
+    ctx.fillRect(x + 15, y + 2, 40, 5);
 
-    // ケーブルのハイライト
+    // スピーカー面
     ctx.fillStyle = "#71849a";
-    ctx.fillRect(x + 18, y + 11, 6, 2);
-    ctx.fillRect(x + 28, y + 15, 14, 2);
-    ctx.fillRect(x + 46, y + 11, 6, 2);
+    ctx.fillRect(x + 10, y + 11, 50, 7);
+    ctx.fillRect(x + 15, y + 6, 40, 6);
 
-    // 左のプラグ
-    ctx.fillStyle = "#6b7cff";
-    ctx.fillRect(x + 1, y + 3, 9, 12);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x, y + 5, 3, 3);
-    ctx.fillRect(x, y + 10, 3, 3);
+    // スピーカーの外側
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 25, y + 7, 20, 13);
 
-    // 右のプラグ
-    ctx.fillStyle = "#6b7cff";
-    ctx.fillRect(x + 60, y + 3, 9, 12);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 67, y + 5, 3, 3);
-    ctx.fillRect(x + 67, y + 10, 3, 3);
+    // スピーカーの円盤
+    ctx.fillStyle = "#afcbda";
+    ctx.fillRect(x + 28, y + 9, 14, 9);
+    ctx.fillRect(x + 30, y + 8, 10, 11);
 
-    // 注意マーク
+    // 中央部分
+    ctx.fillStyle = "#48566b";
+    ctx.fillRect(x + 33, y + 11, 5, 5);
+
+    // 小さなオレンジのランプ
     ctx.fillStyle = "#f28b48";
-    ctx.fillRect(x + 32, y + 1, 6, 5);
-    ctx.fillRect(x + 34, y + 6, 2, 3);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 34, y + 2, 2, 2);
-  }
+    ctx.fillRect(x + 54, y + 14, 4, 3);
 
+    // 上部のハイライト
+    ctx.fillStyle = "#afcbda";
+    ctx.fillRect(x + 19, y + 4, 24, 2);
+
+    // 底のゴム足
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 8, y + 23, 8, 2);
+    ctx.fillRect(x + 54, y + 23, 8, 2);
+  }
+    
   // 三角コーン
   else if (o.name === "CONE") {
     // 底の黒い台座
@@ -892,59 +895,82 @@ function drawObstacle(o) {
   }
 }
 
-
 function drawItem(item) {
   const x = Math.round(item.x);
   const y = Math.round(item.y);
 
   ctx.save();
   ctx.translate(x, y);
-  ctx.scale(1.4, 1.4);
+  ctx.scale(1.8, 1.8);
 
   // ペットボトル
   if (item.name === "BOTTLE") {
+    // 外枠
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(10, 1, 7, 4);
-    ctx.fillRect(6, 4, 15, 20);
+    ctx.fillRect(9, 1, 7, 4);
+    ctx.fillRect(7, 5, 11, 3);
+    ctx.fillRect(5, 8, 15, 15);
+    ctx.fillRect(8, 23, 9, 2);
 
-    ctx.fillStyle = "#55a9df";
-    ctx.fillRect(8, 6, 11, 16);
+    // キャップ
+    ctx.fillStyle = "#6b7cff";
+    ctx.fillRect(10, 0, 5, 3);
 
-    ctx.fillStyle = "#dff1ff";
-    ctx.fillRect(10, 8, 3, 8);
+    // ボトル本体
+    ctx.fillStyle = "#8ed7f5";
+    ctx.fillRect(9, 6, 7, 2);
+    ctx.fillRect(7, 9, 11, 12);
+    ctx.fillRect(9, 21, 7, 2);
 
+    // 水の透明感
+    ctx.fillStyle = "#dff7ff";
+    ctx.fillRect(9, 10, 3, 9);
+
+    // ラベル
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(8, 15, 11, 4);
+    ctx.fillRect(7, 15, 11, 5);
+
+    // ハート風マーク
+    ctx.fillStyle = "#ff9ab8";
+    ctx.fillRect(10, 16, 2, 2);
+    ctx.fillRect(13, 16, 2, 2);
+    ctx.fillRect(11, 18, 3, 1);
   }
 
-    // タオル
+  // タオル
   else if (item.name === "TOWEL") {
-    // 影・外枠
+    // 影
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(1, 7, 24, 14);
+    ctx.fillRect(1, 7, 24, 15);
 
     // タオル本体
     ctx.fillStyle = "#ff9ab8";
-    ctx.fillRect(3, 5, 20, 13);
+    ctx.fillRect(3, 5, 20, 14);
     ctx.fillRect(5, 3, 16, 2);
 
-    // 白い縁取り
+    // 明るい縁取り
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(4, 6, 18, 2);
-    ctx.fillRect(4, 16, 18, 2);
+    ctx.fillRect(4, 17, 18, 2);
 
-    // タオルの模様
+    // 中央の模様
     ctx.fillStyle = "#ffd6e2";
-    ctx.fillRect(7, 9, 12, 3);
+    ctx.fillRect(8, 10, 9, 2);
+    ctx.fillRect(10, 12, 5, 2);
+
+    // ハート
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(10, 7, 2, 2);
+    ctx.fillRect(14, 7, 2, 2);
+    ctx.fillRect(11, 9, 4, 2);
 
     // フリンジ
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(5, 18, 2, 3);
-    ctx.fillRect(10, 18, 2, 3);
-    ctx.fillRect(15, 18, 2, 3);
-    ctx.fillRect(20, 18, 2, 3);
+    ctx.fillRect(5, 19, 2, 3);
+    ctx.fillRect(10, 19, 2, 3);
+    ctx.fillRect(15, 19, 2, 3);
+    ctx.fillRect(20, 19, 2, 3);
 
-    // キラキラ（アイテムの目印）
+    // キラキラ
     ctx.fillStyle = "#ffd85c";
     ctx.fillRect(22, 1, 2, 5);
     ctx.fillRect(20, 3, 6, 2);
@@ -952,19 +978,36 @@ function drawItem(item) {
 
   // 旗
   else if (item.name === "FLAG") {
+    // ポール
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(5, 2, 3, 23);
-    ctx.fillRect(8, 2, 15, 13);
-
-    ctx.fillStyle = "#6b7cff";
-    ctx.fillRect(10, 4, 11, 9);
+    ctx.fillRect(4, 2, 3, 22);
 
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(13, 6, 5, 2);
-    ctx.fillRect(14, 9, 3, 2);
+    ctx.fillRect(5, 4, 1, 17);
 
+    // 旗の外枠
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(3, 23, 7, 2);
+    ctx.fillRect(7, 3, 17, 13);
+    ctx.fillRect(9, 16, 13, 2);
+
+    // 旗本体
+    ctx.fillStyle = "#6b7cff";
+    ctx.fillRect(9, 5, 13, 9);
+    ctx.fillRect(11, 14, 9, 2);
+
+    // 星マーク
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(14, 6, 3, 7);
+    ctx.fillRect(12, 8, 7, 3);
+
+    // ポールの土台
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(2, 23, 8, 2);
+
+    // キラキラ
+    ctx.fillStyle = "#ffd85c";
+    ctx.fillRect(22, 18, 2, 5);
+    ctx.fillRect(20, 20, 6, 2);
   }
 
   ctx.restore();
@@ -1095,7 +1138,7 @@ function draw() {
 
     // 韓国語だけMulmaru
     if (card.label === "뛰어!") {
-      ctx.font = '24px "Mulmaru"';
+      ctx.font = '22px "Mulmaru"';
     } else {
       ctx.font = '26px "Jersey 10", Arial';
     }
