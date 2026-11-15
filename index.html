@@ -411,6 +411,9 @@ function overlap(a, b) {
 
 function update(dt) {
   elapsed += dt;
+  if (!player.jumping) {
+  runAnimationTime += dt;
+  }
 
   // 加速時間を減らす
   if (boostTimer > 0) {
