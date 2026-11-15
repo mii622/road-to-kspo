@@ -8,6 +8,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
+@font-face {
+  font-family: "Mulmaru";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2601-4@1.1/Mulmaru.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
 
 <style>
 * {
@@ -383,10 +389,10 @@ function spawnObstacle() {
   if (blocked) return false;
 
   const types = [
-    { name: "CASE", w: 48, h: 55 },
-    { name: "CABLE", w: 65, h: 18 },
-    { name: "BARRIER", w: 55, h: 65 }
-  ];
+  { name: "CASE", w: 52, h: 60 },
+  { name: "CABLE", w: 70, h: 24 },
+  { name: "CONE", w: 42, h: 58 }
+];
 
   const type = types[
     Math.floor(Math.random() * types.length)
@@ -726,6 +732,31 @@ function drawPlayer() {
   ctx.fillRect(x + 1, y + 24, 5, 10);
   ctx.fillRect(x + 30, y + 24, 5, 10);
 
+    // 腕の動き
+  let armSwing = 0;
+
+  if (state === "running" && !player.jumping) {
+    armSwing = Math.round(
+      Math.sin(runAnimationTime * 14) * 5
+    );
+  }
+
+  // 奥側の腕
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(x + 1, y + 26 + armSwing, 6, 10);
+  ctx.fillRect(x - 1, y + 33 + armSwing, 6, 7);
+
+  ctx.fillStyle = "#f1c9a5";
+  ctx.fillRect(x - 1, y + 39 + armSwing, 6, 5);
+
+  // 手前側の腕
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(x + 29, y + 26 - armSwing, 6, 10);
+  ctx.fillRect(x + 33, y + 32 - armSwing, 6, 7);
+
+  ctx.fillStyle = "#f1c9a5";
+  ctx.fillRect(x + 34, y + 38 - armSwing, 6, 5);
+
   // シャツの柄
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(x + 12, y + 29, 12, 3);
@@ -761,86 +792,107 @@ function drawObstacle(o) {
   if (o.name === "CASE") {
     // 外枠
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(x, y, 48, 55);
+    ctx.fillRect(x, y, 52, 60);
 
-    // ケース本体
+    // 本体
     ctx.fillStyle = "#71849a";
-    ctx.fillRect(x + 4, y + 4, 40, 47);
+    ctx.fillRect(x + 4, y + 5, 44, 49);
 
     // 中央パネル
-    ctx.fillStyle = "#afcbda";
-    ctx.fillRect(x + 9, y + 10, 30, 29);
-
-    // パネルの色
     ctx.fillStyle = "#48566b";
-    ctx.fillRect(x + 12, y + 13, 24, 23);
+    ctx.fillRect(x + 10, y + 12, 32, 30);
 
-    // 留め具
+    // パネルの光沢
+    ctx.fillStyle = "#afcbda";
+    ctx.fillRect(x + 13, y + 15, 26, 3);
+
+    // 金属の角
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 3, y + 20, 4, 8);
-    ctx.fillRect(x + 41, y + 20, 4, 8);
+    ctx.fillRect(x + 4, y + 5, 6, 6);
+    ctx.fillRect(x + 42, y + 5, 6, 6);
+    ctx.fillRect(x + 4, y + 48, 6, 6);
+    ctx.fillRect(x + 42, y + 48, 6, 6);
 
     // 持ち手
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 15, y, 18, 5);
+    ctx.fillRect(x + 16, y, 20, 7);
     ctx.fillStyle = "#afcbda";
-    ctx.fillRect(x + 19, y + 1, 10, 3);
+    ctx.fillRect(x + 20, y + 2, 12, 3);
 
-    // 下の角
+    // 留め具
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 24, y + 24, 5, 9);
+
+    // キャスター
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 4, y + 48, 8, 7);
-    ctx.fillRect(x + 36, y + 48, 8, 7);
+    ctx.fillRect(x + 6, y + 55, 9, 5);
+    ctx.fillRect(x + 37, y + 55, 9, 5);
   }
 
   // ケーブル
   else if (o.name === "CABLE") {
-    // ドット状に波打つケーブル
+    // ケーブル本体
     ctx.fillStyle = "#263b55";
 
-    ctx.fillRect(x, y + 5, 10, 8);
-    ctx.fillRect(x + 9, y, 10, 8);
-    ctx.fillRect(x + 18, y + 5, 10, 8);
-    ctx.fillRect(x + 27, y + 9, 10, 8);
-    ctx.fillRect(x + 36, y + 5, 10, 8);
-    ctx.fillRect(x + 45, y, 10, 8);
-    ctx.fillRect(x + 54, y + 5, 11, 8);
+    ctx.fillRect(x + 7, y + 7, 10, 9);
+    ctx.fillRect(x + 17, y + 3, 10, 9);
+    ctx.fillRect(x + 27, y + 7, 10, 9);
+    ctx.fillRect(x + 37, y + 3, 10, 9);
+    ctx.fillRect(x + 47, y + 7, 10, 9);
+    ctx.fillRect(x + 57, y + 3, 8, 9);
 
-    // ケーブルのハイライト
+    // 下側のケーブル
+    ctx.fillRect(x + 12, y + 15, 10, 7);
+    ctx.fillRect(x + 22, y + 17, 10, 5);
+    ctx.fillRect(x + 32, y + 15, 10, 7);
+    ctx.fillRect(x + 42, y + 17, 10, 5);
+
+    // ハイライト
     ctx.fillStyle = "#71849a";
-    ctx.fillRect(x + 3, y + 7, 5, 3);
-    ctx.fillRect(x + 12, y + 2, 5, 3);
-    ctx.fillRect(x + 30, y + 11, 5, 3);
-    ctx.fillRect(x + 48, y + 2, 5, 3);
+    ctx.fillRect(x + 19, y + 5, 5, 3);
+    ctx.fillRect(x + 39, y + 5, 5, 3);
+    ctx.fillRect(x + 24, y + 18, 5, 2);
+
+    // プラグ
+    ctx.fillStyle = "#6b7cff";
+    ctx.fillRect(x, y + 8, 9, 7);
+    ctx.fillRect(x + 65, y + 4, 5, 8);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 2, y + 10, 3, 3);
+    ctx.fillRect(x + 67, y + 6, 2, 4);
   }
 
-  // バリケード
-  else if (o.name === "BARRIER") {
-    // 外枠
+  // 三角コーン
+  else if (o.name === "CONE") {
+    // 底の黒い台座
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(x, y + 3, 55, 43);
+    ctx.fillRect(x, y + 51, 42, 7);
 
-    // 本体
-    ctx.fillStyle = "#e58b75";
-    ctx.fillRect(x + 3, y + 6, 49, 37);
+    // コーンの輪郭
+    ctx.fillRect(x + 5, y + 43, 32, 8);
+    ctx.fillRect(x + 10, y + 30, 22, 13);
+    ctx.fillRect(x + 14, y + 17, 14, 13);
+    ctx.fillRect(x + 18, y + 7, 6, 10);
+    ctx.fillRect(x + 19, y + 4, 4, 3);
 
-    // 白い警告ライン
+    // オレンジ本体
+    ctx.fillStyle = "#f28b48";
+    ctx.fillRect(x + 7, y + 45, 28, 5);
+    ctx.fillRect(x + 12, y + 32, 18, 11);
+    ctx.fillRect(x + 16, y + 19, 10, 11);
+    ctx.fillRect(x + 19, y + 8, 4, 9);
+
+    // 白い反射ライン
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 7, y + 13, 9, 8);
-    ctx.fillRect(x + 23, y + 13, 9, 8);
-    ctx.fillRect(x + 39, y + 13, 9, 8);
+    ctx.fillRect(x + 13, y + 34, 16, 4);
+    ctx.fillRect(x + 16, y + 21, 10, 4);
 
-    // 脚
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 7, y + 43, 9, 22);
-    ctx.fillRect(x + 39, y + 43, 9, 22);
-
-    // 脚の足元
+    // 台座のハイライト
     ctx.fillStyle = "#71849a";
-    ctx.fillRect(x + 3, y + 61, 17, 4);
-    ctx.fillRect(x + 35, y + 61, 17, 4);
+    ctx.fillRect(x + 4, y + 53, 34, 2);
   }
 }
-
 
 
 function drawItem(item) {
@@ -848,10 +900,8 @@ function drawItem(item) {
   const y = Math.round(item.y);
 
   ctx.save();
-
-  // アイテムを中心から1.25倍に拡大
   ctx.translate(x, y);
-  ctx.scale(1.25, 1.25);
+  ctx.scale(1.4, 1.4);
 
   // ペットボトル
   if (item.name === "BOTTLE") {
@@ -920,7 +970,7 @@ function draw() {
   // 加速中の表示
   if (boostTimer > 0 && state === "running") {
     ctx.fillStyle = "#6b7cff";
-    ctx.font = "bold 20px Arial";
+    ctx.font = '28px "Jersey 10", Arial';
     ctx.textAlign = "left";
     ctx.fillText("SPEED UP!", 20, 35);
   }
@@ -932,7 +982,7 @@ function draw() {
 
   if (state === "ready") {
     ctx.fillStyle = "#263b55";
-    ctx.font = "bold 32px Arial";
+    ctx.font = '42px "Jersey 10", Arial';
     ctx.textAlign = "center";
     ctx.fillText("READY TO RUN?", W / 2, 125);
   }
@@ -942,7 +992,7 @@ function draw() {
     ctx.fillRect(0, 0, W, H);
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 40px Arial";
+    ctx.font = '48px "Jersey 10", Arial';
     ctx.textAlign = "center";
     ctx.fillText("PAUSED", W / 2, 170);
   }
@@ -950,7 +1000,6 @@ function draw() {
  
 
  if (state === "finished") {
-  // 背景
   ctx.fillStyle = "rgba(38,59,85,0.55)";
   ctx.fillRect(0, 0, W, H);
 
@@ -989,58 +1038,62 @@ function draw() {
     ctx.fillRect(x - 9, y - 2, 18, 4);
   });
 
-  // RESULTパネル
+  // 大きなRESULTパネル
   ctx.fillStyle = "#263b55";
-  ctx.fillRect(174, 57, 452, 248);
+  ctx.fillRect(130, 32, 540, 296);
 
   ctx.fillStyle = "#dff1ff";
-  ctx.fillRect(180, 63, 440, 236);
+  ctx.fillRect(136, 38, 528, 284);
 
-  // 上部タイトル帯
+  // タイトル帯
   ctx.fillStyle = "#6b7cff";
-  ctx.fillRect(180, 63, 440, 53);
+  ctx.fillRect(136, 38, 528, 60);
 
   ctx.textAlign = "center";
-
-  ctx.font = '48px "Jersey 10", Arial';
+  ctx.font = '58px "Jersey 10", Arial';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("GOAL!", W / 2, 103);
+  ctx.fillText("GOAL!", W / 2, 83);
 
   // サブタイトル
-  ctx.font = '24px "Jersey 10", Arial';
+  ctx.font = '26px "Jersey 10", Arial';
   ctx.fillStyle = "#526a91";
-  ctx.fillText("WELCOME TO KSPO DOME!", W / 2, 145);
+  ctx.fillText("WELCOME TO KSPO DOME!", W / 2, 132);
 
-  // 記録カード
+  // 4つの記録カード
   const cards = [
-    { x: 205, y: 165, label: "TIME", value: formatTime(elapsed), color: "#ff9ab8" },
-    { x: 410, y: 165, label: "SCORE", value: score, color: "#9b8cff" },
-    { x: 205, y: 230, label: "ITEMS", value: collectedCount, color: "#55a9df" },
-    { x: 410, y: 230, label: "뛰어!", value: jumpCount, color: "#ff9ab8" }
+    { x: 160, y: 151, label: "TIME", value: formatTime(elapsed), color: "#ff9ab8" },
+    { x: 420, y: 151, label: "SCORE", value: score, color: "#9b8cff" },
+    { x: 160, y: 234, label: "ITEMS", value: collectedCount, color: "#55a9df" },
+    { x: 420, y: 234, label: "뛰어!", value: jumpCount, color: "#ff9ab8" }
   ];
 
   cards.forEach(card => {
     ctx.fillStyle = "#afcbda";
-    ctx.fillRect(card.x, card.y, 185, 55);
+    ctx.fillRect(card.x, card.y, 220, 70);
 
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(card.x + 3, card.y + 3, 179, 49);
+    ctx.fillRect(card.x + 3, card.y + 3, 214, 64);
 
     ctx.fillStyle = card.color;
-    ctx.fillRect(card.x + 3, card.y + 3, 5, 49);
+    ctx.fillRect(card.x + 3, card.y + 3, 7, 64);
 
     ctx.textAlign = "left";
 
-    ctx.font = '21px "Jersey 10", Arial';
-    ctx.fillStyle = "#71849a";
-    ctx.fillText(card.label, card.x + 17, card.y + 21);
+    // 韓国語だけMulmaru
+    if (card.label === "뛰어!") {
+      ctx.font = '24px "Mulmaru"';
+    } else {
+      ctx.font = '26px "Jersey 10", Arial';
+    }
 
-    ctx.font = '30px "Jersey 10", Arial';
+    ctx.fillStyle = "#71849a";
+    ctx.fillText(card.label, card.x + 20, card.y + 27);
+
+    ctx.font = '38px "Jersey 10", Arial';
     ctx.fillStyle = "#263b55";
-    ctx.fillText(String(card.value), card.x + 17, card.y + 47);
+    ctx.fillText(String(card.value), card.x + 20, card.y + 59);
   });
  }
-}
 function finishGame() {
   state = "finished";
 
