@@ -317,6 +317,7 @@ function activateBoost() {
   boostTimer = BOOST_DURATION;
 }
 
+
 function spawnObstacle() {
   const spawnX = W + 20;
 
@@ -326,7 +327,36 @@ function spawnObstacle() {
   if (remainingDistance <= getSpeed() * 4) {
     return false;
   }
+
+  // アイテムの近くには障害物を出さない
+  const blocked = items.some(item =>
+    Math.abs(item.x - spawnX) < 220
+  );
+
+  if (blocked) return false;
+
+  const types = [
+    { name: "CASE", w: 48, h: 55 },
+    { name: "CABLE", w: 65, h: 18 },
+    { name: "BARRIER", w: 55, h: 65 }
+  ];
+
+  const type = types[
+    Math.floor(Math.random() * types.length)
+  ];
+
+  obstacles.push({
+    x: spawnX,
+    y: ground - type.h,
+    w: type.w,
+    h: type.h,
+    name: type.name,
+    passed: false
+  });
+
+  return true;
 }
+
 
 function spawnItem() {
   const spawnX = W + 20;
