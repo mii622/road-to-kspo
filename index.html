@@ -370,22 +370,20 @@ function spawnItem() {
     Math.floor(Math.random() * types.length)
   ];
 
+ const remainingDistance = TOTAL_DISTANCE - distance;
+const isNearGoal = remainingDistance <= getSpeed() * 2;
+
+let y;
+
+if (isNearGoal) {
+  y = ground - 20;
+} else {
   const r = Math.random();
 
-  let y;
-
-  if (r < 0.35) {
-    // 足元：地面に埋まらない位置
-    y = ground - 20;
-
-  } else if (r < 0.70) {
-    // 中段
-    y = ground - 45;
-
-  } else {
-    // 高段：ジャンプして取得
-    y = ground - 140;
-  }
+  if (r < 0.35) y = ground - 20;
+  else if (r < 0.70) y = ground - 45;
+  else y = ground - 140;
+}
 
   items.push({
     x: spawnX,
