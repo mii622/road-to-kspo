@@ -661,23 +661,79 @@ function drawObstacle(o) {
   }
 }
 
+
 function drawItem(item) {
-  ctx.fillStyle = item.color;
+  const x = Math.round(item.x);
+  const y = Math.round(item.y);
 
+  // ペットボトル
   if (item.name === "BOTTLE") {
-    ctx.fillRect(item.x + 7, item.y + 4, 13, 21);
-    ctx.fillRect(item.x + 10, item.y, 7, 5);
+    // キャップ
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 10, y + 1, 7, 4);
 
-  } else if (item.name === "TOWEL") {
-    ctx.fillRect(item.x, item.y + 5, 25, 15);
+    // ボトル本体の輪郭
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 6, y + 4, 15, 20);
 
-  } else {
-    ctx.fillRect(item.x + 5, item.y, 17, 20);
+    // ボトル本体
+    ctx.fillStyle = "#55a9df";
+    ctx.fillRect(x + 8, y + 6, 11, 16);
 
+    // ハイライト
+    ctx.fillStyle = "#dff1ff";
+    ctx.fillRect(x + 10, y + 8, 3, 8);
+
+    // ラベル
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(item.x + 9, item.y + 8, 9, 3);
+    ctx.fillRect(x + 8, y + 15, 11, 4);
+  }
+
+  // タオル
+  else if (item.name === "TOWEL") {
+    // 影・輪郭
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 1, y + 6, 24, 15);
+
+    // タオル本体
+    ctx.fillStyle = "#ff9ab8";
+    ctx.fillRect(x + 3, y + 5, 20, 13);
+
+    // 折り返し
+    ctx.fillStyle = "#ffd6e2";
+    ctx.fillRect(x + 5, y + 8, 16, 3);
+
+    // 端の模様
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 4, y + 16, 3, 2);
+    ctx.fillRect(x + 10, y + 16, 3, 2);
+    ctx.fillRect(x + 16, y + 16, 3, 2);
+  }
+
+  // 旗
+  else if (item.name === "FLAG") {
+    // 柄
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 5, y + 2, 3, 23);
+
+    // 旗の輪郭
+    ctx.fillRect(x + 8, y + 2, 15, 13);
+
+    // 旗本体
+    ctx.fillStyle = "#6b7cff";
+    ctx.fillRect(x + 10, y + 4, 11, 9);
+
+    // 旗の模様
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 13, y + 6, 5, 2);
+    ctx.fillRect(x + 14, y + 9, 3, 2);
+
+    // 柄の先端
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 3, y + 23, 7, 2);
   }
 }
+
 
 function draw() {
   drawBackground();
