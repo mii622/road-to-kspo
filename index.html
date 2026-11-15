@@ -173,6 +173,8 @@ let collectedCount = 0;
 // 加速残り時間
 let boostTimer = 0;
 
+let runAnimationTime = 0;
+
 const player = {
   x: 110,
   y: ground - 52,
@@ -556,6 +558,7 @@ function drawBackground() {
   }
 }
 
+
 function drawPlayer() {
   const x = player.x;
   const y = player.y;
@@ -580,16 +583,31 @@ function drawPlayer() {
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(x + 13, y + 27, 10, 3);
 
+  // 足の動き
+  let leftLegX = -3;
+  let rightLegX = 3;
+
+  if (state === "running" && !player.jumping) {
+    const swing = Math.sin(runAnimationTime * 14) * 5;
+
+    leftLegX = swing;
+    rightLegX = -swing;
+  }
+
   // 足
   ctx.strokeStyle = "#263b55";
   ctx.lineWidth = 5;
   ctx.beginPath();
+
   ctx.moveTo(x + 12, y + 42);
-  ctx.lineTo(x + 9, y + 51);
+  ctx.lineTo(x + 12 + leftLegX, y + 51);
+
   ctx.moveTo(x + 25, y + 42);
-  ctx.lineTo(x + 28, y + 51);
+  ctx.lineTo(x + 25 + rightLegX, y + 51);
+
   ctx.stroke();
 }
+
 
 function drawObstacle(o) {
   if (o.name === "CASE") {
