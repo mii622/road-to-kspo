@@ -679,17 +679,34 @@ function drawBackground() {
     // 会場周辺のフラッグ
     for (let i = 0; i < 4; i++) {
       const x = (
-  (i * 280 - distance * 0.32 + 1200) % 1200 + 1200
-) % 1200;
-      ctx.fillStyle = "#71849a";
-      ctx.fillRect(x, 205, 3, 45);
+        (i * 280 - distance * 0.32 + 1200) % 1200 + 1200
+      ) % 1200;
 
+      // 支柱
+      ctx.fillStyle = "#526078";
+      ctx.fillRect(x, 195, 4, 55);
+
+      // 旗の影・縁
+      ctx.fillStyle = "#263b55";
+      ctx.fillRect(x + 4, 198, 34, 23);
+
+      // 旗本体
       ctx.fillStyle = "#6b7cff";
-      ctx.fillRect(x + 3, 207, 22, 14);
-      ctx.fillRect(x + 3, 221, 16, 3);
+      ctx.fillRect(x + 4, 196, 32, 20);
+      ctx.fillRect(x + 4, 216, 25, 4);
 
+      // 旗のアクセント
+      ctx.fillStyle = "#afcbda";
+      ctx.fillRect(x + 4, 196, 32, 4);
+
+      // 白い星
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(x + 9, 211, 5, 5);
+      ctx.fillRect(x + 17, 202, 6, 6);
+      ctx.fillRect(x + 15, 204, 10, 2);
+
+      // 旗のキラッとした部分
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x + 8, 202, 3, 3);
     }
 
     ctx.restore();
