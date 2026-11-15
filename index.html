@@ -3,25 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ROAD TO KSPO</title>
+<title>ROAD TO KSPO DOME</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
 
 <style>
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
   background: #eaf3fa;
   color: #263b55;
-  font-family: Arial, sans-serif;
+  font-family: "Jersey 10", Arial, sans-serif;
   text-align: center;
 }
 
-header { padding: 20px 10px 5px; }
+header {
+  padding: 20px 10px 5px;
+}
 
 h1 {
-  color: #eeeeee;
+  color: #6b7cff;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 48px;
   letter-spacing: 2px;
-  margin-bottom: 5px;
+  line-height: 1;
+  margin: 5px 0;
+  text-shadow: 3px 3px 0 #ffb5d0;
+}
+
+.small {
+  font-family: "Jersey 10", sans-serif;
+  font-size: 19px;
+  letter-spacing: 1px;
+  color: #71849a;
 }
 
 #game {
@@ -37,24 +56,23 @@ h1 {
   flex-wrap: wrap;
   gap: 8px;
   padding: 12px 0;
-  font-weight: bold;
-  font-size: 14px;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: #526a91;
 }
 
-canvas {
-  width: 100%;
-  display: block;
-  background: #dff1ff;
-  border: 3px solid #afcbda;
-  border-radius: 12px;
-  touch-action: none;
+#info span span {
+  color: #6b7cff;
+  font-size: 25px;
 }
 
 #progress {
   width: 100%;
-  height: 9px;
+  height: 13px;
   background: #d0dfeb;
-  border-radius: 10px;
+  border: 2px solid #afcbda;
+  border-radius: 3px;
   overflow: hidden;
   margin: 5px 0 10px;
 }
@@ -62,37 +80,62 @@ canvas {
 #progressBar {
   height: 100%;
   width: 0%;
-  background: #6b7cff;
-  border-radius: 10px;
+  background: repeating-linear-gradient(
+    90deg,
+    #6b7cff 0px,
+    #6b7cff 12px,
+    #9b8cff 12px,
+    #9b8cff 16px
+  );
   transition: width 0.1s linear;
+}
+
+canvas {
+  width: 100%;
+  display: block;
+  background: #dff1ff;
+  border: 4px solid #afcbda;
+  border-radius: 5px;
+  box-shadow: 5px 5px 0 #c7d7e8;
+  touch-action: none;
+}
+
+#message {
+  padding: 12px 5px;
+  min-height: 45px;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 23px;
+  letter-spacing: 1px;
+  color: #6b7cff;
 }
 
 button {
   background: #6b7cff;
   color: white;
-  border: none;
-  border-radius: 30px;
-  padding: 13px 40px;
-  font-size: 17px;
-  font-weight: bold;
+  border: 3px solid #263b55;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 #263b55;
+  padding: 10px 42px;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 27px;
+  letter-spacing: 1px;
   cursor: pointer;
-  margin: 5px;
+  margin: 8px;
+}
+
+button:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 #263b55;
 }
 
 #pause {
-  background: #71849a;
+  background: #ff9ab8;
   display: none;
-  padding: 13px 30px;
-}
-
-#message {
-  padding: 12px;
-  min-height: 45px;
+  padding: 10px 30px;
 }
 
 .small {
-  font-size: 12px;
-  color: #71849a;
+  margin-top: 12px;
 }
 </style>
 </head>
@@ -100,7 +143,7 @@ button {
 <body>
 
 <header>
-  <h1>ROAD TO KSPO</h1>
+  <h1>ROAD TO KSPO DOME</h1>
   <div class="small">RUN TO YOUR FAVORITE STAGE!</div>
 </header>
 
@@ -118,12 +161,12 @@ button {
 
   <canvas id="canvas" width="800" height="360"></canvas>
 
-  <div id="message">KSPO DOMEを目指して走ろう！</div>
+  <div id="message">LET'S RUN TO KSPO DOME!</div>
 
   <button id="start">START</button>
   <button id="pause">PAUSE</button>
-
-  <p class="small">画面をタップしてジャンプ！</p>
+  
+<p class="small">TAP TO JUMP!</p>
 </div>
 
 <script>
@@ -799,76 +842,68 @@ function drawObstacle(o) {
 }
 
 
+
 function drawItem(item) {
   const x = Math.round(item.x);
   const y = Math.round(item.y);
 
+  ctx.save();
+
+  // アイテムを中心から1.25倍に拡大
+  ctx.translate(x, y);
+  ctx.scale(1.25, 1.25);
+
   // ペットボトル
   if (item.name === "BOTTLE") {
-    // キャップ
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 10, y + 1, 7, 4);
+    ctx.fillRect(10, 1, 7, 4);
+    ctx.fillRect(6, 4, 15, 20);
 
-    // ボトル本体の輪郭
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 6, y + 4, 15, 20);
-
-    // ボトル本体
     ctx.fillStyle = "#55a9df";
-    ctx.fillRect(x + 8, y + 6, 11, 16);
+    ctx.fillRect(8, 6, 11, 16);
 
-    // ハイライト
     ctx.fillStyle = "#dff1ff";
-    ctx.fillRect(x + 10, y + 8, 3, 8);
+    ctx.fillRect(10, 8, 3, 8);
 
-    // ラベル
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 8, y + 15, 11, 4);
+    ctx.fillRect(8, 15, 11, 4);
   }
 
   // タオル
   else if (item.name === "TOWEL") {
-    // 影・輪郭
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 1, y + 6, 24, 15);
+    ctx.fillRect(1, 6, 24, 15);
 
-    // タオル本体
     ctx.fillStyle = "#ff9ab8";
-    ctx.fillRect(x + 3, y + 5, 20, 13);
+    ctx.fillRect(3, 5, 20, 13);
 
-    // 折り返し
     ctx.fillStyle = "#ffd6e2";
-    ctx.fillRect(x + 5, y + 8, 16, 3);
+    ctx.fillRect(5, 8, 16, 3);
 
-    // 端の模様
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 4, y + 16, 3, 2);
-    ctx.fillRect(x + 10, y + 16, 3, 2);
-    ctx.fillRect(x + 16, y + 16, 3, 2);
+    ctx.fillRect(4, 16, 3, 2);
+    ctx.fillRect(10, 16, 3, 2);
+    ctx.fillRect(16, 16, 3, 2);
   }
 
   // 旗
   else if (item.name === "FLAG") {
-    // 柄
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 5, y + 2, 3, 23);
+    ctx.fillRect(5, 2, 3, 23);
+    ctx.fillRect(8, 2, 15, 13);
 
-    // 旗の輪郭
-    ctx.fillRect(x + 8, y + 2, 15, 13);
-
-    // 旗本体
     ctx.fillStyle = "#6b7cff";
-    ctx.fillRect(x + 10, y + 4, 11, 9);
+    ctx.fillRect(10, 4, 11, 9);
 
-    // 旗の模様
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 13, y + 6, 5, 2);
-    ctx.fillRect(x + 14, y + 9, 3, 2);
+    ctx.fillRect(13, 6, 5, 2);
+    ctx.fillRect(14, 9, 3, 2);
 
-    // 柄の先端
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 3, y + 23, 7, 2);
+    ctx.fillRect(3, 23, 7, 2);
   }
+
+  ctx.restore();
 }
 
 
@@ -913,9 +948,10 @@ function draw() {
   }
 
  
-if (state === "finished") {
-  // 背景を少し暗くする
-  ctx.fillStyle = "rgba(38,59,85,0.35)";
+
+ if (state === "finished") {
+  // 背景
+  ctx.fillStyle = "rgba(38,59,85,0.55)";
   ctx.fillRect(0, 0, W, H);
 
   // 紙吹雪
@@ -943,12 +979,8 @@ if (state === "finished") {
 
   // キラキラ
   const sparkles = [
-    [170, 75],
-    [315, 165],
-    [490, 65],
-    [650, 145],
-    [730, 230],
-    [75, 155]
+    [170, 75], [315, 165], [490, 65],
+    [650, 145], [730, 230], [75, 155]
   ];
 
   sparkles.forEach(([x, y]) => {
@@ -957,33 +989,62 @@ if (state === "finished") {
     ctx.fillRect(x - 9, y - 2, 18, 4);
   });
 
-  // GOAL! の文字
+  // RESULTパネル
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(174, 57, 452, 248);
+
+  ctx.fillStyle = "#dff1ff";
+  ctx.fillRect(180, 63, 440, 236);
+
+  // 上部タイトル帯
+  ctx.fillStyle = "#6b7cff";
+  ctx.fillRect(180, 63, 440, 53);
+
   ctx.textAlign = "center";
 
-  ctx.font = "bold 64px Arial";
-
-  ctx.fillStyle = "#263b55";
-  ctx.fillText("GOAL!", W / 2 + 3, 155 + 3);
-
+  ctx.font = '48px "Jersey 10", Arial';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("GOAL!", W / 2, 155);
+  ctx.fillText("GOAL!", W / 2, 103);
 
-  // サブメッセージ
-  ctx.font = "bold 20px Arial";
-  ctx.fillStyle = "#ffffff";
-  ctx.fillText("WELCOME TO KSPO DOME!", W / 2, 190);
-}
+  // サブタイトル
+  ctx.font = '24px "Jersey 10", Arial';
+  ctx.fillStyle = "#526a91";
+  ctx.fillText("WELCOME TO KSPO DOME!", W / 2, 145);
 
-}
+  // 記録カード
+  const cards = [
+    { x: 205, y: 165, label: "TIME", value: formatTime(elapsed), color: "#ff9ab8" },
+    { x: 410, y: 165, label: "SCORE", value: score, color: "#9b8cff" },
+    { x: 205, y: 230, label: "ITEMS", value: collectedCount, color: "#55a9df" },
+    { x: 410, y: 230, label: "뛰어!", value: jumpCount, color: "#ff9ab8" }
+  ];
+
+  cards.forEach(card => {
+    ctx.fillStyle = "#afcbda";
+    ctx.fillRect(card.x, card.y, 185, 55);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(card.x + 3, card.y + 3, 179, 49);
+
+    ctx.fillStyle = card.color;
+    ctx.fillRect(card.x + 3, card.y + 3, 5, 49);
+
+    ctx.textAlign = "left";
+
+    ctx.font = '21px "Jersey 10", Arial';
+    ctx.fillStyle = "#71849a";
+    ctx.fillText(card.label, card.x + 17, card.y + 21);
+
+    ctx.font = '30px "Jersey 10", Arial';
+    ctx.fillStyle = "#263b55";
+    ctx.fillText(String(card.value), card.x + 17, card.y + 47);
+  });
+ }
 
 function finishGame() {
   state = "finished";
 
-  message.textContent =
-  "TIME：" + formatTime(elapsed) +
-  " ／ SCORE：" + score + "点" +
-  " ／ ITEMS：" + collectedCount + "個" +
-  " ／ JUMPS：" + jumpCount + "回";
+  message.textContent = "YOU MADE IT! CONGRATULATIONS!";
 
   startBtn.textContent = "RETRY";
   startBtn.style.display = "inline-block";
