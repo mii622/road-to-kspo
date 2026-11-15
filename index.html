@@ -733,30 +733,24 @@ function drawPlayer() {
   ctx.fillRect(x + 30, y + 24, 5, 10);
 
     // 腕の動き
-  let armSwing = 0;
-
-  if (state === "running" && !player.jumping) {
-    armSwing = Math.round(
-      Math.sin(runAnimationTime * 14) * 5
-    );
-  }
-
+  le  // 腕（固定ポーズ）
   // 奥側の腕
   ctx.fillStyle = "#263b55";
-  ctx.fillRect(x + 1, y + 26 + armSwing, 6, 10);
-  ctx.fillRect(x - 1, y + 33 + armSwing, 6, 7);
+  ctx.fillRect(x + 2, y + 27, 5, 10);
+  ctx.fillRect(x + 3, y + 35, 5, 6);
 
+  // 奥側の手
   ctx.fillStyle = "#f1c9a5";
-  ctx.fillRect(x - 1, y + 39 + armSwing, 6, 5);
+  ctx.fillRect(x + 3, y + 40, 5, 4);
 
   // 手前側の腕
   ctx.fillStyle = "#263b55";
-  ctx.fillRect(x + 29, y + 26 - armSwing, 6, 10);
-  ctx.fillRect(x + 33, y + 32 - armSwing, 6, 7);
+  ctx.fillRect(x + 29, y + 27, 5, 10);
+  ctx.fillRect(x + 28, y + 35, 5, 6);
 
+  // 手前側の手
   ctx.fillStyle = "#f1c9a5";
-  ctx.fillRect(x + 34, y + 38 - armSwing, 6, 5);
-
+  ctx.fillRect(x + 28, y + 40, 5, 4);
   // シャツの柄
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(x + 12, y + 29, 12, 3);
@@ -829,38 +823,42 @@ function drawObstacle(o) {
     ctx.fillRect(x + 37, y + 55, 9, 5);
   }
 
-  // ケーブル
+    // ケーブル
   else if (o.name === "CABLE") {
     // ケーブル本体
     ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 8, y + 5, 10, 6);
+    ctx.fillRect(x + 16, y + 9, 10, 7);
+    ctx.fillRect(x + 24, y + 13, 22, 7);
+    ctx.fillRect(x + 44, y + 9, 10, 7);
+    ctx.fillRect(x + 52, y + 5, 10, 6);
 
-    ctx.fillRect(x + 7, y + 7, 10, 9);
-    ctx.fillRect(x + 17, y + 3, 10, 9);
-    ctx.fillRect(x + 27, y + 7, 10, 9);
-    ctx.fillRect(x + 37, y + 3, 10, 9);
-    ctx.fillRect(x + 47, y + 7, 10, 9);
-    ctx.fillRect(x + 57, y + 3, 8, 9);
-
-    // 下側のケーブル
-    ctx.fillRect(x + 12, y + 15, 10, 7);
-    ctx.fillRect(x + 22, y + 17, 10, 5);
-    ctx.fillRect(x + 32, y + 15, 10, 7);
-    ctx.fillRect(x + 42, y + 17, 10, 5);
-
-    // ハイライト
+    // ケーブルのハイライト
     ctx.fillStyle = "#71849a";
-    ctx.fillRect(x + 19, y + 5, 5, 3);
-    ctx.fillRect(x + 39, y + 5, 5, 3);
-    ctx.fillRect(x + 24, y + 18, 5, 2);
+    ctx.fillRect(x + 18, y + 11, 6, 2);
+    ctx.fillRect(x + 28, y + 15, 14, 2);
+    ctx.fillRect(x + 46, y + 11, 6, 2);
 
-    // プラグ
+    // 左のプラグ
     ctx.fillStyle = "#6b7cff";
-    ctx.fillRect(x, y + 8, 9, 7);
-    ctx.fillRect(x + 65, y + 4, 5, 8);
-
+    ctx.fillRect(x + 1, y + 3, 9, 12);
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 2, y + 10, 3, 3);
-    ctx.fillRect(x + 67, y + 6, 2, 4);
+    ctx.fillRect(x, y + 5, 3, 3);
+    ctx.fillRect(x, y + 10, 3, 3);
+
+    // 右のプラグ
+    ctx.fillStyle = "#6b7cff";
+    ctx.fillRect(x + 60, y + 3, 9, 12);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 67, y + 5, 3, 3);
+    ctx.fillRect(x + 67, y + 10, 3, 3);
+
+    // 注意マーク
+    ctx.fillStyle = "#f28b48";
+    ctx.fillRect(x + 32, y + 1, 6, 5);
+    ctx.fillRect(x + 34, y + 6, 2, 3);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 34, y + 2, 2, 2);
   }
 
   // 三角コーン
@@ -919,21 +917,37 @@ function drawItem(item) {
     ctx.fillRect(8, 15, 11, 4);
   }
 
-  // タオル
+    // タオル
   else if (item.name === "TOWEL") {
+    // 影・外枠
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(1, 6, 24, 15);
+    ctx.fillRect(1, 7, 24, 14);
 
+    // タオル本体
     ctx.fillStyle = "#ff9ab8";
     ctx.fillRect(3, 5, 20, 13);
+    ctx.fillRect(5, 3, 16, 2);
 
-    ctx.fillStyle = "#ffd6e2";
-    ctx.fillRect(5, 8, 16, 3);
-
+    // 白い縁取り
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(4, 16, 3, 2);
-    ctx.fillRect(10, 16, 3, 2);
-    ctx.fillRect(16, 16, 3, 2);
+    ctx.fillRect(4, 6, 18, 2);
+    ctx.fillRect(4, 16, 18, 2);
+
+    // タオルの模様
+    ctx.fillStyle = "#ffd6e2";
+    ctx.fillRect(7, 9, 12, 3);
+
+    // フリンジ
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(5, 18, 2, 3);
+    ctx.fillRect(10, 18, 2, 3);
+    ctx.fillRect(15, 18, 2, 3);
+    ctx.fillRect(20, 18, 2, 3);
+
+    // キラキラ（アイテムの目印）
+    ctx.fillStyle = "#ffd85c";
+    ctx.fillRect(22, 1, 2, 5);
+    ctx.fillRect(20, 3, 6, 2);
   }
 
   // 旗
