@@ -320,34 +320,12 @@ function activateBoost() {
 function spawnObstacle() {
   const spawnX = W + 20;
 
-  // アイテムの近くには障害物を出さない
-  const blocked = items.some(item =>
-    Math.abs(item.x - spawnX) < 220
-  );
+  // ゴールまで残り約4秒になったら新しい障害物を出さない
+  const remainingDistance = TOTAL_DISTANCE - distance;
 
-  if (blocked) return false;
-
-  const types = [
-    { name: "CASE", w: 48, h: 55 },
-    { name: "CABLE", w: 65, h: 18 },
-    { name: "BARRIER", w: 55, h: 65 }
-  ];
-
-  const type = types[
-    Math.floor(Math.random() * types.length)
-  ];
-
-  obstacles.push({
-    x: spawnX,
-    y: ground - type.h,
-    w: type.w,
-    h: type.h,
-    name: type.name,
-    passed: false
-  });
-
-  return true;
-}
+  if (remainingDistance <= getSpeed() * 4) {
+    return false;
+  }
 
 function spawnItem() {
   const spawnX = W + 20;
@@ -622,42 +600,92 @@ function drawPlayer() {
   ctx.fillRect(x + 23 + rightLegX, y + 49, 8, 3);
 }
 
+
 function drawObstacle(o) {
+  const x = Math.round(o.x);
+  const y = Math.round(o.y);
+
+  // 機材ケース
   if (o.name === "CASE") {
+    // 外枠
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x, y, 48, 55);
+
+    // ケース本体
+    ctx.fillStyle = "#71849a";
+    ctx.fillRect(x + 4, y + 4, 40, 47);
+
+    // 中央パネル
+    ctx.fillStyle = "#afcbda";
+    ctx.fillRect(x + 9, y + 10, 30, 29);
+
+    // パネルの色
     ctx.fillStyle = "#48566b";
-    ctx.fillRect(o.x, o.y, o.w, o.h);
+    ctx.fillRect(x + 12, y + 13, 24, 23);
 
-    ctx.strokeStyle = "#afcbda";
-    ctx.lineWidth = 3;
-    ctx.strokeRect(
-      o.x + 5, o.y + 5,
-      o.w - 10, o.h - 10
-    );
-  }
-
-  if (o.name === "CABLE") {
-    ctx.strokeStyle = "#263b55";
-    ctx.lineWidth = 8;
-    ctx.beginPath();
-
-    ctx.moveTo(o.x, o.y + 10);
-    ctx.quadraticCurveTo(
-      o.x + 30, o.y - 5,
-      o.x + o.w, o.y + 10
-    );
-
-    ctx.stroke();
-  }
-
-  if (o.name === "BARRIER") {
-    ctx.fillStyle = "#e58b75";
-    ctx.fillRect(o.x, o.y, o.w, o.h);
-
+    // 留め具
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(
-      o.x + 5, o.y + 15,
-      o.w - 10, 10
-    );
+    ctx.fillRect(x + 3, y + 20, 4, 8);
+    ctx.fillRect(x + 41, y + 20, 4, 8);
+
+    // 持ち手
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 15, y, 18, 5);
+    ctx.fillStyle = "#afcbda";
+    ctx.fillRect(x + 19, y + 1, 10, 3);
+
+    // 下の角
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 4, y + 48, 8, 7);
+    ctx.fillRect(x + 36, y + 48, 8, 7);
+  }
+
+  // ケーブル
+  else if (o.name === "CABLE") {
+    // ドット状に波打つケーブル
+    ctx.fillStyle = "#263b55";
+
+    ctx.fillRect(x, y + 5, 10, 8);
+    ctx.fillRect(x + 9, y, 10, 8);
+    ctx.fillRect(x + 18, y + 5, 10, 8);
+    ctx.fillRect(x + 27, y + 9, 10, 8);
+    ctx.fillRect(x + 36, y + 5, 10, 8);
+    ctx.fillRect(x + 45, y, 10, 8);
+    ctx.fillRect(x + 54, y + 5, 11, 8);
+
+    // ケーブルのハイライト
+    ctx.fillStyle = "#71849a";
+    ctx.fillRect(x + 3, y + 7, 5, 3);
+    ctx.fillRect(x + 12, y + 2, 5, 3);
+    ctx.fillRect(x + 30, y + 11, 5, 3);
+    ctx.fillRect(x + 48, y + 2, 5, 3);
+  }
+
+  // バリケード
+  else if (o.name === "BARRIER") {
+    // 外枠
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x, y + 3, 55, 43);
+
+    // 本体
+    ctx.fillStyle = "#e58b75";
+    ctx.fillRect(x + 3, y + 6, 49, 37);
+
+    // 白い警告ライン
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 7, y + 13, 9, 8);
+    ctx.fillRect(x + 23, y + 13, 9, 8);
+    ctx.fillRect(x + 39, y + 13, 9, 8);
+
+    // 脚
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 7, y + 43, 9, 22);
+    ctx.fillRect(x + 39, y + 43, 9, 22);
+
+    // 脚の足元
+    ctx.fillStyle = "#71849a";
+    ctx.fillRect(x + 3, y + 61, 17, 4);
+    ctx.fillRect(x + 35, y + 61, 17, 4);
   }
 }
 
