@@ -563,54 +563,67 @@ function drawBackground() {
 
 
 function drawPlayer() {
+
+function drawPlayer() {
   const x = player.x;
   const y = player.y;
 
-  // 頭
-  ctx.fillStyle = "#f1c9a5";
-  ctx.beginPath();
-  ctx.arc(x + 18, y + 9, 10, 0, Math.PI * 2);
-  ctx.fill();
+  // ドット絵の頭・顔
+  ctx.fillStyle = "#343b4c";
 
   // 髪
+  ctx.fillRect(x + 7, y + 1, 22, 5);
+  ctx.fillRect(x + 4, y + 6, 28, 7);
+  ctx.fillRect(x + 7, y + 13, 24, 3);
+  ctx.fillRect(x + 4, y + 6, 4, 7);
+
+  // 顔
+  ctx.fillStyle = "#f1c9a5";
+  ctx.fillRect(x + 9, y + 8, 18, 14);
+  ctx.fillRect(x + 12, y + 5, 12, 3);
+
+  // 前髪
   ctx.fillStyle = "#343b4c";
-  ctx.beginPath();
-  ctx.arc(x + 18, y + 5, 10, Math.PI, Math.PI * 2);
-  ctx.fill();
+  ctx.fillRect(x + 8, y + 5, 5, 5);
+  ctx.fillRect(x + 14, y + 5, 6, 3);
+  ctx.fillRect(x + 23, y + 6, 5, 4);
+
+  // 目
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(x + 13, y + 13, 3, 3);
+  ctx.fillRect(x + 23, y + 13, 3, 3);
 
   // ライブTシャツ
   ctx.fillStyle = "#6b7cff";
-  ctx.fillRect(x + 5, y + 20, 26, 22);
+  ctx.fillRect(x + 5, y + 23, 26, 19);
+  ctx.fillRect(x + 1, y + 24, 5, 10);
+  ctx.fillRect(x + 30, y + 24, 5, 10);
 
   // シャツの柄
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(x + 13, y + 27, 10, 3);
+  ctx.fillRect(x + 12, y + 29, 12, 3);
+  ctx.fillRect(x + 15, y + 34, 6, 2);
 
   // 足の動き
-  let leftLegX = -3;
-  let rightLegX = 3;
+  let leftLegX = 0;
+  let rightLegX = 0;
 
   if (state === "running" && !player.jumping) {
-    const swing = Math.sin(runAnimationTime * 14) * 5;
+    const swing = Math.sin(runAnimationTime * 14);
 
-    leftLegX = swing;
-    rightLegX = -swing;
+    leftLegX = Math.round(swing * 4);
+    rightLegX = Math.round(-swing * 4);
   }
 
-  // 足
-  ctx.strokeStyle = "#263b55";
-  ctx.lineWidth = 5;
-  ctx.beginPath();
+  // 左足
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(x + 10 + leftLegX, y + 42, 5, 7);
+  ctx.fillRect(x + 8 + leftLegX, y + 49, 8, 3);
 
-  ctx.moveTo(x + 12, y + 42);
-  ctx.lineTo(x + 12 + leftLegX, y + 51);
-
-  ctx.moveTo(x + 25, y + 42);
-  ctx.lineTo(x + 25 + rightLegX, y + 51);
-
-  ctx.stroke();
+  // 右足
+  ctx.fillRect(x + 23 + rightLegX, y + 42, 5, 7);
+  ctx.fillRect(x + 23 + rightLegX, y + 49, 8, 3);
 }
-
 
 function drawObstacle(o) {
   if (o.name === "CASE") {
