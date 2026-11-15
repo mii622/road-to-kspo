@@ -435,12 +435,15 @@ function update(dt) {
   distance += speed * dt;
 
   // ゴール到着
-  if (distance >= TOTAL_DISTANCE) {
-    distance = TOTAL_DISTANCE;
-    updateInfo();
-    finishGame();
-    return;
-  }
+  // ドームの入口に到着したらゴール
+const remainingDistance = TOTAL_DISTANCE - distance;
+
+if (remainingDistance <= 110) {
+  distance = TOTAL_DISTANCE;
+  updateInfo();
+  finishGame();
+  return;
+}
 
   // ジャンプ
   player.vy += 1700 * dt;
