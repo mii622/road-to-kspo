@@ -19,7 +19,7 @@ body {
 header { padding: 20px 10px 5px; }
 
 h1 {
-  color: #6b7cff;
+  color: #eeeeee;
   letter-spacing: 2px;
   margin-bottom: 5px;
 }
@@ -438,7 +438,7 @@ function update(dt) {
   // ドームの入口に到着したらゴール
 const remainingDistance = TOTAL_DISTANCE - distance;
 
-if (remainingDistance <= 110) {
+if (remainingDistance <= 50) {
   distance = TOTAL_DISTANCE;
   updateInfo();
   finishGame();
