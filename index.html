@@ -169,6 +169,7 @@ let hitFlash = 0;
 
 let hitCount = 0;
 let collectedCount = 0;
+let jumpCount = 0;
 
 // 加速残り時間
 let boostTimer = 0;
@@ -209,6 +210,7 @@ function resetGame() {
   hitFlash = 0;
   hitCount = 0;
   collectedCount = 0;
+  jumpCount = 0;
   boostTimer = 0;
 
   player.y = ground - player.h;
@@ -255,13 +257,15 @@ function togglePause() {
   }
 }
 
-function jump() {
+  function jump() {
   if (state !== "running") return;
   if (player.jumping) return;
 
   player.vy = -650;
   player.jumping = true;
-}
+
+  jumpCount++;
+  }
 
 canvas.addEventListener("pointerdown", (e) => {
   e.preventDefault();
@@ -908,30 +912,78 @@ function draw() {
     ctx.fillText("PAUSED", W / 2, 170);
   }
 
-  if (state === "finished") {
-    ctx.fillStyle = "rgba(38,59,85,0.35)";
-    ctx.fillRect(0, 0, W, H);
+ 
+if (state === "finished") {
+  // 背景を少し暗くする
+  ctx.fillStyle = "rgba(38,59,85,0.35)";
+  ctx.fillRect(0, 0, W, H);
 
+  // 紙吹雪
+  const confetti = [
+    [80, 65, "#ff9ab8"],
+    [145, 115, "#ffffff"],
+    [220, 55, "#6b7cff"],
+    [285, 90, "#ffd36e"],
+    [360, 45, "#ff9ab8"],
+    [440, 105, "#ffffff"],
+    [520, 55, "#6b7cff"],
+    [600, 95, "#ffd36e"],
+    [700, 50, "#ff9ab8"],
+    [750, 125, "#ffffff"],
+    [110, 210, "#6b7cff"],
+    [260, 235, "#ff9ab8"],
+    [540, 220, "#ffd36e"],
+    [680, 205, "#6b7cff"]
+  ];
+
+  confetti.forEach(([x, y, color]) => {
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, 8, 12);
+  });
+
+  // キラキラ
+  const sparkles = [
+    [170, 75],
+    [315, 165],
+    [490, 65],
+    [650, 145],
+    [730, 230],
+    [75, 155]
+  ];
+
+  sparkles.forEach(([x, y]) => {
     ctx.fillStyle = "#ffffff";
-    ctx.textAlign = "center";
+    ctx.fillRect(x - 2, y - 9, 4, 18);
+    ctx.fillRect(x - 9, y - 2, 18, 4);
+  });
 
-    ctx.font = "bold 40px Arial";
-    ctx.fillText("YOU MADE IT!", W / 2, 135);
+  // GOAL! の文字
+  ctx.textAlign = "center";
 
-    ctx.font = "bold 22px Arial";
-    ctx.fillText("KSPO DOME", W / 2, 175);
-  }
+  ctx.font = "bold 64px Arial";
+
+  ctx.fillStyle = "#263b55";
+  ctx.fillText("GOAL!", W / 2 + 3, 155 + 3);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText("GOAL!", W / 2, 155);
+
+  // サブメッセージ
+  ctx.font = "bold 20px Arial";
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText("WELCOME TO KSPO DOME!", W / 2, 190);
+}
+
 }
 
 function finishGame() {
   state = "finished";
 
   message.textContent =
-    "GOAL! 完走タイム：" +
-    formatTime(elapsed) +
-    " ／ SCORE：" +
-    score +
-    "点";
+  "TIME：" + formatTime(elapsed) +
+  " ／ SCORE：" + score + "点" +
+  " ／ ITEMS：" + collectedCount + "個" +
+  " ／ JUMPS：" + jumpCount + "回";
 
   startBtn.textContent = "RETRY";
   startBtn.style.display = "inline-block";
