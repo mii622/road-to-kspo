@@ -659,8 +659,8 @@ function drawBackground() {
     // 街灯
     for (let i = 0; i < 5; i++) {
       const x = (
-        i * 230 - distance * 0.25 + 1200
-      ) % 1200;
+  (i * 230 - distance * 0.25 + 1200) % 1200 + 1200
+) % 1200;
 
       // 支柱
       ctx.fillStyle = "#71849a";
@@ -679,9 +679,8 @@ function drawBackground() {
     // 会場周辺のフラッグ
     for (let i = 0; i < 4; i++) {
       const x = (
-        i * 280 - distance * 0.32 + 1200
-      ) % 1200;
-
+  (i * 280 - distance * 0.32 + 1200) % 1200 + 1200
+) % 1200;
       ctx.fillStyle = "#71849a";
       ctx.fillRect(x, 205, 3, 45);
 
