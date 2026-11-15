@@ -676,7 +676,18 @@ function drawBackground() {
       ctx.fillRect(x - 5, 176, 15, 3);
     }
 
-    // 会場周辺のフラッグ
+    ctx.restore();
+  }
+
+  // 地面
+  ctx.fillStyle = "#8ab4a0";
+  ctx.fillRect(0, ground, W, H - ground);
+
+  // 地面の上端
+  ctx.fillStyle = "#d4eadb";
+  ctx.fillRect(0, ground, W, 5);
+
+  // 会場周辺のフラッグ
     for (let i = 0; i < 4; i++) {
       const x = (
         (i * 280 - distance * 0.32 + 1200) % 1200 + 1200
@@ -684,7 +695,7 @@ function drawBackground() {
 
       // 支柱
       ctx.fillStyle = "#526078";
-      ctx.fillRect(x, 195, 4, 55);
+      ctx.fillRect(x, 195, 4, ground - 195);
 
       // 旗の影・縁
       ctx.fillStyle = "#263b55";
@@ -708,17 +719,6 @@ function drawBackground() {
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(x + 8, 202, 3, 3);
     }
-
-    ctx.restore();
-  }
-
-  // 地面
-  ctx.fillStyle = "#8ab4a0";
-  ctx.fillRect(0, ground, W, H - ground);
-
-  // 地面の上端
-  ctx.fillStyle = "#d4eadb";
-  ctx.fillRect(0, ground, W, 5);
 
   // 地面のドット模様
   ctx.fillStyle = "#6d9d88";
