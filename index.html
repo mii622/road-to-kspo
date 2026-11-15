@@ -570,6 +570,77 @@ function drawBackground() {
   }
 }
 
+
+function drawKspoDome() {
+  const remainingDistance = TOTAL_DISTANCE - distance;
+  const speed = getSpeed();
+
+  // ゴールまで残り約4秒になったら登場
+  if (remainingDistance > speed * 4) return;
+
+  // 近づくほど大きく、左に移動する
+  const progress = Math.max(
+    0,
+    Math.min(1, 1 - remainingDistance / (speed * 4))
+  );
+
+  const x = 680 - progress * 220;
+  const scale = 0.55 + progress * 0.65;
+
+  ctx.save();
+  ctx.translate(x, ground);
+  ctx.scale(scale, scale);
+
+  // ドーム外側
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(20, -75, 180, 75);
+
+  // 屋根の段差
+  ctx.fillRect(40, -88, 140, 13);
+  ctx.fillRect(60, -98, 100, 10);
+  ctx.fillRect(80, -105, 60, 7);
+
+  // ドーム本体
+  ctx.fillStyle = "#afcbda";
+  ctx.fillRect(25, -70, 170, 70);
+
+  // 屋根の内側
+  ctx.fillStyle = "#71849a";
+  ctx.fillRect(45, -82, 130, 12);
+  ctx.fillRect(65, -92, 90, 10);
+  ctx.fillRect(85, -99, 50, 7);
+
+  // 正面の壁
+  ctx.fillStyle = "#dff1ff";
+  ctx.fillRect(40, -58, 140, 58);
+
+  // 窓
+  ctx.fillStyle = "#6b7cff";
+  ctx.fillRect(50, -48, 18, 25);
+  ctx.fillRect(75, -48, 18, 25);
+  ctx.fillRect(145, -48, 18, 25);
+  ctx.fillRect(170, -48, 5, 25);
+
+  // 入り口
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(105, -42, 30, 42);
+
+  // 看板
+  ctx.fillStyle = "#6b7cff";
+  ctx.fillRect(75, -65, 70, 13);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 9px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("KSPO DOME", 110, -55);
+
+  // 地面との境目
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(15, -3, 190, 3);
+
+  ctx.restore();
+}
+
 function drawPlayer() {
   const x = player.x;
   const y = player.y;
@@ -796,6 +867,8 @@ function drawItem(item) {
 
 function draw() {
   drawBackground();
+
+  drawKspoDome();
 
   obstacles.forEach(drawObstacle);
   items.forEach(drawItem);
