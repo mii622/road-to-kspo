@@ -575,6 +575,7 @@ if (remainingDistance <= 50) {
   updateInfo();
 }
 
+
 function drawBackground() {
   // 空
   ctx.fillStyle = "#dff1ff";
@@ -587,7 +588,7 @@ function drawBackground() {
   // ドット雲
   for (let i = 0; i < 5; i++) {
     const x = (
-      i * 190 - distance * 0.07 + 1000
+      (i * 190 - distance * 0.07 + 1000) % 1000 + 1000
     ) % 1000;
 
     const y = 65 + (i % 2) * 25;
@@ -605,11 +606,11 @@ function drawBackground() {
   // 遠くの建物
   for (let i = 0; i < 12; i++) {
     const x = (
-      i * 95 - distance * 0.09 + 1200
+      (i * 95 - distance * 0.09 + 1200) % 1200 + 1200
     ) % 1200;
 
     const h = 55 + (i % 4) * 14;
-    const y = 285 - h;
+    const y = ground - h;
 
     ctx.fillStyle = "#c2dce9";
     ctx.fillRect(x, y, 65, h);
@@ -624,7 +625,7 @@ function drawBackground() {
   // 手前の建物
   for (let i = 0; i < 9; i++) {
     const x = (
-      i * 120 - distance * 0.17 + 1200
+      (i * 120 - distance * 0.17 + 1200) % 1200 + 1200
     ) % 1200;
 
     const h = 75 + (i % 3) * 15;
@@ -646,32 +647,29 @@ function drawBackground() {
     }
   }
 
-    // KSPO DOME周辺エリア
+  // KSPO DOME周辺エリア
   const venueProgress = Math.max(
     0,
     Math.min(1, (distance / TOTAL_DISTANCE - 0.72) / 0.08)
   );
 
+  // 街灯
   if (venueProgress > 0) {
     ctx.save();
     ctx.globalAlpha = venueProgress;
 
-    // 街灯
     for (let i = 0; i < 5; i++) {
       const x = (
-  (i * 230 - distance * 0.25 + 1200) % 1200 + 1200
-) % 1200;
+        (i * 230 - distance * 0.25 + 1200) % 1200 + 1200
+      ) % 1200;
 
-      // 支柱
       ctx.fillStyle = "#71849a";
       ctx.fillRect(x, 175, 5, ground - 175);
 
-      // ライト部分
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(x - 9, 169, 23, 7);
       ctx.fillRect(x - 5, 165, 15, 4);
 
-      // 光
       ctx.fillStyle = "#fff4c2";
       ctx.fillRect(x - 5, 176, 15, 3);
     }
@@ -687,7 +685,7 @@ function drawBackground() {
   ctx.fillStyle = "#d4eadb";
   ctx.fillRect(0, ground, W, 5);
 
-    // 会場周辺のフラッグ
+  // 会場周辺のフラッグ
   if (venueProgress > 0) {
     ctx.save();
     ctx.globalAlpha = venueProgress;
@@ -725,6 +723,31 @@ function drawBackground() {
 
     ctx.restore();
   }
+
+  // 地面のドット模様
+  ctx.fillStyle = "#6d9d88";
+
+  for (let i = 0; i < 25; i++) {
+    const x = (
+      (i * 55 - distance * 0.7 + 1000) % 1000 + 1000
+    ) % 1000;
+
+    ctx.fillRect(x, ground + 17, 12, 4);
+    ctx.fillRect(x + 20, ground + 31, 7, 4);
+  }
+
+  // 道の白いライン
+  ctx.fillStyle = "#ffffff";
+
+  for (let i = 0; i < 15; i++) {
+    const x = (
+      (i * 75 - distance * 0.7 + 850) % 850 + 850
+    ) % 850;
+
+    ctx.fillRect(x, ground + 48, 35, 4);
+  }
+}
+
 
 function drawKspoDome() {
   const remainingDistance = TOTAL_DISTANCE - distance;
