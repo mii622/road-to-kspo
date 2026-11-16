@@ -825,15 +825,19 @@ function drawKspoDome() {
   ctx.fillRect(155, -106, 5, 3);
 
   
-  // ドームのキラキラ
+
+  // ドーム周辺のキラキラ
   const sparkles = [
-    [35, -105],
-    [65, -130],
-    [105, -137],
-    [145, -128],
-    [195, -110],
-    [225, -82],
-    [15, -75]
+    [15, -85],
+    [35, -115],
+    [65, -135],
+    [105, -145],
+    [145, -135],
+    [185, -120],
+    [220, -95],
+    [235, -65],
+    [0, -55],
+    [115, -95]
   ];
 
   for (let i = 0; i < sparkles.length; i++) {
@@ -841,24 +845,26 @@ function drawKspoDome() {
       Math.sin(distance * 0.08 + i * 1.8) + 1
     ) / 2;
 
-    // 近づくほどキラキラが強くなる
-    ctx.globalAlpha = progress * (0.25 + twinkle * 0.75);
-
     const sx = sparkles[i][0];
     const sy = sparkles[i][1];
-    const size = 2 + Math.round(twinkle * 2);
 
-    ctx.fillStyle = twinkle > 0.65 ? "#fff4c2" : "#ffffff";
+    const size = 3 + Math.round(twinkle * 3);
 
-    // 星の横線
-    ctx.fillRect(sx - size, sy, size * 2 + 1, 2);
+    ctx.globalAlpha = progress * (0.65 + twinkle * 0.35);
 
-    // 星の縦線
-    ctx.fillRect(sx, sy - size, 2, size * 2 + 1);
+    ctx.fillStyle = twinkle > 0.5 ? "#fff4c2" : "#ffffff";
+
+    // 横に広がる光
+    ctx.fillRect(sx - size, sy, size * 2 + 1, 3);
+
+    // 縦に広がる光
+    ctx.fillRect(sx, sy - size, 3, size * 2 + 1);
+
+    // 中央の光
+    ctx.fillRect(sx - 1, sy - 1, 5, 5);
   }
 
   ctx.globalAlpha = 1;
-
 
   // 地面との境目
   ctx.fillStyle = "#263b55";
