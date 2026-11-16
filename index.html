@@ -721,6 +721,64 @@ function drawBackground() {
     ctx.restore();
   }
 
+    // ゴール直前のウェルカムゲート
+  const gateProgress = Math.max(
+    0,
+    Math.min(1, (distance / TOTAL_DISTANCE - 0.90) / 0.10)
+  );
+
+  if (gateProgress > 0) {
+    ctx.save();
+    ctx.globalAlpha = gateProgress;
+
+    // ゲートの位置をゆっくり流す
+    const gateX = (
+      (W - distance * 0.12 + 1200) % 1200 + 1200
+    ) % 1200;
+
+    // 左右の柱
+    ctx.fillStyle = "#526078";
+    ctx.fillRect(gateX, 145, 12, ground - 145);
+    ctx.fillRect(gateX + 176, 145, 12, ground - 145);
+
+    // 柱の装飾
+    ctx.fillStyle = "#6b7cff";
+    ctx.fillRect(gateX - 4, 150, 20, 8);
+    ctx.fillRect(gateX + 172, 150, 20, 8);
+
+    ctx.fillStyle = "#ff9fbd";
+    ctx.fillRect(gateX + 2, 175, 8, 8);
+    ctx.fillRect(gateX + 178, 175, 8, 8);
+
+    // 上部のアーチ
+    ctx.fillStyle = "#526078";
+    ctx.fillRect(gateX, 132, 188, 15);
+
+    ctx.fillStyle = "#6b7cff";
+    ctx.fillRect(gateX + 8, 125, 172, 12);
+
+    // アーチのライト
+    const gateColors = ["#ff9fbd", "#ffe08a", "#ffffff", "#ff9fbd"];
+
+    for (let i = 0; i < 4; i++) {
+      ctx.fillStyle = gateColors[i];
+      ctx.fillRect(gateX + 22 + i * 42, 128, 10, 6);
+    }
+
+    // ウェルカムメッセージ
+    ctx.fillStyle = "#ffffff";
+    ctx.font = 'bold 11px "Jersey 10"';
+    ctx.textAlign = "center";
+    ctx.fillText("WELCOME BOICE!", gateX + 94, 119);
+
+    // 柱の足元の飾り
+    ctx.fillStyle = "#ffe08a";
+    ctx.fillRect(gateX - 3, ground - 12, 18, 8);
+    ctx.fillRect(gateX + 173, ground - 12, 18, 8);
+
+    ctx.restore();
+  }
+  
   // 地面
   ctx.fillStyle = "#8ab4a0";
   ctx.fillRect(0, ground, W, H - ground);
