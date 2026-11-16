@@ -677,6 +677,50 @@ function drawBackground() {
     ctx.restore();
   }
 
+    // ガーランド
+  const garlandProgress = Math.max(
+    0,
+    Math.min(1, (distance / TOTAL_DISTANCE - 0.80) / 0.10)
+  );
+
+  if (garlandProgress > 0) {
+    ctx.save();
+    ctx.globalAlpha = garlandProgress;
+
+    for (let i = 0; i < 4; i++) {
+      const x = (
+        (i * 260 - distance * 0.25 + 1200) % 1200 + 1200
+      ) % 1200;
+
+      // ガーランドのひも
+      ctx.fillStyle = "#71849a";
+      ctx.fillRect(x, 118, 130, 2);
+      ctx.fillRect(x + 130, 118, 2, 3);
+
+      // カラフルな三角フラッグ
+      const colors = ["#ff9fbd", "#ffe08a", "#6b7cff", "#ffffff"];
+
+      for (let j = 0; j < 5; j++) {
+        const fx = x + 12 + j * 25;
+        const fy = 120 + Math.floor(Math.abs(j - 2) * 3);
+
+        ctx.fillStyle = colors[j % colors.length];
+        ctx.fillRect(fx, fy, 13, 5);
+        ctx.fillRect(fx + 3, fy + 5, 7, 4);
+        ctx.fillRect(fx + 5, fy + 9, 3, 3);
+      }
+
+      // ひもの上の小さなライト
+      for (let j = 0; j < 4; j++) {
+        ctx.fillStyle = "#fff4c2";
+        ctx.fillRect(x + 25 + j * 30, 112, 5, 5);
+        ctx.fillRect(x + 26 + j * 30, 117, 3, 3);
+      }
+    }
+
+    ctx.restore();
+  }
+
   // 地面
   ctx.fillStyle = "#8ab4a0";
   ctx.fillRect(0, ground, W, H - ground);
