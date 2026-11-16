@@ -824,6 +824,42 @@ function drawKspoDome() {
   ctx.fillRect(70, -106, 5, 3);
   ctx.fillRect(155, -106, 5, 3);
 
+  
+  // ドームのキラキラ
+  const sparkles = [
+    [35, -105],
+    [65, -130],
+    [105, -137],
+    [145, -128],
+    [195, -110],
+    [225, -82],
+    [15, -75]
+  ];
+
+  for (let i = 0; i < sparkles.length; i++) {
+    const twinkle = (
+      Math.sin(distance * 0.08 + i * 1.8) + 1
+    ) / 2;
+
+    // 近づくほどキラキラが強くなる
+    ctx.globalAlpha = progress * (0.25 + twinkle * 0.75);
+
+    const sx = sparkles[i][0];
+    const sy = sparkles[i][1];
+    const size = 2 + Math.round(twinkle * 2);
+
+    ctx.fillStyle = twinkle > 0.65 ? "#fff4c2" : "#ffffff";
+
+    // 星の横線
+    ctx.fillRect(sx - size, sy, size * 2 + 1, 2);
+
+    // 星の縦線
+    ctx.fillRect(sx, sy - size, 2, size * 2 + 1);
+  }
+
+  ctx.globalAlpha = 1;
+
+
   // 地面との境目
   ctx.fillStyle = "#263b55";
   ctx.fillRect(5, -3, 230, 3);
