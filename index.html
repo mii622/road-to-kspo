@@ -721,48 +721,6 @@ function drawBackground() {
     ctx.restore();
   }
 
-    // ゴール直前のウェルカムゲート
- const gateProgress = Math.max(
-  0,
-  Math.min(1, (distance / TOTAL_DISTANCE - 0.97) / 0.03)
-);
-
-  if (gateProgress > 0) {
-    ctx.save();
-    ctx.globalAlpha = gateProgress;
-
-    // ゲートの位置をゆっくり流す
-    const gateX = W - 205;
-
-    // 左右の柱
-    ctx.fillStyle = "#526078";
-    ctx.fillRect(gateX, 145, 12, ground - 145);
-    ctx.fillRect(gateX + 176, 145, 12, ground - 145);
-
-    // 柱の装飾
-    ctx.fillStyle = "#6b7cff";
-    ctx.fillRect(gateX - 4, 150, 20, 8);
-    ctx.fillRect(gateX + 172, 150, 20, 8);
-
-    ctx.fillStyle = "#ff9fbd";
-    ctx.fillRect(gateX + 2, 175, 8, 8);
-    ctx.fillRect(gateX + 178, 175, 8, 8);
-
-    // 上部のアーチ
-    ctx.fillStyle = "#526078";
-    ctx.fillRect(gateX, 132, 188, 15);
-
-    ctx.fillStyle = "#6b7cff";
-    ctx.fillRect(gateX + 8, 125, 172, 12);
-
-    // アーチのライト
-    const gateColors = ["#ff9fbd", "#ffe08a", "#ffffff", "#ff9fbd"];
-
-    for (let i = 0; i < 4; i++) {
-      ctx.fillStyle = gateColors[i];
-      ctx.fillRect(gateX + 22 + i * 42, 128, 10, 6);
-    }
-
     // ウェルカムメッセージ
     ctx.fillStyle = "#ffffff";
     ctx.font = 'bold 11px "Jersey 10"';
@@ -964,8 +922,43 @@ function drawKspoDome() {
     ctx.fillRect(sx - 1, sy - 1, 5, 5);
   }
 
-  ctx.globalAlpha = 1;
+// ウェルカムゲート
+ctx.globalAlpha = 1;
 
+// ゲートの柱
+ctx.fillStyle = "#526078";
+ctx.fillRect(-28, -153, 12, 153);
+ctx.fillRect(245, -153, 12, 153);
+
+// 柱のアクセント
+ctx.fillStyle = "#ff9fbd";
+ctx.fillRect(-31, -145, 18, 9);
+ctx.fillRect(242, -145, 18, 9);
+
+// ゲート上部
+ctx.fillStyle = "#263b55";
+ctx.fillRect(-28, -168, 285, 15);
+
+ctx.fillStyle = "#6b7cff";
+ctx.fillRect(-22, -165, 273, 9);
+
+// ライト
+const gateColors = [
+  "#ff9fbd", "#ffe08a", "#ffffff",
+  "#8ed7f5", "#ff9fbd", "#ffe08a"
+];
+
+for (let i = 0; i < 6; i++) {
+  ctx.fillStyle = gateColors[i];
+  ctx.fillRect(-8 + i * 45, -163, 12, 5);
+}
+
+// ウェルカムメッセージ
+ctx.fillStyle = "#ffffff";
+ctx.font = 'bold 11px "Jersey 10"';
+ctx.textAlign = "center";
+ctx.fillText("WELCOME BOICE!", 114, -151);
+  
   // 地面との境目
   ctx.fillStyle = "#263b55";
   ctx.fillRect(5, -3, 230, 3);
