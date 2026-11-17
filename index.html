@@ -722,19 +722,17 @@ function drawBackground() {
   }
 
     // ゴール直前のウェルカムゲート
-  const gateProgress = Math.max(
-    0,
-    Math.min(1, (distance / TOTAL_DISTANCE - 0.90) / 0.10)
-  );
+ const gateProgress = Math.max(
+  0,
+  Math.min(1, (distance / TOTAL_DISTANCE - 0.97) / 0.03)
+);
 
   if (gateProgress > 0) {
     ctx.save();
     ctx.globalAlpha = gateProgress;
 
     // ゲートの位置をゆっくり流す
-    const gateX = (
-      (W - distance * 0.12 + 1200) % 1200 + 1200
-    ) % 1200;
+    const gateX = W - 205;
 
     // 左右の柱
     ctx.fillStyle = "#526078";
