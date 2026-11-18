@@ -721,13 +721,20 @@ function drawBackground() {
     ctx.restore();
   }
   
-  // 地面
-  ctx.fillStyle = "#8ab4a0";
+    // 水色のランニングトラック
+  ctx.fillStyle = "#83c9e8";
   ctx.fillRect(0, ground, W, H - ground);
 
-  // 地面の上端
-  ctx.fillStyle = "#d4eadb";
+  // トラック上端
+  ctx.fillStyle = "#c5edff";
   ctx.fillRect(0, ground, W, 5);
+
+  // トラックの帯
+  ctx.fillStyle = "#70b8dc";
+  ctx.fillRect(0, ground + 8, W, 3);
+
+  ctx.fillStyle = "#a8def5";
+  ctx.fillRect(0, ground + 13, W, 2);
 
   // 会場周辺のフラッグ
   if (venueProgress > 0) {
@@ -768,8 +775,8 @@ function drawBackground() {
     ctx.restore();
   }
 
-  // 地面のドット模様
-  ctx.fillStyle = "#6d9d88";
+    // トラックのドット模様
+  ctx.fillStyle = "#5da9d1";
 
   for (let i = 0; i < 25; i++) {
     const x = (
