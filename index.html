@@ -1110,43 +1110,46 @@ function drawObstacle(o) {
   }
 
     // ステージモニター
-  else if (o.name === "CABLE") {
+else if (o.name === "CABLE") {
 
-    // 本体の外枠（くさび形）
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 5, y + 10, 60, 12);
-    ctx.fillRect(x + 10, y + 6, 50, 6);
-    ctx.fillRect(x + 15, y + 2, 40, 5);
+  // 本体の側面・くさび形
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(x + 4, y + 17, 66, 11);
+  ctx.fillRect(x + 9, y + 12, 56, 5);
+  ctx.fillRect(x + 15, y + 7, 44, 5);
+  ctx.fillRect(x + 21, y + 3, 32, 4);
 
-    // 上面
-    ctx.fillStyle = "#71849a";
-    ctx.fillRect(x + 15, y + 5, 40, 5);
-    ctx.fillRect(x + 9, y + 10, 52, 3);
+  // 上向きのスピーカー面
+  ctx.fillStyle = "#48566b";
+  ctx.fillRect(x + 13, y + 12, 50, 5);
+  ctx.fillRect(x + 19, y + 7, 38, 5);
+  ctx.fillRect(x + 24, y + 3, 28, 4);
 
-    // スピーカーの正面パネル
-    ctx.fillStyle = "#48566b";
-    ctx.fillRect(x + 12, y + 12, 46, 7);
-
-    // スピーカーのグリル
-    ctx.fillStyle = "#afcbda";
-    ctx.fillRect(x + 19, y + 13, 30, 5);
-
-    // 中央のスピーカー
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 29, y + 13, 10, 5);
-
-    ctx.fillStyle = "#71849a";
-    ctx.fillRect(x + 32, y + 14, 4, 3);
-
-    // 小さなランプ
-    ctx.fillStyle = "#ff9ab8";
-    ctx.fillRect(x + 52, y + 13, 3, 3);
-
-    // 底のゴム足
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 10, y + 22, 10, 2);
-    ctx.fillRect(x + 54, y + 22, 10, 2);
+  // メッシュ模様
+  ctx.fillStyle = "#aab8c8";
+  for (let i = 0; i < 6; i++) {
+    ctx.fillRect(x + 19 + i * 7, y + 8, 2, 8);
   }
+
+  // メッシュの横ライン
+  ctx.fillStyle = "#71849a";
+  ctx.fillRect(x + 17, y + 10, 44, 2);
+  ctx.fillRect(x + 14, y + 14, 48, 2);
+
+  // ボディの光沢
+  ctx.fillStyle = "#8999ac";
+  ctx.fillRect(x + 25, y + 4, 23, 2);
+  ctx.fillRect(x + 10, y + 19, 18, 2);
+
+  // 側面の持ち手
+  ctx.fillStyle = "#111e30";
+  ctx.fillRect(x + 34, y + 22, 12, 3);
+
+  // 底面
+  ctx.fillStyle = "#17263a";
+  ctx.fillRect(x + 8, y + 28, 12, 2);
+  ctx.fillRect(x + 56, y + 28, 12, 2);
+}
     
   // 三角コーン
   else if (o.name === "CONE") {
@@ -1226,49 +1229,49 @@ function drawItem(item) {
     ctx.fillRect(20, 20, 6, 2);
   }
 
-  // タオル
-  else if (item.name === "TOWEL") {
+ // タオル
+else if (item.name === "TOWEL") {
 
-    // タオルの影
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(1, 7, 25, 12);
-    ctx.fillRect(4, 5, 20, 2);
+  // タオルの影
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(3, 9, 34, 15);
+  ctx.fillRect(7, 6, 27, 3);
+  ctx.fillRect(34, 11, 5, 9);
 
-    // タオル本体（横長）
-    ctx.fillStyle = "#ff9ab8";
-    ctx.fillRect(3, 6, 21, 12);
-    ctx.fillRect(5, 4, 17, 2);
-    ctx.fillRect(2, 8, 2, 8);
+  // タオル本体
+  ctx.fillStyle = "#ff9ab8";
+  ctx.fillRect(5, 7, 28, 15);
+  ctx.fillRect(9, 5, 24, 2);
+  ctx.fillRect(3, 10, 4, 10);
+  ctx.fillRect(30, 6, 5, 5);
+  ctx.fillRect(33, 11, 4, 8);
+  ctx.fillRect(29, 19, 5, 3);
 
-    // 明るい縁
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(5, 7, 17, 2);
-    ctx.fillRect(5, 16, 17, 2);
+  // 白い縁取り
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(7, 8, 24, 2);
+  ctx.fillRect(6, 19, 24, 2);
 
-    // 中央のデザイン
-    ctx.fillStyle = "#ffd6e2";
-    ctx.fillRect(9, 10, 9, 2);
-    ctx.fillRect(11, 12, 5, 2);
+  // タオルの織り模様
+  ctx.fillStyle = "#ffd6e2";
+  ctx.fillRect(10, 12, 18, 2);
+  ctx.fillRect(12, 15, 14, 2);
 
-    // ハートマーク
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(10, 8, 2, 2);
-    ctx.fillRect(14, 8, 2, 2);
-    ctx.fillRect(11, 10, 4, 2);
+  // フリンジ
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(2, 11, 2, 2);
+  ctx.fillRect(2, 15, 2, 2);
+  ctx.fillRect(2, 19, 2, 2);
+  ctx.fillRect(35, 9, 2, 2);
+  ctx.fillRect(37, 13, 2, 2);
+  ctx.fillRect(36, 17, 2, 2);
 
-    // 両端のフリンジ
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(1, 9, 2, 2);
-    ctx.fillRect(1, 14, 2, 2);
-    ctx.fillRect(24, 9, 2, 2);
-    ctx.fillRect(24, 14, 2, 2);
-
-    // キラキラ
-    ctx.fillStyle = "#ffd85c";
-    ctx.fillRect(22, 1, 2, 5);
-    ctx.fillRect(20, 3, 6, 2);
-  }
-    
+  // 光のアクセント
+  ctx.fillStyle = "#ffd85c";
+  ctx.fillRect(30, 2, 2, 3);
+  ctx.fillRect(28, 3, 6, 2);
+}
+  
   // 旗
   else if (item.name === "FLAG") {
     // ポール
