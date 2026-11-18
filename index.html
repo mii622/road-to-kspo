@@ -1230,47 +1230,55 @@ function drawItem(item) {
   // CNBLUE風ペンライト
   else if (item.name === "TOWEL") {
 
-    // 持ち手の外枠
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(12, 14, 6, 11);
-    ctx.fillRect(10, 23, 10, 3);
-
-    // 持ち手
-    ctx.fillStyle = "#dceeff";
-    ctx.fillRect(13, 15, 4, 9);
+    // 黒い持ち手
+    ctx.fillStyle = "#17263a";
+    ctx.fillRect(12, 15, 6, 10);
+    ctx.fillRect(11, 23, 8, 3);
 
     // 持ち手の光沢
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(13, 16, 1, 6);
+    ctx.fillStyle = "#48566b";
+    ctx.fillRect(13, 16, 2, 7);
 
-    // 発光部分の外枠
+    // 丸いヘッドの外枠
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(4, 2, 22, 15);
-    ctx.fillRect(7, 0, 16, 2);
-    ctx.fillRect(7, 17, 16, 2);
+    ctx.fillRect(9, 0, 12, 2);
+    ctx.fillRect(5, 2, 20, 2);
+    ctx.fillRect(3, 5, 24, 12);
+    ctx.fillRect(5, 17, 20, 2);
+    ctx.fillRect(9, 19, 12, 2);
 
-    // 発光部分
+    // 透明なヘッド
     ctx.fillStyle = "#8ed7f5";
-    ctx.fillRect(6, 4, 18, 11);
-    ctx.fillRect(8, 2, 14, 15);
+    ctx.fillRect(10, 2, 10, 2);
+    ctx.fillRect(7, 4, 16, 2);
+    ctx.fillRect(5, 7, 20, 8);
+    ctx.fillRect(7, 15, 16, 2);
+    ctx.fillRect(10, 17, 10, 2);
 
     // 内側の透明感
     ctx.fillStyle = "#dff7ff";
-    ctx.fillRect(9, 4, 12, 9);
+    ctx.fillRect(8, 6, 14, 2);
+    ctx.fillRect(6, 9, 2, 4);
 
-    // 中央のエンブレム風マーク
+    // 中央の青いダイヤ
+    ctx.fillStyle = "#244d91";
+    ctx.fillRect(13, 5, 4, 2);
+    ctx.fillRect(10, 7, 10, 2);
+    ctx.fillRect(8, 9, 14, 3);
+    ctx.fillRect(10, 12, 10, 2);
+    ctx.fillRect(13, 14, 4, 2);
+
+    // ダイヤの輝き
     ctx.fillStyle = "#6b7cff";
-    ctx.fillRect(12, 6, 6, 2);
-    ctx.fillRect(10, 8, 10, 2);
-    ctx.fillRect(12, 10, 6, 2);
+    ctx.fillRect(13, 7, 4, 2);
+    ctx.fillRect(11, 9, 3, 2);
 
-    // 光のきらめき
+    // ヘッドのきらめき
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(3, 3, 2, 2);
-    ctx.fillRect(25, 7, 2, 2);
-    ctx.fillRect(23, 19, 2, 2);
+    ctx.fillRect(7, 5, 2, 2);
+    ctx.fillRect(22, 8, 2, 2);
 
-     // キラキラ
+    // キラキラ
     ctx.fillStyle = "#ffd85c";
     ctx.fillRect(22, 18, 2, 5);
     ctx.fillRect(20, 20, 6, 2);
