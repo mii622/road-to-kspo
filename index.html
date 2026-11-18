@@ -778,9 +778,9 @@ function drawBackground() {
 // 陸上トラックの白いレーン
 ctx.fillStyle = "#ffffff";
 
-ctx.fillRect(0, ground + 18, W, 2);
-ctx.fillRect(0, ground + 36, W, 2);
-ctx.fillRect(0, ground + 54, W, 2);
+ctx.fillRect(0, ground + 18, W, 3);
+ctx.fillRect(0, ground + 36, W, 3);
+ctx.fillRect(0, ground + 54, W, 3);
 }
 
 
@@ -995,13 +995,13 @@ function drawPlayer() {
   ctx.fillRect(x + 4, y + 27 + bob, 17, 5);
 
   // 前傾した胴体
-  ctx.fillStyle = "#8ed7f5";
+  ctx.fillStyle = "#244D91";
   ctx.fillRect(x + 12 + lean, y + 31 + bob, 25, 19);
   ctx.fillRect(x + 9 + lean, y + 34 + bob, 7, 11);
   ctx.fillRect(x + 32 + lean, y + 29 + bob, 6, 12);
 
   // シャツの影
-  ctx.fillStyle = "#55a9df";
+  ctx.fillStyle = "#18365F";
   ctx.fillRect(x + 14 + lean, y + 47 + bob, 22, 3);
 
   // 胸元マーク
