@@ -775,28 +775,12 @@ function drawBackground() {
     ctx.restore();
   }
 
-    // トラックのドット模様
-  ctx.fillStyle = "#5da9d1";
+// 陸上トラックの白いレーン
+ctx.fillStyle = "#ffffff";
 
-  for (let i = 0; i < 25; i++) {
-    const x = (
-      (i * 55 - distance * 0.7 + 1000) % 1000 + 1000
-    ) % 1000;
-
-    ctx.fillRect(x, ground + 17, 12, 4);
-    ctx.fillRect(x + 20, ground + 31, 7, 4);
-  }
-
-  // 道の白いライン
-  ctx.fillStyle = "#ffffff";
-
-  for (let i = 0; i < 15; i++) {
-    const x = (
-      (i * 75 - distance * 0.7 + 850) % 850 + 850
-    ) % 850;
-
-    ctx.fillRect(x, ground + 48, 35, 4);
-  }
+ctx.fillRect(0, ground + 18, W, 2);
+ctx.fillRect(0, ground + 36, W, 2);
+ctx.fillRect(0, ground + 54, W, 2);
 }
 
 
