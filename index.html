@@ -1834,6 +1834,7 @@ function loop(now) {
       imgEl.style.display = "block";
     }
   } catch (err) {
+    alert("画像生成エラー: " + err.message);
     console.error("シェア画像生成エラー:", err);
   }
 }
