@@ -1282,6 +1282,22 @@ ctx.fillRect(x + 5 - armSwing, y + 40 + bob, 8, 5);
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(x + 34, y + 23 + bob, 1, 1);
 
+    } else if (style.hairType === "shin") {
+
+    // SHIN：中くらいの大きさで少しキリッとした目
+    ctx.fillStyle = outline;
+    ctx.fillRect(x + 32, y + 21 + bob, 6, 6);
+    ctx.fillRect(x + 33, y + 20 + bob, 4, 1);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 33, y + 22 + bob, 3, 2);
+
+    ctx.fillStyle = style.eye;
+    ctx.fillRect(x + 34, y + 23 + bob, 3, 3);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 34, y + 23 + bob, 1, 1);
+
   } else {
 
     // YONG：今までのぱっちりした目
@@ -1334,6 +1350,33 @@ ctx.fillRect(x + 5 - armSwing, y + 40 + bob, 8, 5);
     ctx.fillStyle = style.highlight;
     ctx.fillRect(x + 15, y + 7 + bob, 7, 2);
     ctx.fillRect(x + 28, y + 7 + bob, 6, 2);
+    
+  } else if (style.hairType === "shin") {
+
+    // SHIN：ふわふわした動きのある前髪
+    ctx.fillStyle = outline;
+    ctx.fillRect(x + 10, y + 4 + bob, 29, 13);
+    ctx.fillRect(x + 12, y + 2 + bob, 8, 5);
+    ctx.fillRect(x + 23, y + 3 + bob, 9, 5);
+    ctx.fillRect(x + 34, y + 6 + bob, 7, 7);
+    ctx.fillRect(x + 14, y + 13 + bob, 5, 7);
+    ctx.fillRect(x + 25, y + 12 + bob, 5, 8);
+    ctx.fillRect(x + 34, y + 12 + bob, 4, 6);
+
+    ctx.fillStyle = style.hair;
+    ctx.fillRect(x + 12, y + 5 + bob, 25, 8);
+    ctx.fillRect(x + 14, y + 2 + bob, 5, 4);
+    ctx.fillRect(x + 24, y + 4 + bob, 7, 4);
+    ctx.fillRect(x + 35, y + 7 + bob, 4, 5);
+    ctx.fillRect(x + 15, y + 13 + bob, 3, 5);
+    ctx.fillRect(x + 26, y + 12 + bob, 3, 6);
+    ctx.fillRect(x + 35, y + 13 + bob, 2, 4);
+
+    // ふわふわ感のハイライト
+    ctx.fillStyle = style.highlight;
+    ctx.fillRect(x + 15, y + 5 + bob, 6, 2);
+    ctx.fillRect(x + 25, y + 6 + bob, 6, 2);
+    ctx.fillRect(x + 35, y + 8 + bob, 3, 2);
 
   } else {
 
