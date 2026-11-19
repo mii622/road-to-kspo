@@ -901,7 +901,7 @@ function drawBackground() {
     0,
     Math.min(1, (distance / TOTAL_DISTANCE - 0.72) / 0.08)
   );
-
+  
   // 街灯
   if (venueProgress > 0) {
     ctx.save();
@@ -925,46 +925,47 @@ function drawBackground() {
 
     ctx.restore();
   }
-
-     // ガーランド（パステルカラー＋白ドット）
-  const garlandColors = ["#ff9ab8", "#6b7cff", "#9fd8ff", "#c4b5fd", "#ffd166"];
-  ctx.save();
-  ctx.strokeStyle = "#526a91";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(0, 56);
-  ctx.quadraticCurveTo(400, 82, 800, 56);
-  ctx.stroke();
-
-  for (let gx = 36; gx < 780; gx += 48) {
-    const colorIdx = Math.floor(gx / 48) % garlandColors.length;
-    const t = gx / 800;
-    // 放物線（ヒモのたわみ）に沿わせる
-    const topY = 56 + 4 * 26 * t * (1 - t);
-
-    ctx.fillStyle = "#263b55";
+   // ガーランド（街頭バナーと同じタイミングで登場）
+    if (venueProgress > 0) {
+    const garlandColors = ["#ff9ab8", "#6b7cff", "#9fd8ff", "#c4b5fd", "#ffd166"];
+    ctx.save();
+    ctx.globalAlpha = venueProgress;
+    ctx.strokeStyle = "#526a91";
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(gx - 12, topY + 1);
-    ctx.lineTo(gx + 14, topY + 1);
-    ctx.lineTo(gx + 1, topY + 25);
-    ctx.closePath();
-    ctx.fill();
+    ctx.moveTo(0, 56);
+    ctx.quadraticCurveTo(400, 82, 800, 56);
+    ctx.stroke();
 
-    ctx.fillStyle = garlandColors[colorIdx];
-    ctx.beginPath();
-    ctx.moveTo(gx - 11, topY);
-    ctx.lineTo(gx + 13, topY);
-    ctx.lineTo(gx + 1, topY + 22);
-    ctx.closePath();
-    ctx.fill();
+     for (let gx = 36; gx < 780; gx += 48) {
+      const colorIdx = Math.floor(gx / 48) % garlandColors.length;
+      const t = gx / 800;
+      // 放物線（ヒモのたわみ）に沿わせる
+      const topY = 56 + 4 * 26 * t * (1 - t);
 
-    // 小さなドット模様
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(gx - 1, topY + 5, 4, 4);
-  }
+      ctx.fillStyle = "#263b55";
+      ctx.beginPath();
+      ctx.moveTo(gx - 12, topY + 1);
+      ctx.lineTo(gx + 14, topY + 1);
+      ctx.lineTo(gx + 1, topY + 25);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = garlandColors[colorIdx];
+      ctx.beginPath();
+      ctx.moveTo(gx - 11, topY);
+      ctx.lineTo(gx + 13, topY);
+      ctx.lineTo(gx + 1, topY + 22);
+      ctx.closePath();
+      ctx.fill();
+
+      // 小さなドット模様
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(gx - 1, topY + 5, 4, 4);
+    }
     ctx.restore();
-  
-    // 水色のランニングトラック
+  }
+  // 水色のランニングトラック
   ctx.fillStyle = "#83c9e8";
   ctx.fillRect(0, ground, W, H - ground);
 
@@ -980,9 +981,9 @@ function drawBackground() {
   ctx.fillRect(0, ground + 13, W, 2);
 
   // 会場周辺の縦長街頭バナー（韓国風・青系）
-  if (venueProgress > 0) {
-    ctx.save();
-    ctx.globalAlpha = venueProgress;
+  　if (venueProgress > 0) {
+    　ctx.save();
+    　ctx.globalAlpha = venueProgress;
 
     for (let i = 0; i < 4; i++) {
       const x = (
@@ -1030,7 +1031,7 @@ function drawBackground() {
     }
     ctx.restore();
 }
-
+  
 function drawKspoDome() {
   const remainingDistance = TOTAL_DISTANCE - distance;
   const speed = getSpeed();
