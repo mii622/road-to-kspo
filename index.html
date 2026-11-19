@@ -1268,18 +1268,19 @@ ctx.fillRect(x + 5 - armSwing, y + 40 + bob, 8, 5);
   // --------------------
   if (style.hairType === "min") {
 
-    // MIN：少し細めの目
+        // MIN：切れ長の目
     ctx.fillStyle = outline;
-    ctx.fillRect(x + 32, y + 21 + bob, 5, 5);
+    ctx.fillRect(x + 31, y + 22 + bob, 7, 4);
+    ctx.fillRect(x + 32, y + 21 + bob, 5, 1);
 
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 33, y + 21 + bob, 3, 1);
+    ctx.fillRect(x + 32, y + 22 + bob, 4, 1);
 
     ctx.fillStyle = style.eye;
-    ctx.fillRect(x + 34, y + 22 + bob, 3, 3);
+    ctx.fillRect(x + 33, y + 23 + bob, 4, 2);
 
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 34, y + 22 + bob, 1, 1);
+    ctx.fillRect(x + 34, y + 23 + bob, 1, 1);
 
   } else {
 
