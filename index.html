@@ -517,10 +517,17 @@ characterStartBtn.addEventListener("click", () => {
   game.style.display = "block";
   startGame();
 });
-  // RETRYボタン
+
+// RETRYボタン
 startBtn.addEventListener("click", () => {
   startBtn.style.display = "none";
-  startGame();
+  document.getElementById("game").style.display = "none";
+  document.getElementById("characterSelect").style.display = "block";
+
+  pauseBtn.style.display = "inline-block";
+  pauseBtn.textContent = "PAUSE";
+
+  state = "ready";
 });
 
 pauseBtn.addEventListener("click", togglePause);
