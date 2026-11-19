@@ -376,7 +376,7 @@ const H = 360;
 const ground = 285;
 
 // ゴールまでの距離
-const TOTAL_DISTANCE = 18000;
+const TOTAL_DISTANCE = 1000;
 
 // 基本スピード
 const SPEED_EARLY = 300;
@@ -1286,6 +1286,16 @@ function drawCharacterPreviews() {
     const dy = (ch - dh) / 2;
 
     pCtx.drawImage(spriteImg, sx, sy, sw, sh, dx, dy, dw, dh);
+    
+    // 立ち絵のYONGに左目右下あたりのほくろを追加
+    if (key === "yonghwa") {
+      pCtx.fillStyle = "#263b55";
+      const moleX = Math.round(dx + dw * 0.56);
+      const moleY = Math.round(dy + dh * 0.27);
+      const moleSize = Math.max(2, Math.round(dw * 0.025));
+      pCtx.fillRect(moleX, moleY, moleSize, moleSize);
+    }
+
   });
 }
 // 画像が読み込み終わったらプレビューを描く
