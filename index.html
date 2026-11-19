@@ -26,6 +26,9 @@ body {
   color: #263b55;
   font-family: "Jersey 10", Arial, sans-serif;
   text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 header {
@@ -542,7 +545,16 @@ characterStartBtn.addEventListener("click", () => {
 // RETRYボタン
 startBtn.addEventListener("click", () => {
   startBtn.style.display = "none";
-  if (shareArea) shareArea.style.display = "none"; 
+  if (shareArea) shareArea.style.display = "none";
+
+  latestShareDataUrl = "";
+  runAnimationTime = 0;
+  const imgEl = document.getElementById("resultCardImg");
+  if (imgEl) {
+    imgEl.removeAttribute("src");
+    imgEl.style.display = "none";
+  }
+
   document.getElementById("game").style.display = "none";
   document.getElementById("characterSelect").style.display = "block";
 
@@ -973,7 +985,7 @@ function drawBackground() {
   ctx.fillStyle = "#a8def5";
   ctx.fillRect(0, ground + 13, W, 2);
 
-  // 会場周辺のフラッグ
+  // 会場周辺の縦長街頭バナー（韓国風・青系）
   if (venueProgress > 0) {
     ctx.save();
     ctx.globalAlpha = venueProgress;
@@ -983,30 +995,37 @@ function drawBackground() {
         (i * 280 - distance * 0.32 + 1200) % 1200 + 1200
       ) % 1200;
 
-      // 支柱
+      // 支柱（ポール）
       ctx.fillStyle = "#526078";
-      ctx.fillRect(x, 195, 4, ground - 195);
+      ctx.fillRect(x, 178, 4, ground - 178);
 
-      // 旗の影・縁
+      // 上下の横アーム（バナーを支える棒）
+      ctx.fillStyle = "#71849a";
+      ctx.fillRect(x + 4, 184, 24, 3);
+      ctx.fillRect(x + 4, 224, 24, 3);
+
+      // バナーの影・縁取り
       ctx.fillStyle = "#263b55";
-      ctx.fillRect(x + 4, 198, 34, 23);
+      ctx.fillRect(x + 6, 187, 20, 37);
 
-      // 旗本体
-      ctx.fillStyle = "#6b7cff";
-      ctx.fillRect(x + 4, 196, 32, 20);
-      ctx.fillRect(x + 4, 216, 25, 4);
+      // バナー本体（青系グラデーション風）
+      ctx.fillStyle = i % 2 === 0 ? "#4f8ef7" : "#6b7cff";
+      ctx.fillRect(x + 7, 188, 18, 35);
 
-      // 旗のアクセント
-      ctx.fillStyle = "#afcbda";
-      ctx.fillRect(x + 4, 196, 32, 4);
+      // 上部のライトブルー帯
+      ctx.fillStyle = "#9fd8ff";
+      ctx.fillRect(x + 7, 188, 18, 6);
 
-      // 白い星
+      // 下部のアクセントライン（ピンク少しでかわいく）
+      ctx.fillStyle = "#ff9ab8";
+      ctx.fillRect(x + 7, 219, 18, 4);
+
+      // 中央のドットライン＆星マーク（バナーの文字/ロゴ風）
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(x + 17, 202, 6, 6);
-      ctx.fillRect(x + 15, 204, 10, 2);
-
-      // キラッとした部分
-      ctx.fillRect(x + 8, 202, 3, 3);
+      ctx.fillRect(x + 14, 198, 4, 4);
+      ctx.fillRect(x + 12, 200, 8, 2);
+      ctx.fillRect(x + 11, 207, 10, 2);
+      ctx.fillRect(x + 12, 211, 8, 2);
     }
 
     ctx.restore();
@@ -1727,7 +1746,7 @@ if (state === "finished") {
  }
 }
 
-function finishGame() {
+async function finishGame() {
   state = "finished";
 
   message.textContent = "YOU MADE IT! CONGRATULATIONS!";
@@ -1739,6 +1758,10 @@ function finishGame() {
 
   if (shareArea) {
     shareArea.style.display = "block";
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    await document.fonts.ready;
   }
 
   draw();
