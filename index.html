@@ -326,7 +326,18 @@ button:active {
 
   <button id="pause">PAUSE</button>
   <button id="start" style="display:none;">RETRY</button>
-  
+    <button id="pause">PAUSE</button>
+  <button id="start" style="display:none;">RETRY</button>
+
+  <!-- クリア時だけ表示するXシェア＆リザルト画像エリア -->
+  <div id="shareArea" style="display:none; margin-top: 14px; text-align: center;">
+    <button id="shareXBtn" type="button" style="cursor:pointer; padding:10px 18px; font-family:'Jersey 10', Arial; font-size:22px; background:#111111; color:#ffffff; border:2px solid #263b55; border-radius:8px;">
+      SHARE ON X
+    </button>
+    <p class="small" style="margin-top: 6px;">LONG PRESS OR SAVE IMAGE TO ATTACH ON X!</p>
+    <img id="resultCardImg" alt="GOAL RESULT CARD" style="display:none; width:100%; max-width:460px; margin:8px auto 0; border:2px solid #263b55; border-radius:8px;" />
+  </div>
+
 <p class="small">TAP TO JUMP!</p>
 </div>
 
@@ -1582,30 +1593,91 @@ function draw() {
     ctx.fillText("PAUSED", W / 2, 170);
   }
 
- 
+ // 一番下の段（ニコニコジャンプ3人）の比率座標
+// ※もし上下にちょっとズレてたら ry と rh を微調整してみてね！
+const bottomJumpRatios = [
+  { key: "yonghwa",  label: "YONG", rx: 0.06, ry: 0.76, rw: 0.20, rh: 0.21 },
+  { key: "minhyuk",  label: "MIN",  rx: 0.39, ry: 0.76, rw: 0.20, rh: 0.21 },
+  { key: "jungshin", label: "SHIN", rx: 0.71, ry: 0.76, rw: 0.20, rh: 0.21 }
+];
 
- if (state === "finished") {
+// 選んだキャラ名を取得するヘルパー
+function getSelectedRunnerLabel() {
+  const map = {
+    yonghwa: "YONG",
+    minhyuk: "MIN",
+    jungshin: "SHIN"
+  };
+  return map[selectedCharacter] || "YONG";
+}
+
+// 4分割カード描画用の共通ヘルパー
+function drawStatCard(targetCtx, x, y, w, h, label, value, accentColor, isKorean = false) {
+  targetCtx.fillStyle = "#afcbda";
+  targetCtx.fillRect(x, y, w, h);
+
+  targetCtx.fillStyle = "#ffffff";
+  targetCtx.fillRect(x + 3, y + 3, w - 6, h - 6);
+
+  targetCtx.fillStyle = accentColor;
+  targetCtx.fillRect(x + 3, y + 3, 7, h - 6);
+
+  targetCtx.textAlign = "left";
+  targetCtx.font = isKorean ? '22px "Mulmaru"' : '24px "Jersey 10", Arial';
+  targetCtx.fillStyle = "#71849a";
+  targetCtx.fillText(label, x + 20, y + 25);
+
+  targetCtx.font = '34px "Jersey 10", Arial';
+  targetCtx.fillStyle = "#263b55";
+  targetCtx.fillText(String(value), x + 20, y + h - 10);
+}
+
+// 3人ニコニコジャンプを横にくっつけて描画するヘルパー
+function drawThreeJumpers(targetCtx, centerX, bottomY, targetHeight) {
+  if (!spriteImg.complete || !spriteImg.naturalWidth) return;
+
+  const imgW = spriteImg.naturalWidth;
+  const imgH = spriteImg.naturalHeight;
+
+  targetCtx.save();
+  targetCtx.imageSmoothingEnabled = false;
+
+  const spacing = 4; // 3人くっつけ気味にする隙間（0にすると完全密着）
+  const items = bottomJumpRatios.map(r => {
+    const sw = r.rw * imgW;
+    const sh = r.rh * imgH;
+    const scale = targetHeight / sh;
+    const dw = sw * scale;
+    const dh = targetHeight;
+    return { r, sw, sh, dw, dh };
+  });
+
+  const totalW = items.reduce((sum, item) => sum + item.dw, 0) + spacing * (items.length - 1);
+  let curX = centerX - totalW / 2;
+
+  items.forEach(item => {
+    const sx = item.r.rx * imgW;
+    const sy = item.r.ry * imgH;
+    const dy = bottomY - item.dh;
+
+    targetCtx.drawImage(spriteImg, sx, sy, item.sw, item.sh, curX, dy, item.dw, item.dh);
+    curX += item.dw + spacing;
+  });
+
+  targetCtx.restore();
+}
+if (state === "finished") {
   ctx.fillStyle = "rgba(38,59,85,0.55)";
   ctx.fillRect(0, 0, W, H);
 
   // 紙吹雪
   const confetti = [
-    [80, 65, "#ff9ab8"],
-    [145, 115, "#ffffff"],
-    [220, 55, "#6b7cff"],
-    [285, 90, "#ffd36e"],
-    [360, 45, "#ff9ab8"],
-    [440, 105, "#ffffff"],
-    [520, 55, "#6b7cff"],
-    [600, 95, "#ffd36e"],
-    [700, 50, "#ff9ab8"],
-    [750, 125, "#ffffff"],
-    [110, 210, "#6b7cff"],
-    [260, 235, "#ff9ab8"],
-    [540, 220, "#ffd36e"],
-    [680, 205, "#6b7cff"]
+    [80, 65, "#ff9ab8"], [145, 115, "#ffffff"], [220, 55, "#6b7cff"],
+    [285, 90, "#ffd36e"], [360, 45, "#ff9ab8"], [440, 105, "#ffffff"],
+    [520, 55, "#6b7cff"], [600, 95, "#ffd36e"], [700, 50, "#ff9ab8"],
+    [750, 125, "#ffffff"], [110, 210, "#6b7cff"], [260, 235, "#ff9ab8"],
+    [540, 220, "#ffd36e"], [680, 205, "#6b7cff"]
   ];
-
   confetti.forEach(([x, y, color]) => {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, 8, 12);
@@ -1616,7 +1688,6 @@ function draw() {
     [170, 75], [315, 165], [490, 65],
     [650, 145], [730, 230], [75, 155]
   ];
-
   sparkles.forEach(([x, y]) => {
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(x - 2, y - 9, 4, 18);
@@ -1625,31 +1696,33 @@ function draw() {
 
   // 大きなRESULTパネル
   ctx.fillStyle = "#263b55";
-  ctx.fillRect(130, 32, 540, 296);
+  ctx.fillRect(130, 20, 540, 320);
 
   ctx.fillStyle = "#dff1ff";
-  ctx.fillRect(136, 38, 528, 284);
+  ctx.fillRect(136, 26, 528, 308);
 
   // タイトル帯
   ctx.fillStyle = "#6b7cff";
-  ctx.fillRect(136, 38, 528, 60);
+  ctx.fillRect(136, 26, 528, 52);
 
   ctx.textAlign = "center";
-  ctx.font = '58px "Jersey 10", Arial';
+  ctx.font = '50px "Jersey 10", Arial';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("GOAL!", W / 2, 83);
+  ctx.fillText("GOAL!", W / 2, 68);
 
   // サブタイトル
-  ctx.font = '26px "Jersey 10", Arial';
+  ctx.font = '22px "Jersey 10", Arial';
   ctx.fillStyle = "#526a91";
-  ctx.fillText("WELCOME TO KSPO DOME!", W / 2, 132);
+  ctx.fillText("WELCOME TO KSPO DOME!", W / 2, 102);
+
+  // WELCOME〜と4分割カードの間に横長RUNNERカード
+  drawStatCard(ctx, 160, 112, 480, 54, "RUNNER", getSelectedRunnerLabel(), "#6b7cff", false);
 
   // 4つの記録カード
-  const cards = [
-    { x: 160, y: 151, label: "TIME", value: formatTime(elapsed), color: "#ff9ab8" },
-    { x: 420, y: 151, label: "SCORE", value: score, color: "#9b8cff" },
-    { x: 160, y: 234, label: "ITEMS", value: collectedCount, color: "#55a9df" },
-    { x: 420, y: 234, label: "뛰어!", value: jumpCount, color: "#ff9ab8" }
+  drawStatCard(ctx, 160, 174, 226, 66, "TIME", formatTime(elapsed), "#ff9ab8", false);
+  drawStatCard(ctx, 414, 174, 226, 66, "SCORE", score, "#9b8cff", false);
+  drawStatCard(ctx, 160, 248, 226, 66, "ITEMS", collectedCount, "#55a9df", false);
+  drawStatCard(ctx, 414, 248, 226, 66, "뛰어!", jumpCount, "#ff9ab8", true);
   ];
 
   cards.forEach(card => {
@@ -1690,7 +1763,12 @@ function finishGame() {
 
   pauseBtn.style.display = "none";
 
+  if (shareArea) {
+    shareArea.style.display = "block";
+  }
+
   draw();
+  generateShareImage();
 }
 
 function loop(now) {
@@ -1709,6 +1787,99 @@ function loop(now) {
   if (state === "running") {
     requestAnimationFrame(loop);
   }
+}
+  function generateShareImage() {
+  const shareCanvas = document.createElement("canvas");
+  shareCanvas.width = 1200;
+  shareCanvas.height = 630;
+  const sCtx = shareCanvas.getContext("2d");
+
+  // 背景（淡い水色＋ドット枠）
+  sCtx.fillStyle = "#e6f2fb";
+  sCtx.fillRect(0, 0, 1200, 630);
+
+  sCtx.fillStyle = "#ffffff";
+  sCtx.fillRect(28, 28, 1144, 574);
+
+  sCtx.fillStyle = "#dff1ff";
+  sCtx.fillRect(36, 36, 1128, 558);
+
+  // 上部タイトル
+  sCtx.textAlign = "center";
+  sCtx.font = '64px "Jersey 10", Arial';
+  sCtx.fillStyle = "#6b7cff";
+  sCtx.fillText("ROAD TO KSPO DOME", 600, 102);
+
+  // 左側：3人ニコニコジャンプ（くっつけて配置）
+  drawThreeJumpers(sCtx, 315, 500, 240);
+
+  sCtx.textAlign = "center";
+  sCtx.font = '32px "Jersey 10", Arial';
+  sCtx.fillStyle = "#ff7eb6";
+  sCtx.fillText("YOU MADE IT! CONGRATULATIONS!", 315, 546);
+
+  // 右側：GOALパネル（WELCOME〜の下に横長RUNNER、その下に4分割カード）
+  const px = 590, py = 132, pw = 540, ph = 420;
+  sCtx.fillStyle = "#263b55";
+  sCtx.fillRect(px, py, pw, ph);
+
+  sCtx.fillStyle = "#dff1ff";
+  sCtx.fillRect(px + 6, py + 6, pw - 12, ph - 12);
+
+  sCtx.fillStyle = "#6b7cff";
+  sCtx.fillRect(px + 6, py + 6, pw - 12, 62);
+
+  sCtx.fillStyle = "#ffffff";
+  sCtx.font = '54px "Jersey 10", Arial';
+  sCtx.fillText("GOAL!", px + pw / 2, py + 54);
+
+  sCtx.fillStyle = "#526a91";
+  sCtx.font = '26px "Jersey 10", Arial';
+  sCtx.fillText("WELCOME TO KSPO DOME!", px + pw / 2, py + 102);
+
+  // 横長RUNNERカード
+  drawStatCard(sCtx, px + 26, py + 116, pw - 52, 64, "RUNNER", getSelectedRunnerLabel(), "#6b7cff", false);
+
+  // 4分割カード
+  const cw = 236, ch = 92;
+  const leftX = px + 26;
+  const rightX = px + pw - 26 - cw;
+  const row1Y = py + 192;
+  const row2Y = py + 298;
+
+  drawStatCard(sCtx, leftX,  row1Y, cw, ch, "TIME",  formatTime(elapsed), "#ff9ab8", false);
+  drawStatCard(sCtx, rightX, row1Y, cw, ch, "SCORE", score,               "#9b8cff", false);
+  drawStatCard(sCtx, leftX,  row2Y, cw, ch, "ITEMS", collectedCount,      "#55a9df", false);
+  drawStatCard(sCtx, rightX, row2Y, cw, ch, "뛰어!", jumpCount,           "#ff9ab8", true);
+
+  const imgEl = document.getElementById("resultCardImg");
+  if (imgEl) {
+    imgEl.src = shareCanvas.toDataURL("image/png");
+    imgEl.style.display = "block";
+  }
+}
+
+const shareArea = document.getElementById("shareArea");
+const shareXBtn = document.getElementById("shareXBtn");
+
+if (shareXBtn) {
+  shareXBtn.addEventListener("click", () => {
+    const runner = getSelectedRunnerLabel();
+    const gameUrl = "https://mii622.github.io/road-to-kspo/";
+    const tweetText = [
+      `GOAL! Cleared with ${runner}! 🎉`,
+      `SCORE: ${score} | TIME: ${formatTime(elapsed)}`,
+      ``,
+      `#ROADTOKSPODOME #CNBLUE #씨엔블루 #에바뛰콘`
+    ].join("\n");
+
+    const intentUrl =
+      "https://twitter.com/intent/tweet" +
+      `?text=${encodeURIComponent(tweetText)}` +
+      `&url=${encodeURIComponent(gameUrl)}`;
+
+    window.open(intentUrl, "_blank", "noopener,noreferrer");
+  });
 }
 
 updateInfo();
