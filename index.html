@@ -963,7 +963,6 @@ function drawBackground() {
     ctx.fillRect(gx - 1, topY + 5, 4, 4);
   }
     ctx.restore();
-  }
   
     // 水色のランニングトラック
   ctx.fillStyle = "#83c9e8";
@@ -1024,7 +1023,6 @@ function drawBackground() {
     }
 
     ctx.restore();
-  }
 
 // 陸上トラックの白いレーン
 ctx.fillStyle = "#ffffff";
@@ -1032,6 +1030,7 @@ ctx.fillStyle = "#ffffff";
 ctx.fillRect(0, ground + 18, W, 3);
 ctx.fillRect(0, ground + 36, W, 3);
 ctx.fillRect(0, ground + 54, W, 3);
+}
 }
 
 
@@ -1049,6 +1048,13 @@ function drawKspoDome() {
 
   const x = 680 - progress * 600;
   const scale = 0.55 + progress * 0.65;
+
+  // ドームの左側にゲートを一緒に表示
+  ctx.save();
+  ctx.translate(x, ground);
+  ctx.scale(scale, scale);
+  drawVenueGate(-38, 0);
+  ctx.restore();
 
   ctx.save();
   ctx.translate(x, ground);
@@ -1109,8 +1115,6 @@ function drawKspoDome() {
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(70, -106, 5, 3);
   ctx.fillRect(155, -106, 5, 3);
-
-  
 
   // ドーム周辺のキラキラ
   const sparkles = [
