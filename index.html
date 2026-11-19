@@ -326,16 +326,16 @@ button:active {
 
   <button id="pause">PAUSE</button>
   <button id="start" style="display:none;">RETRY</button>
-    <button id="pause">PAUSE</button>
-  <button id="start" style="display:none;">RETRY</button>
 
-  <!-- クリア時だけ表示するXシェア＆リザルト画像エリア -->
+    <!-- クリア時だけ表示するXシェア＆リザルト画像エリア -->
   <div id="shareArea" style="display:none; margin-top: 14px; text-align: center;">
+    <button id="saveImgBtn" type="button" style="cursor:pointer; padding:10px 18px; font-family:'Jersey 10', Arial; font-size:22px; background:#6b7cff; color:#ffffff; border:2px solid #263b55; border-radius:8px;">
+      SAVE IMAGE
+    </button>
     <button id="shareXBtn" type="button" style="cursor:pointer; padding:10px 18px; font-family:'Jersey 10', Arial; font-size:22px; background:#111111; color:#ffffff; border:2px solid #263b55; border-radius:8px;">
       SHARE ON X
     </button>
-    <p class="small" style="margin-top: 6px;">LONG PRESS OR SAVE IMAGE TO ATTACH ON X!</p>
-    <img id="resultCardImg" alt="GOAL RESULT CARD" style="display:none; width:100%; max-width:460px; margin:8px auto 0; border:2px solid #263b55; border-radius:8px;" />
+    <img id="resultCardImg" alt="GOAL RESULT CARD" style="display:none; width:100%; max-width:460px; margin:10px auto 0; border:2px solid #263b55; border-radius:8px;" />
   </div>
 
 <p class="small">TAP TO JUMP!</p>
@@ -397,12 +397,11 @@ let hitCount = 0;
 let collectedCount = 0;
 let jumpCount = 0;
 
-// 加速残り時間
 let boostTimer = 0;
-
 let hitSlowTimer = 0;
-
 let runAnimationTime = 0;
+
+let latestShareDataUrl = "";
 
 const player = {
   x: 110,
@@ -543,6 +542,7 @@ characterStartBtn.addEventListener("click", () => {
 // RETRYボタン
 startBtn.addEventListener("click", () => {
   startBtn.style.display = "none";
+  if (shareArea) shareArea.style.display = "none"; 
   document.getElementById("game").style.display = "none";
   document.getElementById("characterSelect").style.display = "block";
 
@@ -1723,36 +1723,9 @@ if (state === "finished") {
   drawStatCard(ctx, 414, 174, 226, 66, "SCORE", score, "#9b8cff", false);
   drawStatCard(ctx, 160, 248, 226, 66, "ITEMS", collectedCount, "#55a9df", false);
   drawStatCard(ctx, 414, 248, 226, 66, "뛰어!", jumpCount, "#ff9ab8", true);
-  ];
-
-  cards.forEach(card => {
-    ctx.fillStyle = "#afcbda";
-    ctx.fillRect(card.x, card.y, 220, 70);
-
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(card.x + 3, card.y + 3, 214, 64);
-
-    ctx.fillStyle = card.color;
-    ctx.fillRect(card.x + 3, card.y + 3, 7, 64);
-
-    ctx.textAlign = "left";
-
-    // 韓国語だけMulmaru
-    if (card.label === "뛰어!") {
-      ctx.font = '22px "Mulmaru"';
-    } else {
-      ctx.font = '26px "Jersey 10", Arial';
-    }
-
-    ctx.fillStyle = "#71849a";
-    ctx.fillText(card.label, card.x + 20, card.y + 27);
-
-    ctx.font = '38px "Jersey 10", Arial';
-    ctx.fillStyle = "#263b55";
-    ctx.fillText(String(card.value), card.x + 20, card.y + 59);
   });
  }
-}
+
 function finishGame() {
   state = "finished";
 
@@ -1852,15 +1825,35 @@ function loop(now) {
   drawStatCard(sCtx, leftX,  row2Y, cw, ch, "ITEMS", collectedCount,      "#55a9df", false);
   drawStatCard(sCtx, rightX, row2Y, cw, ch, "뛰어!", jumpCount,           "#ff9ab8", true);
 
+    latestShareDataUrl = shareCanvas.toDataURL("image/png");
+
   const imgEl = document.getElementById("resultCardImg");
   if (imgEl) {
-    imgEl.src = shareCanvas.toDataURL("image/png");
+    imgEl.src = latestShareDataUrl;
     imgEl.style.display = "block";
   }
+
 }
 
 const shareArea = document.getElementById("shareArea");
 const shareXBtn = document.getElementById("shareXBtn");
+const saveImgBtn = document.getElementById("saveImgBtn");
+
+if (saveImgBtn) {
+  saveImgBtn.addEventListener("click", () => {
+    if (!latestShareDataUrl) {
+      generateShareImage();
+    }
+    if (!latestShareDataUrl) return;
+
+    const link = document.createElement("a");
+    link.href = latestShareDataUrl;
+    link.download = `road-to-kspo-${getSelectedRunnerLabel().toLowerCase()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+}
 
 if (shareXBtn) {
   shareXBtn.addEventListener("click", () => {
