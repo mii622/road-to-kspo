@@ -1264,16 +1264,38 @@ ctx.fillRect(x + 5 - armSwing, y + 40 + bob, 8, 5);
   ctx.fillStyle = skin;
   ctx.fillRect(x + 12, y + 22 + bob, 4, 5);
 
-  // 目（右向きの横顔）
-  ctx.fillStyle = outline;
-  ctx.fillRect(x + 32, y + 20 + bob, 5, 7);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(x + 33, y + 20 + bob, 3, 2);
-  ctx.fillStyle = style.eye;
-  ctx.fillRect(x + 34, y + 22 + bob, 3, 5);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(x + 34, y + 22 + bob, 1, 1);
+    // 目（右向きの横顔）
+  // --------------------
+  if (style.hairType === "min") {
 
+    // MIN：少し細めの目
+    ctx.fillStyle = outline;
+    ctx.fillRect(x + 32, y + 21 + bob, 5, 5);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 33, y + 21 + bob, 3, 1);
+
+    ctx.fillStyle = style.eye;
+    ctx.fillRect(x + 34, y + 22 + bob, 3, 3);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 34, y + 22 + bob, 1, 1);
+
+  } else {
+
+    // YONG：今までのぱっちりした目
+    ctx.fillStyle = outline;
+    ctx.fillRect(x + 32, y + 20 + bob, 5, 7);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 33, y + 20 + bob, 3, 2);
+
+    ctx.fillStyle = style.eye;
+    ctx.fillRect(x + 34, y + 22 + bob, 3, 5);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 34, y + 22 + bob, 1, 1);
+  }
   // 鼻
   ctx.fillStyle = skinShadow;
   ctx.fillRect(x + 40, y + 25 + bob, 3, 2);
