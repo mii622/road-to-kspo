@@ -252,6 +252,11 @@ button:active {
     font-size: 15px;
   }
 }
+/* ゲーム開始前はゲーム画面を隠す */
+#game {
+  display: none;
+}
+  
 </style>
 </head>
 
@@ -270,32 +275,23 @@ button:active {
   <div class="character-list">
 
     <div class="character-card selected" data-character="yonghwa">
-      <div class="character-preview">
-        YONGHWA
-      </div>
-      <span class="member-name">용화</span>
-      <span class="member-name-en">YONGHWA</span>
+  <div class="character-preview">YONG</div>
+  <span class="member-name">YONG</span>
     </div>
 
     <div class="character-card" data-character="minhyuk">
-      <div class="character-preview">
-        MINHYUK
-      </div>
-      <span class="member-name">민혁</span>
-      <span class="member-name-en">MINHYUK</span>
+  <div class="character-preview">MIN</div>
+  <span class="member-name">MIN</span>
     </div>
 
     <div class="character-card" data-character="jungshin">
-      <div class="character-preview">
-        JUNGSHIN
-      </div>
-      <span class="member-name">정신</span>
-      <span class="member-name-en">JUNGSHIN</span>
+  <div class="character-preview">SHIN</div>
+  <span class="member-name">SHIN</span>
     </div>
 
   </div>
 
-  <div id="selectedMessage">YONGHWA SELECTED!</div>
+  <div id="selectedMessage">YONG SELECTED!</div>
 
   <button id="characterStart">START</button>
 
@@ -337,7 +333,8 @@ const pauseBtn = document.getElementById("pause");
 const characterSelect = document.getElementById("characterSelect");
 const characterStartBtn = document.getElementById("characterStart");
 const selectedMessage = document.getElementById("selectedMessage");
-
+const game = document.getElementById("game");
+  
 let selectedCharacter = "yonghwa";
 
 const W = 800;
@@ -436,7 +433,6 @@ function startGame() {
 
   message.textContent = "GO! RUN TO KSPO!";
 
-  startBtn.style.display = "none";
   pauseBtn.style.display = "inline-block";
   pauseBtn.textContent = "PAUSE";
 
@@ -501,10 +497,10 @@ document.querySelectorAll(".character-card").forEach(card => {
     selectedCharacter = card.dataset.character;
 
     const names = {
-      yonghwa: "YONGHWA",
-      minhyuk: "MINHYUK",
-      jungshin: "JUNGSHIN"
-    };
+  yonghwa: "YONG",
+  minhyuk: "MIN",
+  jungshin: "SHIN"
+};
 
     selectedMessage.textContent =
       names[selectedCharacter] + " SELECTED!";
@@ -514,6 +510,7 @@ document.querySelectorAll(".character-card").forEach(card => {
 // 選択してゲーム開始
 characterStartBtn.addEventListener("click", () => {
   characterSelect.style.display = "none";
+  game.style.display = "block";
   startGame();
 });
 
