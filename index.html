@@ -362,12 +362,12 @@ const selectedMessage = document.getElementById("selectedMessage");
 const game = document.getElementById("game");
 
 const spriteImg = new Image();
-spriteImg.src = "./9771.jpg";
 
 spriteImg.addEventListener("load", () => {
   drawCharacterPreviews();
   draw();
 });
+spriteImg.src = "./9771.jpg";
 
 let selectedCharacter = "yonghwa";
 
@@ -1409,45 +1409,61 @@ function drawObstacle(o) {
   const x = Math.round(o.x);
   const y = Math.round(o.y);
 
-  // 機材ケース
+  // アンプ（旧：機材ケース）
   if (o.name === "CASE") {
-    // 外枠
+    // 外枠（濃い紺）
     ctx.fillStyle = "#263b55";
     ctx.fillRect(x, y, 52, 60);
 
-    // 本体
+    // アンプ本体
     ctx.fillStyle = "#71849a";
-    ctx.fillRect(x + 4, y + 5, 44, 49);
+    ctx.fillRect(x + 3, y + 5, 46, 52);
 
-    // 中央パネル
-    ctx.fillStyle = "#3c4d66";
-    ctx.fillRect(x + 9, y + 12, 34, 30);
-
-    // パネルの光沢
+    // 上部コントロールパネル
     ctx.fillStyle = "#dff1ff";
-    ctx.fillRect(x + 12, y + 15, 28, 3);
+    ctx.fillRect(x + 6, y + 8, 40, 12);
 
-    // 金属の角
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 4, y + 5, 6, 6);
-    ctx.fillRect(x + 42, y + 5, 6, 6);
-    ctx.fillRect(x + 4, y + 48, 6, 6);
-    ctx.fillRect(x + 42, y + 48, 6, 6);
-
-    // 持ち手
+    // ツマミ（ノブ）＆パイロットランプ
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 16, y, 20, 7);
+    ctx.fillRect(x + 10, y + 11, 4, 6);
+    ctx.fillRect(x + 18, y + 11, 4, 6);
+    ctx.fillRect(x + 26, y + 11, 4, 6);
+
+    ctx.fillStyle = "#6b7cff";
+    ctx.fillRect(x + 11, y + 12, 2, 4);
+    ctx.fillRect(x + 19, y + 12, 2, 4);
+
+    // ランプ（ピンク/黄色でアクセント）
+    ctx.fillStyle = "#ff9ab8";
+    ctx.fillRect(x + 38, y + 12, 4, 4);
+
+    // スピーカーグリル（メッシュ部分）
+    ctx.fillStyle = "#3c4d66";
+    ctx.fillRect(x + 6, y + 23, 40, 31);
+
+    // スピーカーの丸いフレーム感＋ドットメッシュ
+    ctx.fillStyle = "#263b55";
+    ctx.fillRect(x + 14, y + 28, 24, 21);
+
+    ctx.fillStyle = "#526a91";
+    ctx.fillRect(x + 17, y + 31, 18, 15);
+
+    // センターキャップ
     ctx.fillStyle = "#9fd8ff";
-    ctx.fillRect(x + 20, y + 2, 12, 3);
+    ctx.fillRect(x + 23, y + 36, 6, 5);
 
-    // 留め具
-    ctx.fillStyle = "#ffd85c";
-    ctx.fillRect(x + 24, y + 24, 5, 9);
+    // コーナー金具
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 3, y + 5, 5, 5);
+    ctx.fillRect(x + 44, y + 5, 5, 5);
+    ctx.fillRect(x + 3, y + 52, 5, 5);
+    ctx.fillRect(x + 44, y + 52, 5, 5);
 
-    // キャスター
+    // トップハンドル
     ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 6, y + 55, 9, 5);
-    ctx.fillRect(x + 37, y + 55, 9, 5);
+    ctx.fillRect(x + 17, y, 18, 6);
+    ctx.fillStyle = "#afcbda";
+    ctx.fillRect(x + 20, y + 2, 12, 2);
   }
 
   // 段ボール
