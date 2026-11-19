@@ -517,6 +517,11 @@ characterStartBtn.addEventListener("click", () => {
   game.style.display = "block";
   startGame();
 });
+  // RETRYボタン
+startBtn.addEventListener("click", () => {
+  startBtn.style.display = "none";
+  startGame();
+});
 
 pauseBtn.addEventListener("click", togglePause);
 
