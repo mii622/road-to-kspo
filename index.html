@@ -360,7 +360,15 @@ const characterSelect = document.getElementById("characterSelect");
 const characterStartBtn = document.getElementById("characterStart");
 const selectedMessage = document.getElementById("selectedMessage");
 const game = document.getElementById("game");
-  
+
+const spriteImg = new Image();
+spriteImg.src = "./9771.jpg";
+
+spriteImg.addEventListener("load", () => {
+  drawCharacterPreviews();
+  draw();
+});
+
 let selectedCharacter = "yonghwa";
 
 const W = 800;
@@ -982,8 +990,8 @@ function drawBackground() {
 
   // 会場周辺の縦長街頭バナー（韓国風・青系）
   　if (venueProgress > 0) {
-    　ctx.save();
-    　ctx.globalAlpha = venueProgress;
+     ctx.save();
+     ctx.globalAlpha = venueProgress;
 
     for (let i = 0; i < 4; i++) {
       const x = (
@@ -1022,13 +1030,14 @@ function drawBackground() {
       ctx.fillRect(x + 11, 207, 10, 2);
       ctx.fillRect(x + 12, 211, 8, 2);
     }
+   }
 
       // 陸上トラックの白いレーン
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, ground + 18, W, 3);
       ctx.fillRect(0, ground + 36, W, 3);
       ctx.fillRect(0, ground + 54, W, 3);
-    }
+  
     ctx.restore();
 }
   
@@ -1266,7 +1275,7 @@ function drawPlayer() {
   const y = Math.round(player.y);
 
   const key = selectedCharacter || "yonghwa";
-  const frames = midRunRatios[key] || midRunRatios.yonghwa;
+  const frames = runRatios[key] || runRatios.yonghwa;
 
   const running = state === "running" && !player.jumping;
   const frameIndex = running ? Math.floor(runAnimationTime * 10) % frames.length : 0;
