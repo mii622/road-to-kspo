@@ -1298,9 +1298,9 @@ function drawPlayer() {
 // 一番下の段（ニコニコジャンプ3人）の比率座標
 // ※もし上下にちょっとズレてたら ry と rh を微調整してみてね！
 const bottomJumpRatios = [
-  { key: "yonghwa",  label: "YONG", rx: 0.09, ry: 0.76, rw: 0.15, rh: 0.21 },
-  { key: "minhyuk",  label: "MIN",  rx: 0.42, ry: 0.76, rw: 0.15, rh: 0.21 },
-  { key: "jungshin", label: "SHIN", rx: 0.74, ry: 0.76, rw: 0.15, rh: 0.21 }
+  { key: "yonghwa",  label: "YONG", rx: 0.04, ry: 0.76, rw: 0.14, rh: 0.21 },
+  { key: "minhyuk",  label: "MIN",  rx: 0.46, ry: 0.76, rw: 0.14, rh: 0.21 },
+  { key: "jungshin", label: "SHIN", rx: 0.79, ry: 0.76, rw: 0.14, rh: 0.21 }
 ];
 
 // 選んだキャラ名を取得するヘルパー
@@ -1786,7 +1786,8 @@ function loop(now) {
     sCtx.fillText("ROAD TO KSPO DOME", 600, 102);
 
     // 左側：3人ニコニコジャンプ（くっつけて配置）
-    drawThreeJumpers(sCtx, 315, 500, 240);
+    drawThreeJumpers(sCtx, 315, 500, 190);
+
 
     sCtx.textAlign = "center";
     sCtx.font = '32px "Jersey 10", Arial';
