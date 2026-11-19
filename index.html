@@ -912,7 +912,7 @@ function drawBackground() {
     }
   }
 
-  // 手前の建物（ソウル風のカフェ＆ショップビル）
+  // 手前の建物（ソウル風の街角ビル・1Fは控えめなお店感）
   for (let i = 0; i < 9; i++) {
     const x = (
       (i * 120 - distance * 0.17 + 1200) % 1200 + 1200
@@ -938,18 +938,38 @@ function drawBackground() {
       ctx.fillRect(x + 57, y + 10 + j * 18, 12, 10);
     }
 
-    // 1階のショップ＆カフェ窓（オーニング付き）
-    const shopY = ground - 26;
-    ctx.fillStyle = i % 2 === 0 ? "#ff9ab8" : "#6b7cff";
-    ctx.fillRect(x + 6, shopY - 6, 68, 6);
+    // 1F：控えめなガラス窓・入口ドア・小さな看板＆鉢植え
+    const shopY = ground - 22;
 
+    // ガラス窓（淡い水色＋細めの枠線）
+    ctx.fillStyle = "#8ab4c9";
+    ctx.fillRect(x + 8, shopY, 34, 22);
+    ctx.fillStyle = "#dff1ff";
+    ctx.fillRect(x + 10, shopY + 2, 30, 18);
+    // 窓の反射斜めライン風
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 9, shopY, 62, 20);
+    ctx.fillRect(x + 13, shopY + 4, 4, 14);
 
-    // 窓の中のあたたかい光
-    ctx.fillStyle = "#fff4c2";
-    ctx.fillRect(x + 13, shopY + 4, 20, 12);
-    ctx.fillRect(x + 40, shopY + 4, 24, 12);
+    // 入口ドア
+    ctx.fillStyle = "#71849a";
+    ctx.fillRect(x + 46, shopY - 2, 16, 24);
+    ctx.fillStyle = "#c9e5f5";
+    ctx.fillRect(x + 48, shopY, 12, 20);
+
+    // 小さな立て看板 or 鉢植え（主張しすぎないサイズ）
+    if (i % 2 === 0) {
+      // 小さな看板
+      ctx.fillStyle = "#71849a";
+      ctx.fillRect(x + 65, shopY + 6, 10, 16);
+      ctx.fillStyle = "#fff8e9";
+      ctx.fillRect(x + 66, shopY + 8, 8, 10);
+    } else {
+      // 鉢植え
+      ctx.fillStyle = "#c88d55";
+      ctx.fillRect(x + 65, shopY + 14, 9, 8);
+      ctx.fillStyle = "#88c9a1";
+      ctx.fillRect(x + 64, shopY + 9, 11, 6);
+    }
   }
 
   // KSPO DOME周辺エリア
