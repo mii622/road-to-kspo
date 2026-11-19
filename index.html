@@ -1298,9 +1298,9 @@ function drawPlayer() {
 // 一番下の段（ニコニコジャンプ3人）の比率座標
 // ※もし上下にちょっとズレてたら ry と rh を微調整してみてね！
 const bottomJumpRatios = [
-  { key: "yonghwa",  label: "YONG", rx: 0.06, ry: 0.76, rw: 0.20, rh: 0.21 },
-  { key: "minhyuk",  label: "MIN",  rx: 0.39, ry: 0.76, rw: 0.20, rh: 0.21 },
-  { key: "jungshin", label: "SHIN", rx: 0.71, ry: 0.76, rw: 0.20, rh: 0.21 }
+  { key: "yonghwa",  label: "YONG", rx: 0.09, ry: 0.76, rw: 0.15, rh: 0.21 },
+  { key: "minhyuk",  label: "MIN",  rx: 0.42, ry: 0.76, rw: 0.15, rh: 0.21 },
+  { key: "jungshin", label: "SHIN", rx: 0.74, ry: 0.76, rw: 0.15, rh: 0.21 }
 ];
 
 // 選んだキャラ名を取得するヘルパー
@@ -1846,14 +1846,11 @@ const saveImgBtn = document.getElementById("saveImgBtn");
 
 if (saveImgBtn) {
   saveImgBtn.addEventListener("click", () => {
-    alert("SAVE押せた！");
     if (!latestShareDataUrl) {
       generateShareImage();
     }
-    if (!latestShareDataUrl) {
-      alert("画像データが空だったよ");
+    if (!latestShareDataUrl) 
       return;
-    }
 
     const link = document.createElement("a");
     link.href = latestShareDataUrl;
@@ -1866,20 +1863,20 @@ if (saveImgBtn) {
 
 if (shareXBtn) {
   shareXBtn.addEventListener("click", () => {
-    alert("X押せた！");
     const runner = getSelectedRunnerLabel();
     const gameUrl = "https://mii622.github.io/road-to-kspo/";
     const tweetText = [
       `GOAL! Cleared with ${runner}! 🎉`,
       `SCORE: ${score} | TIME: ${formatTime(elapsed)}`,
       ``,
-      `#ROADTOKSPODOME #CNBLUE #씨엔블루 #에바뛰콘`
+      `#ROADTOKSPODOME #CNBLUE #씨엔블루 #에바뛰콘`,
+      ``,
+      `${gameUrl}`
     ].join("\n");
 
     const intentUrl =
       "https://twitter.com/intent/tweet" +
-      `?text=${encodeURIComponent(tweetText)}` +
-      `&url=${encodeURIComponent(gameUrl)}`;
+      `?text=${encodeURIComponent(tweetText)}`;
 
     window.location.href = intentUrl;
   });
