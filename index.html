@@ -1229,7 +1229,13 @@ function drawCharacterPreviews() {
     pCtx.drawImage(spriteImg, sx, sy, sw, sh, dx, dy, dw, dh);
   });
 }
-
+// 画像が読み込み終わったらプレビューを描く
+spriteImg.addEventListener("load", drawCharacterPreviews);
+// すでに読み込み済みだった場合も念のため呼ぶ
+if (spriteImg.complete) {
+  drawCharacterPreviews();
+}
+  
 function drawPlayer() {
   if (!spriteImg.complete || !spriteImg.naturalWidth) return;
 
