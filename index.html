@@ -203,6 +203,10 @@ const SPEED_LATE = 380;
 const BOOST_AMOUNT = 30;
 const BOOST_DURATION = 3;
 
+// 障害物にぶつかったときの減速
+const HIT_SLOW_DURATION = 2.5;
+const HIT_SLOW_RATE = 0.75;
+
 let state = "ready";
 let score = 0;
 let elapsed = 0;
@@ -222,6 +226,8 @@ let jumpCount = 0;
 
 // 加速残り時間
 let boostTimer = 0;
+
+let hitSlowTimer = 0;
 
 let runAnimationTime = 0;
 
@@ -261,6 +267,7 @@ function resetGame() {
   collectedCount = 0;
   jumpCount = 0;
   boostTimer = 0;
+  hitSlowTimer = 0;
 
   player.y = ground - player.h;
   player.vy = 0;
@@ -361,8 +368,16 @@ function getBaseSpeed() {
 
 // 現在のスピード
 function getSpeed() {
-  return getBaseSpeed() +
+
+  const normalSpeed = getBaseSpeed() +
     (boostTimer > 0 ? BOOST_AMOUNT : 0);
+
+  const slowProgress = hitSlowTimer / HIT_SLOW_DURATION;
+
+  const slowRate = 1 - (1 - HIT_SLOW_RATE) * slowProgress;
+
+  return normalSpeed * slowRate;
+
 }
 
 // アイテム取得時の加速
@@ -480,6 +495,11 @@ function update(dt) {
   // 加速時間を減らす
   if (boostTimer > 0) {
     boostTimer = Math.max(0, boostTimer - dt);
+    
+  // 減速時間を減らす
+if (hitSlowTimer > 0) {
+  hitSlowTimer = Math.max(0, hitSlowTimer - dt);
+}
   }
 
   const speed = getSpeed();
@@ -527,6 +547,7 @@ if (remainingDistance <= 50) {
       o.passed = true;
       hitCount++;
       hitFlash = 0.2;
+      hitSlowTimer = HIT_SLOW_DURATION;
     }
   });
 
