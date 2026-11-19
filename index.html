@@ -1762,77 +1762,80 @@ function loop(now) {
   }
 }
   function generateShareImage() {
-  const shareCanvas = document.createElement("canvas");
-  shareCanvas.width = 1200;
-  shareCanvas.height = 630;
-  const sCtx = shareCanvas.getContext("2d");
+  try {
+    const shareCanvas = document.createElement("canvas");
+    shareCanvas.width = 1200;
+    shareCanvas.height = 630;
+    const sCtx = shareCanvas.getContext("2d");
 
-  // 背景（淡い水色＋ドット枠）
-  sCtx.fillStyle = "#e6f2fb";
-  sCtx.fillRect(0, 0, 1200, 630);
+    // 背景（淡い水色＋ドット枠）
+    sCtx.fillStyle = "#e6f2fb";
+    sCtx.fillRect(0, 0, 1200, 630);
 
-  sCtx.fillStyle = "#ffffff";
-  sCtx.fillRect(28, 28, 1144, 574);
+    sCtx.fillStyle = "#ffffff";
+    sCtx.fillRect(28, 28, 1144, 574);
 
-  sCtx.fillStyle = "#dff1ff";
-  sCtx.fillRect(36, 36, 1128, 558);
+    sCtx.fillStyle = "#dff1ff";
+    sCtx.fillRect(36, 36, 1128, 558);
 
-  // 上部タイトル
-  sCtx.textAlign = "center";
-  sCtx.font = '64px "Jersey 10", Arial';
-  sCtx.fillStyle = "#6b7cff";
-  sCtx.fillText("ROAD TO KSPO DOME", 600, 102);
+    // 上部タイトル
+    sCtx.textAlign = "center";
+    sCtx.font = '64px "Jersey 10", Arial';
+    sCtx.fillStyle = "#6b7cff";
+    sCtx.fillText("ROAD TO KSPO DOME", 600, 102);
 
-  // 左側：3人ニコニコジャンプ（くっつけて配置）
-  drawThreeJumpers(sCtx, 315, 500, 240);
+    // 左側：3人ニコニコジャンプ（くっつけて配置）
+    drawThreeJumpers(sCtx, 315, 500, 240);
 
-  sCtx.textAlign = "center";
-  sCtx.font = '32px "Jersey 10", Arial';
-  sCtx.fillStyle = "#ff7eb6";
-  sCtx.fillText("YOU MADE IT! CONGRATULATIONS!", 315, 546);
+    sCtx.textAlign = "center";
+    sCtx.font = '32px "Jersey 10", Arial';
+    sCtx.fillStyle = "#ff7eb6";
+    sCtx.fillText("YOU MADE IT! CONGRATULATIONS!", 315, 546);
 
-  // 右側：GOALパネル（WELCOME〜の下に横長RUNNER、その下に4分割カード）
-  const px = 590, py = 132, pw = 540, ph = 420;
-  sCtx.fillStyle = "#263b55";
-  sCtx.fillRect(px, py, pw, ph);
+    // 右側：GOALパネル（WELCOME〜の下に横長RUNNER、その下に4分割カード）
+    const px = 590, py = 132, pw = 540, ph = 420;
+    sCtx.fillStyle = "#263b55";
+    sCtx.fillRect(px, py, pw, ph);
 
-  sCtx.fillStyle = "#dff1ff";
-  sCtx.fillRect(px + 6, py + 6, pw - 12, ph - 12);
+    sCtx.fillStyle = "#dff1ff";
+    sCtx.fillRect(px + 6, py + 6, pw - 12, ph - 12);
 
-  sCtx.fillStyle = "#6b7cff";
-  sCtx.fillRect(px + 6, py + 6, pw - 12, 62);
+    sCtx.fillStyle = "#6b7cff";
+    sCtx.fillRect(px + 6, py + 6, pw - 12, 62);
 
-  sCtx.fillStyle = "#ffffff";
-  sCtx.font = '54px "Jersey 10", Arial';
-  sCtx.fillText("GOAL!", px + pw / 2, py + 54);
+    sCtx.fillStyle = "#ffffff";
+    sCtx.font = '54px "Jersey 10", Arial';
+    sCtx.fillText("GOAL!", px + pw / 2, py + 54);
 
-  sCtx.fillStyle = "#526a91";
-  sCtx.font = '26px "Jersey 10", Arial';
-  sCtx.fillText("WELCOME TO KSPO DOME!", px + pw / 2, py + 102);
+    sCtx.fillStyle = "#526a91";
+    sCtx.font = '26px "Jersey 10", Arial';
+    sCtx.fillText("WELCOME TO KSPO DOME!", px + pw / 2, py + 102);
 
-  // 横長RUNNERカード
-  drawStatCard(sCtx, px + 26, py + 116, pw - 52, 64, "RUNNER", getSelectedRunnerLabel(), "#6b7cff", false);
+    // 横長RUNNERカード
+    drawStatCard(sCtx, px + 26, py + 116, pw - 52, 64, "RUNNER", getSelectedRunnerLabel(), "#6b7cff", false);
 
-  // 4分割カード
-  const cw = 236, ch = 92;
-  const leftX = px + 26;
-  const rightX = px + pw - 26 - cw;
-  const row1Y = py + 192;
-  const row2Y = py + 298;
+    // 4分割カード
+    const cw = 236, ch = 92;
+    const leftX = px + 26;
+    const rightX = px + pw - 26 - cw;
+    const row1Y = py + 192;
+    const row2Y = py + 298;
 
-  drawStatCard(sCtx, leftX,  row1Y, cw, ch, "TIME",  formatTime(elapsed), "#ff9ab8", false);
-  drawStatCard(sCtx, rightX, row1Y, cw, ch, "SCORE", score,               "#9b8cff", false);
-  drawStatCard(sCtx, leftX,  row2Y, cw, ch, "ITEMS", collectedCount,      "#55a9df", false);
-  drawStatCard(sCtx, rightX, row2Y, cw, ch, "뛰어!", jumpCount,           "#ff9ab8", true);
+    drawStatCard(sCtx, leftX,  row1Y, cw, ch, "TIME",  formatTime(elapsed), "#ff9ab8", false);
+    drawStatCard(sCtx, rightX, row1Y, cw, ch, "SCORE", score,               "#9b8cff", false);
+    drawStatCard(sCtx, leftX,  row2Y, cw, ch, "ITEMS", collectedCount,      "#55a9df", false);
+    drawStatCard(sCtx, rightX, row2Y, cw, ch, "뛰어!", jumpCount,           "#ff9ab8", true);
 
     latestShareDataUrl = shareCanvas.toDataURL("image/png");
 
-  const imgEl = document.getElementById("resultCardImg");
-  if (imgEl) {
-    imgEl.src = latestShareDataUrl;
-    imgEl.style.display = "block";
+    const imgEl = document.getElementById("resultCardImg");
+    if (imgEl) {
+      imgEl.src = latestShareDataUrl;
+      imgEl.style.display = "block";
+    }
+  } catch (err) {
+    console.error("シェア画像生成エラー:", err);
   }
-
 }
 
 const shareArea = document.getElementById("shareArea");
