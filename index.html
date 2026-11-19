@@ -1056,12 +1056,13 @@ function drawKspoDome() {
   const x = 680 - progress * 600;
   const scale = 0.55 + progress * 0.65;
 
-  // ドームの左側にゲートを一緒に表示
+  // ドームの横から手前へ斜めにゲートを配置
   ctx.save();
   ctx.translate(x, ground);
   ctx.scale(scale, scale);
-  drawVenueGate(-38, 0);
+  drawVenueGate(-22, 0);
   ctx.restore();
+
 
   ctx.save();
   ctx.translate(x, ground);
@@ -1165,37 +1166,63 @@ function drawKspoDome() {
 function drawVenueGate(gx, baseY) {
   ctx.save();
 
-  const gateW = 84;
-  const gateH = 68;
-  const leftX = gx - gateW / 2;
-  const topY = baseY - gateH;
+  // 奥側の柱（ドーム寄り・少し高い位置）
+  const backX = gx - 18;
+  const backTopY = baseY - 72;
+  const backBottomY = baseY - 6;
 
-  // 柱（左・右）
+  // 手前側の柱（トラック手前・少し低い／手前寄りの位置）
+  const frontX = gx + 28;
+  const frontTopY = baseY - 62;
+  const frontBottomY = baseY + 18;
+
+  // 奥の柱
   ctx.fillStyle = "#263b55";
-  ctx.fillRect(leftX, topY + 12, 10, gateH - 12);
-  ctx.fillRect(leftX + gateW - 10, topY + 12, 10, gateH - 12);
-
+  ctx.fillRect(backX - 4, backTopY, 8, backBottomY - backTopY);
   ctx.fillStyle = "#dff1ff";
-  ctx.fillRect(leftX + 2, topY + 14, 6, gateH - 14);
-  ctx.fillRect(leftX + gateW - 8, topY + 14, 6, gateH - 14);
+  ctx.fillRect(backX - 2, backTopY + 2, 4, backBottomY - backTopY - 2);
 
-  // 上部ゲートバー
+  // 斜めに渡すゲートバー（外枠 → 本体 → ピンク＆水色ライン）
+  ctx.strokeStyle = "#263b55";
+  ctx.lineWidth = 16;
+  ctx.lineCap = "square";
+  ctx.beginPath();
+  ctx.moveTo(backX, backTopY + 4);
+  ctx.lineTo(frontX, frontTopY + 4);
+  ctx.stroke();
+
+  ctx.strokeStyle = "#6b7cff";
+  ctx.lineWidth = 12;
+  ctx.beginPath();
+  ctx.moveTo(backX, backTopY + 4);
+  ctx.lineTo(frontX, frontTopY + 4);
+  ctx.stroke();
+
+  ctx.strokeStyle = "#ff9ab8";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(backX, backTopY);
+  ctx.lineTo(frontX, frontTopY);
+  ctx.stroke();
+
+  ctx.strokeStyle = "#9fd8ff";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(backX, backTopY + 8);
+  ctx.lineTo(frontX, frontTopY + 8);
+  ctx.stroke();
+
+  // 手前の柱（プレイヤーより手前に見えるように最後に描画）
   ctx.fillStyle = "#263b55";
-  ctx.fillRect(leftX - 4, topY, gateW + 8, 16);
+  ctx.fillRect(frontX - 5, frontTopY, 10, frontBottomY - frontTopY);
+  ctx.fillStyle = "#dff1ff";
+  ctx.fillRect(frontX - 3, frontTopY + 2, 6, frontBottomY - frontTopY - 2);
 
-  ctx.fillStyle = "#6b7cff";
-  ctx.fillRect(leftX - 2, topY + 2, gateW + 4, 12);
-
-  // 上部のピンク＆水色ライン
-  ctx.fillStyle = "#ff9ab8";
-  ctx.fillRect(leftX - 2, topY + 2, gateW + 4, 3);
-
-  ctx.fillStyle = "#9fd8ff";
-  ctx.fillRect(leftX - 2, topY + 11, gateW + 4, 3);
-
-  // 中央の星ドット
+  // バー中央の星ドット
+  const midX = (backX + frontX) / 2;
+  const midY = (backTopY + frontTopY) / 2 + 4;
   ctx.fillStyle = "#fff4c2";
-  ctx.fillRect(gx - 2, topY + 6, 4, 4);
+  ctx.fillRect(midX - 3, midY - 3, 6, 6);
 
   ctx.restore();
 }
