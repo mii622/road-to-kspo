@@ -1166,10 +1166,19 @@ const characterStyles = {
 };
 
 function drawPlayer() {
+  function drawPlayer() {
   const x = Math.round(player.x);
   const y = Math.round(player.y);
 
-const style = characterStyles[selectedCharacter] || characterStyles.yonghwa;
+  // キャラクターを少し大きくする
+  const scale = 1.2;
+
+  ctx.save();
+  ctx.translate(x * (1 - scale), (y + 60) * (1 - scale));
+  ctx.scale(scale, scale);
+
+  const style = characterStyles[selectedCharacter] || characterStyles.yonghwa;
+    
   // 走るアニメーション
   const running = state === "running" && !player.jumping;
   const phase = running ? runAnimationTime * 14 : 0;
@@ -1283,6 +1292,8 @@ const style = characterStyles[selectedCharacter] || characterStyles.yonghwa;
   // 口
   ctx.fillStyle = "#a75e67";
   ctx.fillRect(x + 40 + lean, y + 25 + bob, 2, 2);
+    
+    ctx.restore();
 }
 
 function drawObstacle(o) {
