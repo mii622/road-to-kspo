@@ -1206,26 +1206,24 @@ function drawPlayer() {
   ctx.fillRect(x + 12 + backLeg, y + 55 + bob, 12, 4);
 
   // 後ろ側の靴
-  ctx.fillStyle = outline;
-  ctx.fillRect(x + 5 + backLeg, y + 57 + bob, 17, 7);
-  ctx.fillStyle = shoe;
-  ctx.fillRect(x + 7 + backLeg, y + 58 + bob, 13, 4);
-  ctx.fillStyle = "#c7d7e8";
-  ctx.fillRect(x + 8 + backLeg, y + 62 + bob, 12, 2);
+ctx.fillStyle = outline;
+ctx.fillRect(x + 7 + backLeg, y + 58 + bob, 14, 6);
+ctx.fillStyle = shoe;
+ctx.fillRect(x + 9 + backLeg, y + 59 + bob, 10, 3);
+ctx.fillStyle = "#c7d7e8";
+ctx.fillRect(x + 9 + backLeg, y + 62 + bob, 10, 1);
 
-  // --------------------
+
   // 後ろ側の腕
-  // --------------------
-  ctx.fillStyle = outline;
-  ctx.fillRect(x + 12 - armSwing, y + 31 + bob, 9, 13);
-  ctx.fillRect(x + 8 - armSwing, y + 27 + bob, 10, 9);
+ctx.fillStyle = outline;
+ctx.fillRect(x + 12 - armSwing, y + 37 + bob, 9, 7);
+ctx.fillRect(x + 7 - armSwing, y + 39 + bob, 8, 6);
 
-  ctx.fillStyle = "#244D91";
-  ctx.fillRect(x + 14 - armSwing, y + 33 + bob, 6, 9);
+ctx.fillStyle = "#244D91";
+ctx.fillRect(x + 13 - armSwing, y + 38 + bob, 6, 5);
 
-  ctx.fillStyle = skin;
-  ctx.fillRect(x + 7 - armSwing, y + 27 + bob, 8, 7);
-  ctx.fillRect(x + 5 - armSwing, y + 29 + bob, 5, 5);
+ctx.fillStyle = skin;
+ctx.fillRect(x + 5 - armSwing, y + 40 + bob, 8, 5);
 
   // --------------------
   // 頭の後ろ・髪
@@ -1340,17 +1338,16 @@ function drawPlayer() {
   ctx.fillRect(x + 19, y + 40 + bob, 14, 2);
   ctx.fillRect(x + 21, y + 43 + bob, 10, 2);
 
-  // --------------------
   // 前側の腕
-  // --------------------
-  ctx.fillStyle = outline;
-  ctx.fillRect(x + 28 + armSwing, y + 32 + bob, 9, 8);
-  ctx.fillRect(x + 34 + armSwing, y + 28 + bob, 8, 8);
+ctx.fillStyle = outline;
+ctx.fillRect(x + 30 + armSwing, y + 36 + bob, 9, 7);
+ctx.fillRect(x + 37 + armSwing, y + 38 + bob, 7, 6);
 
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(x + 29 + armSwing, y + 33 + bob, 6, 5);
-  ctx.fillStyle = skin;
-  ctx.fillRect(x + 35 + armSwing, y + 29 + bob, 6, 6);
+ctx.fillStyle = "#ffffff";
+ctx.fillRect(x + 31 + armSwing, y + 37 + bob, 6, 5);
+
+ctx.fillStyle = skin;
+ctx.fillRect(x + 38 + armSwing, y + 39 + bob, 5, 5);
 
   // --------------------
   // 前側の脚
@@ -1364,12 +1361,12 @@ function drawPlayer() {
   ctx.fillRect(x + 24 + frontLeg, y + 57 + bob, 11, 4);
 
   // 前側の靴
-  ctx.fillStyle = outline;
-  ctx.fillRect(x + 30 + frontLeg, y + 58 + bob, 17, 6);
-  ctx.fillStyle = shoe;
-  ctx.fillRect(x + 32 + frontLeg, y + 59 + bob, 13, 3);
-  ctx.fillStyle = "#c7d7e8";
-  ctx.fillRect(x + 32 + frontLeg, y + 62 + bob, 13, 2);
+ctx.fillStyle = outline;
+ctx.fillRect(x + 32 + frontLeg, y + 59 + bob, 14, 5);
+ctx.fillStyle = shoe;
+ctx.fillRect(x + 34 + frontLeg, y + 60 + bob, 10, 2);
+ctx.fillStyle = "#c7d7e8";
+ctx.fillRect(x + 34 + frontLeg, y + 62 + bob, 10, 1);
 
   ctx.restore();
 }
