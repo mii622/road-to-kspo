@@ -210,7 +210,7 @@ button:active {
 
 .character-preview {
   width: 100%;
-  height: 92px;
+  height: 100px; /* 水色枠の高さ */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -220,10 +220,8 @@ button:active {
 }
 
 .preview-canvas {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   display: block;
 }
 
@@ -1215,6 +1213,13 @@ function drawCharacterPreviews() {
     const canvasEl = card.querySelector(".preview-canvas");
     if (!canvasEl || !topStandRatios[key]) return;
 
+    // 実際の表示サイズに合わせて内部解像度も合わせる
+    const rect = canvasEl.getBoundingClientRect();
+    const cw = Math.max(1, Math.round(rect.width));
+    const ch = Math.max(1, Math.round(rect.height));
+    canvasEl.width = cw;
+    canvasEl.height = ch;
+
     const pCtx = canvasEl.getContext("2d");
     const r = topStandRatios[key];
 
@@ -1223,15 +1228,15 @@ function drawCharacterPreviews() {
     const sw = r.rw * imgW;
     const sh = r.rh * imgH;
 
-    pCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+    pCtx.clearRect(0, 0, cw, ch);
     pCtx.imageSmoothingEnabled = false;
 
-    // 0.92 -> 0.74 にして全体をひとまわり小さく、余白をかわいくするよ
-    const scale = Math.min(canvasEl.width / sw, canvasEl.height / sh) * 0.60;
+    // 0.88 くらいにすると「全身が切れない＋ちゃんと大きく見える」いい塩梅になるよ！
+    const scale = Math.min(cw / sw, ch / sh) * 0.88;
     const dw = sw * scale;
     const dh = sh * scale;
-    const dx = (canvasEl.width - dw) / 2;
-    const dy = (canvasEl.height - dh) / 2;
+    const dx = (cw - dw) / 2;
+    const dy = (ch - dh) / 2;
 
     pCtx.drawImage(spriteImg, sx, sy, sw, sh, dx, dy, dw, dh);
   });
