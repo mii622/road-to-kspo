@@ -1272,7 +1272,15 @@ function drawPlayer() {
 
   ctx.save();
   ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(spriteImg, sx, sy, sw, sh, x, y + bob, player.w, player.h);
+    const scale = 1.25; // 1.2 〜 1.4 くらいで好みに合わせてね
+  const drawW = player.w * scale;
+  const drawH = player.h * scale;
+  const drawX = x - (drawW - player.w) / 2;
+  const drawY = y + bob - (drawH - player.h);
+
+  ctx.save();
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(spriteImg, sx, sy, sw, sh, drawX, drawY, drawW, drawH);
   ctx.restore();
 }
 
