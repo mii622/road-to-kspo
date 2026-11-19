@@ -860,48 +860,96 @@ function drawBackground() {
     ctx.fillRect(x + 5, y + 20, 45, 3);
   }
 
-  // 遠くの建物
+    // 遠くのソウルっぽい山シルエット（うっすらパステル）
+  ctx.fillStyle = "#cde6f7";
+  ctx.beginPath();
+  ctx.moveTo(0, ground);
+  ctx.lineTo(0, 195);
+  ctx.lineTo(130, 155);
+  ctx.lineTo(250, 182);
+  ctx.lineTo(410, 145);
+  ctx.lineTo(560, 175);
+  ctx.lineTo(710, 150);
+  ctx.lineTo(800, 178);
+  ctx.lineTo(800, ground);
+  ctx.closePath();
+  ctx.fill();
+
+  // 遠くの建物（ビル＋屋上看板・ハングル風ドット）
   for (let i = 0; i < 12; i++) {
     const x = (
       (i * 95 - distance * 0.09 + 1200) % 1200 + 1200
     ) % 1200;
 
-    const h = 55 + (i % 4) * 14;
+    const h = 58 + (i % 4) * 14;
     const y = ground - h;
 
     ctx.fillStyle = "#c2dce9";
-    ctx.fillRect(x, y, 65, h);
+    ctx.fillRect(x, y, 66, h);
 
+    // 屋上看板（韓国の街角っぽい縦長・横長サイン）
+    if (i % 2 === 0) {
+      ctx.fillStyle = "#9fd8ff";
+      ctx.fillRect(x + 8, y - 12, 22, 12);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x + 11, y - 9, 16, 2);
+      ctx.fillRect(x + 11, y - 6, 12, 2);
+    } else {
+      ctx.fillStyle = "#ffd1e3";
+      ctx.fillRect(x + 42, y - 15, 12, 15);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x + 45, y - 12, 6, 2);
+      ctx.fillRect(x + 45, y - 8, 6, 2);
+      ctx.fillRect(x + 45, y - 4, 6, 2);
+    }
+
+    // 窓
     ctx.fillStyle = "#eaf3fa";
     for (let j = 0; j < 3; j++) {
-      ctx.fillRect(x + 12, y + 12 + j * 15, 8, 7);
-      ctx.fillRect(x + 36, y + 12 + j * 15, 8, 7);
+      ctx.fillRect(x + 11, y + 10 + j * 15, 8, 7);
+      ctx.fillRect(x + 29, y + 10 + j * 15, 8, 7);
+      ctx.fillRect(x + 47, y + 10 + j * 15, 8, 7);
     }
   }
 
-  // 手前の建物
+  // 手前の建物（ソウル風のカフェ＆ショップビル）
   for (let i = 0; i < 9; i++) {
     const x = (
       (i * 120 - distance * 0.17 + 1200) % 1200 + 1200
     ) % 1200;
 
-    const h = 75 + (i % 3) * 15;
+    const h = 76 + (i % 3) * 14;
     const y = ground - h;
 
+    // 建物本体
     ctx.fillStyle = "#afcbda";
-    ctx.fillRect(x, y, 78, h);
+    ctx.fillRect(x, y, 80, h);
 
-    // 屋上
+    // 屋上フェンス＆小さな設備
     ctx.fillStyle = "#71849a";
-    ctx.fillRect(x + 5, y - 5, 68, 5);
+    ctx.fillRect(x + 4, y - 5, 72, 5);
+    ctx.fillRect(x + 10, y - 11, 14, 6);
 
-    // 窓
+    // 上階ウィンドウ
     ctx.fillStyle = "#eaf3fa";
-    for (let j = 0; j < 3; j++) {
-      ctx.fillRect(x + 12, y + 12 + j * 20, 12, 10);
-      ctx.fillRect(x + 34, y + 12 + j * 20, 12, 10);
-      ctx.fillRect(x + 56, y + 12 + j * 20, 10, 10);
+    for (let j = 0; j < 2; j++) {
+      ctx.fillRect(x + 11, y + 10 + j * 18, 12, 10);
+      ctx.fillRect(x + 34, y + 10 + j * 18, 12, 10);
+      ctx.fillRect(x + 57, y + 10 + j * 18, 12, 10);
     }
+
+    // 1階のショップ＆カフェ窓（オーニング付き）
+    const shopY = ground - 26;
+    ctx.fillStyle = i % 2 === 0 ? "#ff9ab8" : "#6b7cff";
+    ctx.fillRect(x + 6, shopY - 6, 68, 6);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x + 9, shopY, 62, 20);
+
+    // 窓の中のあたたかい光
+    ctx.fillStyle = "#fff4c2";
+    ctx.fillRect(x + 13, shopY + 4, 20, 12);
+    ctx.fillRect(x + 40, shopY + 4, 24, 12);
   }
 
   // KSPO DOME周辺エリア
