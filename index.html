@@ -1295,6 +1295,80 @@ function drawPlayer() {
   ctx.restore();
 }
 
+// 一番下の段（ニコニコジャンプ3人）の比率座標
+// ※もし上下にちょっとズレてたら ry と rh を微調整してみてね！
+const bottomJumpRatios = [
+  { key: "yonghwa",  label: "YONG", rx: 0.06, ry: 0.76, rw: 0.20, rh: 0.21 },
+  { key: "minhyuk",  label: "MIN",  rx: 0.39, ry: 0.76, rw: 0.20, rh: 0.21 },
+  { key: "jungshin", label: "SHIN", rx: 0.71, ry: 0.76, rw: 0.20, rh: 0.21 }
+];
+
+// 選んだキャラ名を取得するヘルパー
+function getSelectedRunnerLabel() {
+  const map = {
+    yonghwa: "YONG",
+    minhyuk: "MIN",
+    jungshin: "SHIN"
+  };
+  return map[selectedCharacter] || "YONG";
+}
+
+// 4分割カード描画用の共通ヘルパー
+function drawStatCard(targetCtx, x, y, w, h, label, value, accentColor, isKorean = false) {
+  targetCtx.fillStyle = "#afcbda";
+  targetCtx.fillRect(x, y, w, h);
+
+  targetCtx.fillStyle = "#ffffff";
+  targetCtx.fillRect(x + 3, y + 3, w - 6, h - 6);
+
+  targetCtx.fillStyle = accentColor;
+  targetCtx.fillRect(x + 3, y + 3, 7, h - 6);
+
+  targetCtx.textAlign = "left";
+  targetCtx.font = isKorean ? '22px "Mulmaru"' : '24px "Jersey 10", Arial';
+  targetCtx.fillStyle = "#71849a";
+  targetCtx.fillText(label, x + 20, y + 25);
+
+  targetCtx.font = '34px "Jersey 10", Arial';
+  targetCtx.fillStyle = "#263b55";
+  targetCtx.fillText(String(value), x + 20, y + h - 10);
+}
+
+// 3人ニコニコジャンプを横にくっつけて描画するヘルパー
+function drawThreeJumpers(targetCtx, centerX, bottomY, targetHeight) {
+  if (!spriteImg.complete || !spriteImg.naturalWidth) return;
+
+  const imgW = spriteImg.naturalWidth;
+  const imgH = spriteImg.naturalHeight;
+
+  targetCtx.save();
+  targetCtx.imageSmoothingEnabled = false;
+
+  const spacing = 4; // 3人くっつけ気味にする隙間（0にすると完全密着）
+  const items = bottomJumpRatios.map(r => {
+    const sw = r.rw * imgW;
+    const sh = r.rh * imgH;
+    const scale = targetHeight / sh;
+    const dw = sw * scale;
+    const dh = targetHeight;
+    return { r, sw, sh, dw, dh };
+  });
+
+  const totalW = items.reduce((sum, item) => sum + item.dw, 0) + spacing * (items.length - 1);
+  let curX = centerX - totalW / 2;
+
+  items.forEach(item => {
+    const sx = item.r.rx * imgW;
+    const sy = item.r.ry * imgH;
+    const dy = bottomY - item.dh;
+
+    targetCtx.drawImage(spriteImg, sx, sy, item.sw, item.sh, curX, dy, item.dw, item.dh);
+    curX += item.dw + spacing;
+  });
+
+  targetCtx.restore();
+}
+
 function drawObstacle(o) {
   const x = Math.round(o.x);
   const y = Math.round(o.y);
@@ -1593,79 +1667,6 @@ function draw() {
     ctx.fillText("PAUSED", W / 2, 170);
   }
 
- // 一番下の段（ニコニコジャンプ3人）の比率座標
-// ※もし上下にちょっとズレてたら ry と rh を微調整してみてね！
-const bottomJumpRatios = [
-  { key: "yonghwa",  label: "YONG", rx: 0.06, ry: 0.76, rw: 0.20, rh: 0.21 },
-  { key: "minhyuk",  label: "MIN",  rx: 0.39, ry: 0.76, rw: 0.20, rh: 0.21 },
-  { key: "jungshin", label: "SHIN", rx: 0.71, ry: 0.76, rw: 0.20, rh: 0.21 }
-];
-
-// 選んだキャラ名を取得するヘルパー
-function getSelectedRunnerLabel() {
-  const map = {
-    yonghwa: "YONG",
-    minhyuk: "MIN",
-    jungshin: "SHIN"
-  };
-  return map[selectedCharacter] || "YONG";
-}
-
-// 4分割カード描画用の共通ヘルパー
-function drawStatCard(targetCtx, x, y, w, h, label, value, accentColor, isKorean = false) {
-  targetCtx.fillStyle = "#afcbda";
-  targetCtx.fillRect(x, y, w, h);
-
-  targetCtx.fillStyle = "#ffffff";
-  targetCtx.fillRect(x + 3, y + 3, w - 6, h - 6);
-
-  targetCtx.fillStyle = accentColor;
-  targetCtx.fillRect(x + 3, y + 3, 7, h - 6);
-
-  targetCtx.textAlign = "left";
-  targetCtx.font = isKorean ? '22px "Mulmaru"' : '24px "Jersey 10", Arial';
-  targetCtx.fillStyle = "#71849a";
-  targetCtx.fillText(label, x + 20, y + 25);
-
-  targetCtx.font = '34px "Jersey 10", Arial';
-  targetCtx.fillStyle = "#263b55";
-  targetCtx.fillText(String(value), x + 20, y + h - 10);
-}
-
-// 3人ニコニコジャンプを横にくっつけて描画するヘルパー
-function drawThreeJumpers(targetCtx, centerX, bottomY, targetHeight) {
-  if (!spriteImg.complete || !spriteImg.naturalWidth) return;
-
-  const imgW = spriteImg.naturalWidth;
-  const imgH = spriteImg.naturalHeight;
-
-  targetCtx.save();
-  targetCtx.imageSmoothingEnabled = false;
-
-  const spacing = 4; // 3人くっつけ気味にする隙間（0にすると完全密着）
-  const items = bottomJumpRatios.map(r => {
-    const sw = r.rw * imgW;
-    const sh = r.rh * imgH;
-    const scale = targetHeight / sh;
-    const dw = sw * scale;
-    const dh = targetHeight;
-    return { r, sw, sh, dw, dh };
-  });
-
-  const totalW = items.reduce((sum, item) => sum + item.dw, 0) + spacing * (items.length - 1);
-  let curX = centerX - totalW / 2;
-
-  items.forEach(item => {
-    const sx = item.r.rx * imgW;
-    const sy = item.r.ry * imgH;
-    const dy = bottomY - item.dh;
-
-    targetCtx.drawImage(spriteImg, sx, sy, item.sw, item.sh, curX, dy, item.dw, item.dh);
-    curX += item.dw + spacing;
-  });
-
-  targetCtx.restore();
-}
 if (state === "finished") {
   ctx.fillStyle = "rgba(38,59,85,0.55)";
   ctx.fillRect(0, 0, W, H);
