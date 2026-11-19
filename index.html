@@ -1192,7 +1192,7 @@ const midRunRatios = {
 
   // 各キャラ「一番上の立ち絵」の比率座標（0.0 〜 1.0）
 const topStandRatios = {
-  yonghwa:  { rx: 0.06, ry: 0.13, rw: 0.19, rh: 0.34 },
+  yonghwa:  { rx: 0.05, ry: 0.13, rw: 0.19, rh: 0.34 },
   minhyuk:  { rx: 0.40, ry: 0.13, rw: 0.19, rh: 0.34 },
   jungshin: { rx: 0.74, ry: 0.13, rw: 0.19, rh: 0.34 }
 };
@@ -1219,8 +1219,8 @@ function drawCharacterPreviews() {
     pCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
     pCtx.imageSmoothingEnabled = false;
 
-    // 縦横比を崩さず枠内に収める計算
-    const scale = Math.min(canvasEl.width / sw, canvasEl.height / sh) * 0.92;
+    // 0.92 -> 0.74 にして全体をひとまわり小さく、余白をかわいくするよ
+    const scale = Math.min(canvasEl.width / sw, canvasEl.height / sh) * 0.74;
     const dw = sw * scale;
     const dh = sh * scale;
     const dx = (canvasEl.width - dw) / 2;
@@ -1228,13 +1228,6 @@ function drawCharacterPreviews() {
 
     pCtx.drawImage(spriteImg, sx, sy, sw, sh, dx, dy, dw, dh);
   });
-}
-
-// 画像が読み込み終わったらプレビューを描く
-spriteImg.addEventListener("load", drawCharacterPreviews);
-// すでに読み込み済みだった場合も念のため呼ぶ
-if (spriteImg.complete) {
-  drawCharacterPreviews();
 }
 
 function drawPlayer() {
