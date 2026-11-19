@@ -1159,28 +1159,10 @@ ctx.fillText("WELCOME BOICE!", 114, -151);
 }
 
 const characterStyles = {
-  yonghwa: {
-    hair: "#252331",
-    highlight: "#514b60",
-    eye: "#263b55",
-    mole: true
-  },
-
-  minhyuk: {
-    hair: "#b99576",
-    highlight: "#e2c5a5",
-    eye: "#49352d",
-    mole: false
-  },
-
-  jungshin: {
-    hair: "#76503e",
-    highlight: "#a77a60",
-    eye: "#30231f",
-    mole: false
-  }
+  yonghwa: { hair:"#252331", highlight:"#514b60", eye:"#263b55", mole:true, hairType:"yong" },
+  minhyuk: { hair:"#b99576", highlight:"#e2c5a5", eye:"#49352d", mole:false, hairType:"min" },
+  jungshin: { hair:"#76503e", highlight:"#a77a60", eye:"#30231f", mole:false, hairType:"shin" }
 };
-
 
 function drawPlayer() {
   const x = Math.round(player.x);
@@ -1306,27 +1288,51 @@ ctx.fillRect(x + 5 - armSwing, y + 40 + bob, 8, 5);
     ctx.fillRect(x + 31, y + 29 + bob, 2, 2);
   }
 
-  // --------------------
   // 前髪
   // --------------------
-  ctx.fillStyle = outline;
-  ctx.fillRect(x + 10, y + 5 + bob, 29, 12);
-  ctx.fillRect(x + 13, y + 12 + bob, 5, 9);
-  ctx.fillRect(x + 21, y + 11 + bob, 5, 11);
-  ctx.fillRect(x + 29, y + 12 + bob, 5, 8);
-  ctx.fillRect(x + 36, y + 8 + bob, 5, 9);
+  if (style.hairType === "min") {
 
-  ctx.fillStyle = style.hair;
-  ctx.fillRect(x + 12, y + 6 + bob, 25, 8);
-  ctx.fillRect(x + 14, y + 12 + bob, 3, 7);
-  ctx.fillRect(x + 22, y + 12 + bob, 3, 8);
-  ctx.fillRect(x + 30, y + 12 + bob, 3, 6);
-  ctx.fillRect(x + 37, y + 9 + bob, 3, 6);
+    // MIN：センター分け
+    ctx.fillStyle = outline;
+    ctx.fillRect(x + 10, y + 5 + bob, 29, 12);
+    ctx.fillRect(x + 13, y + 12 + bob, 6, 7);
+    ctx.fillRect(x + 20, y + 9 + bob, 5, 5);
+    ctx.fillRect(x + 29, y + 12 + bob, 6, 7);
+    ctx.fillRect(x + 36, y + 8 + bob, 5, 9);
 
-  // 前髪の光
-  ctx.fillStyle = style.highlight;
-  ctx.fillRect(x + 16, y + 7 + bob, 8, 2);
-  ctx.fillRect(x + 27, y + 7 + bob, 6, 2);
+    ctx.fillStyle = style.hair;
+    ctx.fillRect(x + 12, y + 6 + bob, 13, 7);
+    ctx.fillRect(x + 14, y + 12 + bob, 4, 6);
+    ctx.fillRect(x + 20, y + 11 + bob, 4, 4);
+    ctx.fillRect(x + 25, y + 6 + bob, 12, 7);
+    ctx.fillRect(x + 30, y + 12 + bob, 4, 6);
+    ctx.fillRect(x + 36, y + 9 + bob, 3, 6);
+
+    ctx.fillStyle = style.highlight;
+    ctx.fillRect(x + 15, y + 7 + bob, 7, 2);
+    ctx.fillRect(x + 28, y + 7 + bob, 6, 2);
+
+  } else {
+
+    // YONG：今までの前髪
+    ctx.fillStyle = outline;
+    ctx.fillRect(x + 10, y + 5 + bob, 29, 12);
+    ctx.fillRect(x + 13, y + 12 + bob, 5, 9);
+    ctx.fillRect(x + 21, y + 11 + bob, 5, 11);
+    ctx.fillRect(x + 29, y + 12 + bob, 5, 8);
+    ctx.fillRect(x + 36, y + 8 + bob, 5, 9);
+
+    ctx.fillStyle = style.hair;
+    ctx.fillRect(x + 12, y + 6 + bob, 25, 8);
+    ctx.fillRect(x + 14, y + 12 + bob, 3, 7);
+    ctx.fillRect(x + 22, y + 12 + bob, 3, 8);
+    ctx.fillRect(x + 30, y + 12 + bob, 3, 6);
+    ctx.fillRect(x + 37, y + 9 + bob, 3, 6);
+
+    ctx.fillStyle = style.highlight;
+    ctx.fillRect(x + 16, y + 7 + bob, 8, 2);
+    ctx.fillRect(x + 27, y + 7 + bob, 6, 2);
+  }
 
   // --------------------
   // Tシャツの胴体
