@@ -1167,135 +1167,213 @@ const characterStyles = {
   }
 };
 
+
 function drawPlayer() {
   const x = Math.round(player.x);
   const y = Math.round(player.y);
 
-  // キャラクターを少し大きくする
-  const scale = 1.2;
-
-  ctx.save();
-  ctx.translate(x * (1 - scale), (y + 60) * (1 - scale));
-  ctx.scale(scale, scale);
-
   const style = characterStyles[selectedCharacter] || characterStyles.yonghwa;
-    
-  // 走るアニメーション
+
+  // 走る動き
   const running = state === "running" && !player.jumping;
   const phase = running ? runAnimationTime * 14 : 0;
   const swing = running ? Math.sin(phase) : 0;
   const bounce = running ? Math.abs(Math.cos(phase)) * 2 : 0;
 
   const bob = Math.round(bounce);
-  const lean = 3;
+  const frontLeg = Math.round(swing * 5);
+  const backLeg = Math.round(-swing * 5);
+  const armSwing = Math.round(swing * 3);
 
-  // 脚の動き
-  const frontLeg = Math.round(swing * 7);
-  const backLeg = Math.round(-swing * 7);
-  const frontLift = Math.round(Math.max(0, -swing) * 4);
-  const backLift = Math.round(Math.max(0, swing) * 4);
+  const dark = "#252331";
+  const skin = "#f1c9a5";
+  const skinShadow = "#d99e83";
+  const pants = "#263b55";
+  const shoe = "#ffffff";
+  const outline = "#252331";
 
-  // 腕の振り
-  const armSwing = Math.round(swing * 5);
+  ctx.save();
 
+  // --------------------
   // 後ろ側の脚
-  ctx.fillStyle = "#263b55";
-  ctx.fillRect(
-    x + 13 + backLeg,
-    y + 48 + bob - backLift,
-    7, 10
-  );
-  ctx.fillRect(
-    x + 9 + backLeg,
-    y + 56 + bob - backLift,
-    12, 5
-  );
+  // --------------------
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 15 + backLeg, y + 45 + bob, 10, 13);
+  ctx.fillRect(x + 10 + backLeg, y + 54 + bob, 15, 7);
 
-  // 後ろ側の腕（肘を曲げる）
-  ctx.fillStyle = "#343b4c";
-  ctx.fillRect(x + 12 - armSwing, y + 34 + bob, 7, 9);
-  ctx.fillRect(x + 7 - armSwing, y + 29 + bob, 8, 7);
+  ctx.fillStyle = pants;
+  ctx.fillRect(x + 17 + backLeg, y + 46 + bob, 7, 10);
+  ctx.fillRect(x + 12 + backLeg, y + 55 + bob, 12, 4);
 
-  ctx.fillStyle = "#f1c9a5";
-  ctx.fillRect(x + 5 - armSwing, y + 27 + bob, 7, 6);
+  // 後ろ側の靴
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 5 + backLeg, y + 57 + bob, 17, 7);
+  ctx.fillStyle = shoe;
+  ctx.fillRect(x + 7 + backLeg, y + 58 + bob, 13, 4);
+  ctx.fillStyle = "#c7d7e8";
+  ctx.fillRect(x + 8 + backLeg, y + 62 + bob, 12, 2);
 
-  // 後ろ髪
-  ctx.fillStyle = style.hair;
-  ctx.fillRect(x + 5, y + 8 + bob, 17, 24);
-  ctx.fillRect(x + 1, y + 14 + bob, 9, 14);
-  ctx.fillRect(x + 4, y + 27 + bob, 17, 5);
+  // --------------------
+  // 後ろ側の腕
+  // --------------------
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 12 - armSwing, y + 31 + bob, 9, 13);
+  ctx.fillRect(x + 8 - armSwing, y + 27 + bob, 10, 9);
 
-  // 前傾した胴体
   ctx.fillStyle = "#244D91";
-  ctx.fillRect(x + 12 + lean, y + 31 + bob, 25, 19);
-  ctx.fillRect(x + 9 + lean, y + 34 + bob, 7, 11);
-  ctx.fillRect(x + 32 + lean, y + 29 + bob, 6, 12);
+  ctx.fillRect(x + 14 - armSwing, y + 33 + bob, 6, 9);
 
-  // シャツの影
-  ctx.fillStyle = "#18365F";
-  ctx.fillRect(x + 14 + lean, y + 47 + bob, 22, 3);
+  ctx.fillStyle = skin;
+  ctx.fillRect(x + 7 - armSwing, y + 27 + bob, 8, 7);
+  ctx.fillRect(x + 5 - armSwing, y + 29 + bob, 5, 5);
 
-  // 胸元マーク
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(x + 25 + lean, y + 35 + bob, 7, 3);
-  ctx.fillRect(x + 27 + lean, y + 38 + bob, 3, 3);
+  // --------------------
+  // 頭の後ろ・髪
+  // --------------------
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 5, y + 5 + bob, 35, 29);
+  ctx.fillRect(x + 2, y + 11 + bob, 8, 19);
+  ctx.fillRect(x + 7, y + 2 + bob, 28, 7);
+  ctx.fillRect(x + 10, y + 29 + bob, 27, 7);
 
-  // 前側の脚
-  ctx.fillStyle = "#263b55";
-  ctx.fillRect(
-    x + 25 + frontLeg,
-    y + 47 + bob - frontLift,
-    7, 11
-  );
-  ctx.fillRect(
-    x + 23 + frontLeg,
-    y + 56 + bob - frontLift,
-    12, 5
-  );
-
-  // 前側の腕（肘を曲げる）
-  ctx.fillStyle = "#343b4c";
-  ctx.fillRect(x + 31 + armSwing, y + 31 + bob, 7, 9);
-  ctx.fillRect(x + 35 + armSwing, y + 25 + bob, 7, 8);
-
-  ctx.fillStyle = "#f1c9a5";
-  ctx.fillRect(x + 38 + armSwing, y + 22 + bob, 7, 6);
-
-  // 顔
-  ctx.fillStyle = "#f1c9a5";
-  ctx.fillRect(x + 19 + lean, y + 10 + bob, 18, 20);
-  ctx.fillRect(x + 34 + lean, y + 16 + bob, 6, 8);
-  ctx.fillRect(x + 39 + lean, y + 20 + bob, 3, 3);
-
-  // 前髪
   ctx.fillStyle = style.hair;
-  ctx.fillRect(x + 15 + lean, y + 6 + bob, 20, 8);
-  ctx.fillRect(x + 17 + lean, y + 11 + bob, 8, 6);
-  ctx.fillRect(x + 28 + lean, y + 9 + bob, 7, 6);
-
-  // 後ろ髪の束
-  ctx.fillRect(x + 9, y + 13 + bob, 10, 17);
-  ctx.fillRect(x + 11, y + 27 + bob, 11, 5);
+  ctx.fillRect(x + 7, y + 6 + bob, 31, 26);
+  ctx.fillRect(x + 4, y + 12 + bob, 7, 15);
+  ctx.fillRect(x + 9, y + 3 + bob, 25, 5);
+  ctx.fillRect(x + 9, y + 29 + bob, 25, 4);
 
   // 髪のハイライト
   ctx.fillStyle = style.highlight;
-  ctx.fillRect(x + 20 + lean, y + 8 + bob, 7, 2);
-  ctx.fillRect(x + 12, y + 16 + bob, 3, 6);
+  ctx.fillRect(x + 12, y + 6 + bob, 13, 3);
+  ctx.fillRect(x + 9, y + 12 + bob, 3, 8);
+  ctx.fillRect(x + 27, y + 8 + bob, 7, 3);
 
-  // 目
+  // --------------------
+  // 顔
+  // --------------------
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 13, y + 12 + bob, 29, 23);
+  ctx.fillRect(x + 10, y + 17 + bob, 6, 13);
+  ctx.fillRect(x + 18, y + 32 + bob, 20, 5);
+
+  ctx.fillStyle = skin;
+  ctx.fillRect(x + 15, y + 14 + bob, 25, 18);
+  ctx.fillRect(x + 12, y + 19 + bob, 5, 8);
+  ctx.fillRect(x + 20, y + 31 + bob, 16, 3);
+
+  // 頬
+  ctx.fillStyle = "#f5a9a5";
+  ctx.fillRect(x + 29, y + 29 + bob, 6, 3);
+
+  // 耳
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 10, y + 21 + bob, 7, 8);
+  ctx.fillStyle = skin;
+  ctx.fillRect(x + 12, y + 22 + bob, 4, 5);
+
+  // 目（右向きの横顔）
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 32, y + 20 + bob, 5, 7);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(x + 33, y + 20 + bob, 3, 2);
   ctx.fillStyle = style.eye;
-  ctx.fillRect(x + 33 + lean, y + 18 + bob, 3, 4);
+  ctx.fillRect(x + 34, y + 22 + bob, 3, 5);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(x + 34, y + 22 + bob, 1, 1);
 
-  // ほっぺ
-  ctx.fillStyle = "#e99e9e";
-  ctx.fillRect(x + 35 + lean, y + 24 + bob, 4, 2);
+  // 鼻
+  ctx.fillStyle = skinShadow;
+  ctx.fillRect(x + 40, y + 25 + bob, 3, 2);
 
   // 口
-  ctx.fillStyle = "#a75e67";
-  ctx.fillRect(x + 40 + lean, y + 25 + bob, 2, 2);
-    
+  ctx.fillStyle = "#bd766e";
+  ctx.fillRect(x + 36, y + 30 + bob, 4, 2);
+
+  // YONGのほくろ
+  if (style.mole) {
+    ctx.fillStyle = "#79514a";
+    ctx.fillRect(x + 31, y + 29 + bob, 2, 2);
+  }
+
+  // --------------------
+  // 前髪
+  // --------------------
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 10, y + 5 + bob, 29, 12);
+  ctx.fillRect(x + 13, y + 12 + bob, 5, 9);
+  ctx.fillRect(x + 21, y + 11 + bob, 5, 11);
+  ctx.fillRect(x + 29, y + 12 + bob, 5, 8);
+  ctx.fillRect(x + 36, y + 8 + bob, 5, 9);
+
+  ctx.fillStyle = style.hair;
+  ctx.fillRect(x + 12, y + 6 + bob, 25, 8);
+  ctx.fillRect(x + 14, y + 12 + bob, 3, 7);
+  ctx.fillRect(x + 22, y + 12 + bob, 3, 8);
+  ctx.fillRect(x + 30, y + 12 + bob, 3, 6);
+  ctx.fillRect(x + 37, y + 9 + bob, 3, 6);
+
+  // 前髪の光
+  ctx.fillStyle = style.highlight;
+  ctx.fillRect(x + 16, y + 7 + bob, 8, 2);
+  ctx.fillRect(x + 27, y + 7 + bob, 6, 2);
+
+  // --------------------
+  // Tシャツの胴体
+  // --------------------
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 12, y + 34 + bob, 26, 17);
+  ctx.fillRect(x + 9, y + 36 + bob, 8, 10);
+  ctx.fillRect(x + 34, y + 34 + bob, 7, 10);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(x + 14, y + 35 + bob, 22, 14);
+  ctx.fillRect(x + 11, y + 37 + bob, 5, 7);
+  ctx.fillRect(x + 35, y + 36 + bob, 4, 7);
+
+  // 袖
+  ctx.fillStyle = "#dce9f7";
+  ctx.fillRect(x + 10, y + 36 + bob, 6, 6);
+  ctx.fillRect(x + 35, y + 35 + bob, 5, 6);
+
+  // 胸のCNBLUEロゴ
+  ctx.fillStyle = "#244D91";
+  ctx.fillRect(x + 19, y + 40 + bob, 14, 2);
+  ctx.fillRect(x + 21, y + 43 + bob, 10, 2);
+
+  // --------------------
+  // 前側の腕
+  // --------------------
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 28 + armSwing, y + 32 + bob, 9, 8);
+  ctx.fillRect(x + 34 + armSwing, y + 28 + bob, 8, 8);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(x + 29 + armSwing, y + 33 + bob, 6, 5);
+  ctx.fillStyle = skin;
+  ctx.fillRect(x + 35 + armSwing, y + 29 + bob, 6, 6);
+
+  // --------------------
+  // 前側の脚
+  // --------------------
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 25 + frontLeg, y + 47 + bob, 10, 12);
+  ctx.fillRect(x + 22 + frontLeg, y + 56 + bob, 15, 7);
+
+  ctx.fillStyle = pants;
+  ctx.fillRect(x + 27 + frontLeg, y + 48 + bob, 7, 9);
+  ctx.fillRect(x + 24 + frontLeg, y + 57 + bob, 11, 4);
+
+  // 前側の靴
+  ctx.fillStyle = outline;
+  ctx.fillRect(x + 30 + frontLeg, y + 58 + bob, 17, 6);
+  ctx.fillStyle = shoe;
+  ctx.fillRect(x + 32 + frontLeg, y + 59 + bob, 13, 3);
+  ctx.fillStyle = "#c7d7e8";
+  ctx.fillRect(x + 32 + frontLeg, y + 62 + bob, 13, 2);
+
   ctx.restore();
 }
+
 
 function drawObstacle(o) {
   const x = Math.round(o.x);
