@@ -920,11 +920,6 @@ function drawBackground() {
 
     // 3つごとにビルじゃないパーツ（並木や低めエリア）を挟む
     if (i % 3 === 2) {
-      // 並木・街路樹＋低めの柵（ビルじゃない休憩スポット風）
-      ctx.fillStyle = "#8f5d34";
-      ctx.fillRect(x + 22, ground - 26, 6, 26);
-      ctx.fillRect(x + 52, ground - 22, 6, 22);
-
       // 木の幹
       ctx.fillStyle = "#8f5d34";
       ctx.fillRect(x + 22, ground - 34, 6, 24);
@@ -1074,10 +1069,10 @@ function drawBackground() {
   ctx.fillStyle = "#a8def5";
   ctx.fillRect(0, ground + 13, W, 2);
 
-  // 会場周辺の縦長街頭バナー（韓国風・青系）
-  　if (venueProgress > 0) {
-     ctx.save();
-     ctx.globalAlpha = venueProgress;
+    // 会場周辺の縦長街頭バナー（韓国風・青系）
+  if (venueProgress > 0) {
+    ctx.save();
+    ctx.globalAlpha = venueProgress;
 
     for (let i = 0; i < 4; i++) {
       const x = (
@@ -1116,15 +1111,14 @@ function drawBackground() {
       ctx.fillRect(x + 11, 207, 10, 2);
       ctx.fillRect(x + 12, 211, 8, 2);
     }
-   }
 
+    ctx.restore();
+  }
       // 陸上トラックの白いレーン
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, ground + 18, W, 3);
       ctx.fillRect(0, ground + 36, W, 3);
       ctx.fillRect(0, ground + 54, W, 3);
-  
-    ctx.restore();
 }
   
 
