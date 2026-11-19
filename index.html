@@ -143,6 +143,115 @@ button:active {
 .small {
   margin-top: 12px;
 }
+
+/* キャラクター選択画面 */
+#characterSelect {
+  max-width: 800px;
+  margin: 15px auto 25px;
+  padding: 20px 12px;
+  background: #f5f9ff;
+  border: 4px solid #afcbda;
+  border-radius: 8px;
+  box-shadow: 5px 5px 0 #c7d7e8;
+}
+
+.select-title {
+  color: #6b7cff;
+  font-size: 34px;
+  letter-spacing: 2px;
+  margin: 0 0 5px;
+}
+
+.select-subtitle {
+  color: #71849a;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.character-list {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 15px auto 25px;
+}
+
+.character-card {
+  flex: 1;
+  max-width: 210px;
+  min-width: 0;
+  padding: 12px 5px;
+  background: #ffffff;
+  border: 3px solid #c7d7e8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.character-card.selected {
+  border-color: #6b7cff;
+  background: #edf0ff;
+  box-shadow: 0 0 0 3px #d9ddff;
+  transform: translateY(-4px);
+}
+
+.character-card .member-name {
+  display: block;
+  color: #263b55;
+  font-size: 25px;
+  margin-top: 8px;
+}
+
+.character-card .member-name-en {
+  display: block;
+  color: #8a9bb0;
+  font-size: 17px;
+}
+
+.character-preview {
+  width: 100%;
+  height: 145px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf3fa;
+  border-radius: 5px;
+  color: #8a9bb0;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+}
+
+#selectedMessage {
+  color: #6b7cff;
+  font-size: 20px;
+  min-height: 25px;
+  margin: 10px 0;
+}
+
+#characterStart {
+  min-width: 180px;
+}
+
+@media (max-width: 480px) {
+  .character-list {
+    gap: 7px;
+  }
+
+  .character-card {
+    padding: 8px 3px;
+  }
+
+  .character-preview {
+    height: 115px;
+  }
+
+  .character-card .member-name {
+    font-size: 21px;
+  }
+
+  .character-card .member-name-en {
+    font-size: 15px;
+  }
+}
 </style>
 </head>
 
@@ -152,6 +261,45 @@ button:active {
   <h1>ROAD TO KSPO DOME</h1>
   <div class="small">RUN TO YOUR DREAM!</div>
 </header>
+
+<div id="characterSelect">
+
+  <h2 class="select-title">CHOOSE YOUR RUNNER!</h2>
+  <div class="select-subtitle">WHO WILL RUN TO KSPO DOME?</div>
+
+  <div class="character-list">
+
+    <div class="character-card selected" data-character="yonghwa">
+      <div class="character-preview">
+        YONGHWA
+      </div>
+      <span class="member-name">용화</span>
+      <span class="member-name-en">YONGHWA</span>
+    </div>
+
+    <div class="character-card" data-character="minhyuk">
+      <div class="character-preview">
+        MINHYUK
+      </div>
+      <span class="member-name">민혁</span>
+      <span class="member-name-en">MINHYUK</span>
+    </div>
+
+    <div class="character-card" data-character="jungshin">
+      <div class="character-preview">
+        JUNGSHIN
+      </div>
+      <span class="member-name">정신</span>
+      <span class="member-name-en">JUNGSHIN</span>
+    </div>
+
+  </div>
+
+  <div id="selectedMessage">YONGHWA SELECTED!</div>
+
+  <button id="characterStart">START</button>
+
+</div>
 
 <div id="game">
 
@@ -169,7 +317,6 @@ button:active {
 
   <div id="message">LET'S RUN TO KSPO DOME!</div>
 
-  <button id="start">START</button>
   <button id="pause">PAUSE</button>
   
 <p class="small">TAP TO JUMP!</p>
@@ -186,6 +333,12 @@ const progressBar = document.getElementById("progressBar");
 const message = document.getElementById("message");
 const startBtn = document.getElementById("start");
 const pauseBtn = document.getElementById("pause");
+
+const characterSelect = document.getElementById("characterSelect");
+const characterStartBtn = document.getElementById("characterStart");
+const selectedMessage = document.getElementById("selectedMessage");
+
+let selectedCharacter = "yonghwa";
 
 const W = 800;
 const H = 360;
@@ -335,7 +488,35 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-startBtn.addEventListener("click", startGame);
+// キャラクター選択
+document.querySelectorAll(".character-card").forEach(card => {
+  card.addEventListener("click", () => {
+
+    document.querySelectorAll(".character-card").forEach(c => {
+      c.classList.remove("selected");
+    });
+
+    card.classList.add("selected");
+
+    selectedCharacter = card.dataset.character;
+
+    const names = {
+      yonghwa: "YONGHWA",
+      minhyuk: "MINHYUK",
+      jungshin: "JUNGSHIN"
+    };
+
+    selectedMessage.textContent =
+      names[selectedCharacter] + " SELECTED!";
+  });
+});
+
+// 選択してゲーム開始
+characterStartBtn.addEventListener("click", () => {
+  characterSelect.style.display = "none";
+  startGame();
+});
+
 pauseBtn.addEventListener("click", togglePause);
 
 function updateInfo() {
