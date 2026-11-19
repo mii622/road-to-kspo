@@ -1164,71 +1164,53 @@ const characterStyles = {
   jungshin: { hair:"#76503e", highlight:"#a77a60", eye:"#30231f", mole:false, hairType:"shin" }
 };
 
+// テスト用に元画像を読み込む（9771.jpg を index.html と同じフォルダに置く）
+const spriteImg = new Image();
+spriteImg.src = "9771.jpg";
+
+// 各キャラ「真ん中の段（左・右の2コマ）」の比率座標（0.0 〜 1.0）
+const midRunRatios = {
+  yonghwa: [
+    { rx: 0.03, ry: 0.54, rw: 0.13, rh: 0.21 },
+    { rx: 0.18, ry: 0.54, rw: 0.13, rh: 0.21 }
+  ],
+  minhyuk: [
+    { rx: 0.36, ry: 0.54, rw: 0.13, rh: 0.21 },
+    { rx: 0.51, ry: 0.54, rw: 0.13, rh: 0.21 }
+  ],
+  jungshin: [
+    { rx: 0.69, ry: 0.54, rw: 0.13, rh: 0.21 },
+    { rx: 0.84, ry: 0.54, rw: 0.13, rh: 0.21 }
+  ]
+};
 
 function drawPlayer() {
+  if (!spriteImg.complete || !spriteImg.naturalWidth) return;
+
   const x = Math.round(player.x);
   const y = Math.round(player.y);
 
-  const style = characterStyles[selectedCharacter] || characterStyles.yonghwa;
+  const key = selectedCharacter || "yonghwa";
+  const frames = midRunRatios[key] || midRunRatios.yonghwa;
 
-  // 走るアニメーション
   const running = state === "running" && !player.jumping;
-  const phase = running ? runAnimationTime * 14 : 0;
-  const swing = running ? Math.sin(phase) : 0;
-  const bounce = running ? Math.abs(Math.cos(phase)) * 2 : 0;
+  const frameIndex = running ? Math.floor(runAnimationTime * 10) % frames.length : 0;
+  const r = frames[frameIndex];
 
-  const bob = Math.round(bounce);
-  const frontLeg = swing * 5;
-  const backLeg = -swing * 5;
-  const armSwing = swing * 3;
+  const imgW = spriteImg.naturalWidth;
+  const imgH = spriteImg.naturalHeight;
+  const sx = r.rx * imgW;
+  const sy = r.ry * imgH;
+  const sw = r.rw * imgW;
+  const sh = r.rh * imgH;
 
-  // キャラクターごとの髪色
-  const hair =
-    style.hair ||
-    style.hairColor ||
-    (style.hairType === "min" ? "#b98554" :
-     style.hairType === "shin" ? "#79543d" : "#252331");
-
-  const highlight = style.highlight || "#b9a18d";
-
-  const outline = "#252331";
-  const skin = "#f1c9a5";
-  const skinShadow = "#d99e83";
-  const pants = "#263b55";
-  const shirt = "#ffffff";
-  const shoe = "#ffffff";
-  const blue = "#244D91";
+  const bob = running ? Math.round(Math.abs(Math.sin(runAnimationTime * 10)) * 2) : 0;
 
   ctx.save();
-  ctx.translate(x, y + bob);
-
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-
-  // パーツ描画用
-  function shape(color, draw, border = outline, lineWidth = 1.8) {
-    ctx.beginPath();
-    draw();
-    ctx.fillStyle = color;
-    ctx.fill();
-    if (border) {
-      ctx.strokeStyle = border;
-      ctx.lineWidth = lineWidth;
-      ctx.stroke();
-    }
-  }
-
-  function oval(cx, cy, rx, ry, color, border = null, lineWidth = 1) {
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-    ctx.fillStyle = color;
-    ctx.fill();
-    if (border) {
-      ctx.strokeStyle = border;
-      ctx.lineWidth = lineWidth;
-      ctx.stroke();
-    }
-  }
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(spriteImg, sx, sy, sw, sh, x, y + bob, player.w, player.h);
+  ctx.restore();
+}
 
 function drawObstacle(o) {
   const x = Math.round(o.x);
