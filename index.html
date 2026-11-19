@@ -1127,6 +1127,7 @@ function drawBackground() {
     ctx.restore();
 }
   
+
 function drawKspoDome() {
   const remainingDistance = TOTAL_DISTANCE - distance;
   const speed = getSpeed();
@@ -1142,14 +1143,14 @@ function drawKspoDome() {
   const x = 680 - progress * 600;
   const scale = 0.55 + progress * 0.65;
 
-  // ドームの横から手前へ斜めにゲートを配置
+  // 1. ゲートの「奥の柱 ＋ バー」を先に描く
   ctx.save();
   ctx.translate(x, ground);
   ctx.scale(scale, scale);
-  drawVenueGate(-22, 0);
+  drawVenueGateBackAndBar(-22, 0);
   ctx.restore();
 
-
+  // 2. ドーム本体＋キラキラを描く
   ctx.save();
   ctx.translate(x, ground);
   ctx.scale(scale, scale);
@@ -1237,7 +1238,7 @@ function drawKspoDome() {
     ctx.globalAlpha = progress * (0.65 + twinkle * 0.35);
 
     ctx.fillStyle = twinkle > 0.5 ? "#fff4c2" : "#ffffff";
-    
+
     // 横に広がる光
     ctx.fillRect(sx - size, sy, size * 2, 2);
 
@@ -1247,20 +1248,30 @@ function drawKspoDome() {
 
   ctx.globalAlpha = 1;
   ctx.restore();
+
+  // 3. ゲートの「手前側の柱」をドームよりあとに描いて前に出す！
+  ctx.save();
+  ctx.translate(x, ground);
+  ctx.scale(scale, scale);
+  drawVenueGateFrontPost(-22, 0);
+  ctx.restore();
 }
 
-function drawVenueGate(gx, baseY) {
-  ctx.save();
-
-  // 奥側の柱（ドーム寄り・少し高い位置）
+function getVenueGateCoords(gx, baseY) {
   const backX = gx - 18;
   const backTopY = baseY - 120;
   const backBottomY = baseY + 10;
 
-  // 手前側の柱（トラック手前・少し低い／手前寄りの位置）
   const frontX = gx + 35;
   const frontTopY = baseY - 60;
   const frontBottomY = baseY + 60;
+
+  return { backX, backTopY, backBottomY, frontX, frontTopY, frontBottomY };
+}
+
+function drawVenueGateBackAndBar(gx, baseY) {
+  const { backX, backTopY, backBottomY, frontX, frontTopY } = getVenueGateCoords(gx, baseY);
+  ctx.save();
 
   // 奥の柱
   ctx.fillStyle = "#263b55";
@@ -1268,7 +1279,7 @@ function drawVenueGate(gx, baseY) {
   ctx.fillStyle = "#dff1ff";
   ctx.fillRect(backX - 2, backTopY + 2, 4, backBottomY - backTopY - 2);
 
-  // 斜めに渡すゲートバー（外枠 → 本体 → ピンク＆水色ライン）
+  // 斜めに渡すゲートバー
   ctx.strokeStyle = "#263b55";
   ctx.lineWidth = 16;
   ctx.lineCap = "square";
@@ -1298,17 +1309,24 @@ function drawVenueGate(gx, baseY) {
   ctx.lineTo(frontX, frontTopY + 8);
   ctx.stroke();
 
-  // 手前の柱（プレイヤーより手前に見えるように最後に描画）
-  ctx.fillStyle = "#263b55";
-  ctx.fillRect(frontX - 5, frontTopY, 10, frontBottomY - frontTopY);
-  ctx.fillStyle = "#dff1ff";
-  ctx.fillRect(frontX - 3, frontTopY + 2, 6, frontBottomY - frontTopY - 2);
-
   // バー中央の星ドット
   const midX = (backX + frontX) / 2;
   const midY = (backTopY + frontTopY) / 2 + 4;
   ctx.fillStyle = "#fff4c2";
   ctx.fillRect(midX - 3, midY - 3, 6, 6);
+
+  ctx.restore();
+}
+
+function drawVenueGateFrontPost(gx, baseY) {
+  const { frontX, frontTopY, frontBottomY } = getVenueGateCoords(gx, baseY);
+  ctx.save();
+
+  // 手前の柱（ドームよりあとに描くから前に出る！）
+  ctx.fillStyle = "#263b55";
+  ctx.fillRect(frontX - 5, frontTopY, 10, frontBottomY - frontTopY);
+  ctx.fillStyle = "#dff1ff";
+  ctx.fillRect(frontX - 3, frontTopY + 2, 6, frontBottomY - frontTopY - 2);
 
   ctx.restore();
 }
