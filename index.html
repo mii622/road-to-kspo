@@ -329,7 +329,7 @@ button:active {
 
     <!-- クリア時だけ表示するXシェア＆リザルト画像エリア -->
   <div id="shareArea" style="display:none; margin-top: 14px; text-align: center;">
-    <button id="saveImgBtn" type="button" style="cursor:pointer; padding:10px 18px; font-family:'Jersey 10', Arial; font-size:22px; background:#6b7cff; color:#ffffff; border:2px solid #263b55; border-radius:8px;">
+    <button id="saveImgBtn" type="button" style="cursor:pointer; padding:10px 18px; font-family:'Jersey 10', Arial; font-size:22px; background:#ffb5d0; color:#ffffff; border:2px solid #263b55; border-radius:8px;">
       SAVE IMAGE
     </button>
     <button id="shareXBtn" type="button" style="cursor:pointer; padding:10px 18px; font-family:'Jersey 10', Arial; font-size:22px; background:#111111; color:#ffffff; border:2px solid #263b55; border-radius:8px;">
@@ -703,7 +703,7 @@ function overlap(a, b) {
 }
 
 function update(dt) {
-  elapsed += dt;
+  elapsed = Math.max(0, elapsed + dt);
   if (!player.jumping) {
   runAnimationTime += dt;
   }
@@ -721,7 +721,7 @@ if (hitSlowTimer > 0) {
   const speed = getSpeed();
 
   // 距離を進める
-  distance += speed * dt;
+  distance = Math.max(0, distance + speed * dt);
 
   // ゴール到着
   // ドームの入口に到着したらゴール
@@ -1748,10 +1748,8 @@ function finishGame() {
 function loop(now) {
   if (state !== "running") return;
 
-  const dt = Math.min(
-    (now - lastTime) / 1000,
-    0.04
-  );
+  const rawDt = (now - lastTime) / 1000;
+  const dt = Math.max(0, Math.min(rawDt, 0.04));
 
   lastTime = now;
 
