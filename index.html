@@ -1142,12 +1142,34 @@ ctx.fillText("WELCOME BOICE!", 114, -151);
   ctx.restore();
 }
 
+const characterStyles = {
+  yonghwa: {
+    hair: "#252331",
+    highlight: "#514b60",
+    eye: "#263b55",
+    mole: true
+  },
 
+  minhyuk: {
+    hair: "#b99576",
+    highlight: "#e2c5a5",
+    eye: "#49352d",
+    mole: false
+  },
+
+  jungshin: {
+    hair: "#76503e",
+    highlight: "#a77a60",
+    eye: "#30231f",
+    mole: false
+  }
+};
 
 function drawPlayer() {
   const x = Math.round(player.x);
   const y = Math.round(player.y);
 
+const style = characterStyles[selectedCharacter] || characterStyles.yonghwa;
   // 走るアニメーション
   const running = state === "running" && !player.jumping;
   const phase = running ? runAnimationTime * 14 : 0;
@@ -1188,7 +1210,7 @@ function drawPlayer() {
   ctx.fillRect(x + 5 - armSwing, y + 27 + bob, 7, 6);
 
   // 後ろ髪
-  ctx.fillStyle = "#343b4c";
+  ctx.fillStyle = style.hair;
   ctx.fillRect(x + 5, y + 8 + bob, 17, 24);
   ctx.fillRect(x + 1, y + 14 + bob, 9, 14);
   ctx.fillRect(x + 4, y + 27 + bob, 17, 5);
@@ -1236,7 +1258,7 @@ function drawPlayer() {
   ctx.fillRect(x + 39 + lean, y + 20 + bob, 3, 3);
 
   // 前髪
-  ctx.fillStyle = "#343b4c";
+  ctx.fillStyle = style.hair;
   ctx.fillRect(x + 15 + lean, y + 6 + bob, 20, 8);
   ctx.fillRect(x + 17 + lean, y + 11 + bob, 8, 6);
   ctx.fillRect(x + 28 + lean, y + 9 + bob, 7, 6);
@@ -1246,12 +1268,12 @@ function drawPlayer() {
   ctx.fillRect(x + 11, y + 27 + bob, 11, 5);
 
   // 髪のハイライト
-  ctx.fillStyle = "#526078";
+  ctx.fillStyle = style.highlight;
   ctx.fillRect(x + 20 + lean, y + 8 + bob, 7, 2);
   ctx.fillRect(x + 12, y + 16 + bob, 3, 6);
 
   // 目
-  ctx.fillStyle = "#263b55";
+  ctx.fillStyle = style.eye;
   ctx.fillRect(x + 33 + lean, y + 18 + bob, 3, 4);
 
   // ほっぺ
