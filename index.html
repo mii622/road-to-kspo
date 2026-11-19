@@ -274,22 +274,28 @@ button:active {
 
   <div class="character-list">
 
-    <div class="character-card selected" data-character="yonghwa">
-  <div class="character-preview">YONG</div>
-  <span class="member-name">YONG</span>
+  <div class="character-card selected" data-character="yonghwa">
+    <div class="character-preview">
+      <canvas class="preview-canvas" width="90" height="110"></canvas>
     </div>
-
-    <div class="character-card" data-character="minhyuk">
-  <div class="character-preview">MIN</div>
-  <span class="member-name">MIN</span>
-    </div>
-
-    <div class="character-card" data-character="jungshin">
-  <div class="character-preview">SHIN</div>
-  <span class="member-name">SHIN</span>
-    </div>
-
+    <span class="member-name">YONG</span>
   </div>
+
+  <div class="character-card" data-character="minhyuk">
+    <div class="character-preview">
+      <canvas class="preview-canvas" width="90" height="110"></canvas>
+    </div>
+    <span class="member-name">MIN</span>
+  </div>
+
+  <div class="character-card" data-character="jungshin">
+    <div class="character-preview">
+      <canvas class="preview-canvas" width="90" height="110"></canvas>
+    </div>
+    <span class="member-name">SHIN</span>
+  </div>
+
+</div>
 
   <div id="selectedMessage">YONG SELECTED!</div>
 
@@ -1183,6 +1189,53 @@ const midRunRatios = {
     { rx: 0.84, ry: 0.54, rw: 0.13, rh: 0.21 }
   ]
 };
+
+  // 各キャラ「一番上の立ち絵」の比率座標（0.0 〜 1.0）
+const topStandRatios = {
+  yonghwa:  { rx: 0.06, ry: 0.13, rw: 0.19, rh: 0.34 },
+  minhyuk:  { rx: 0.40, ry: 0.13, rw: 0.19, rh: 0.34 },
+  jungshin: { rx: 0.74, ry: 0.13, rw: 0.19, rh: 0.34 }
+};
+
+function drawCharacterPreviews() {
+  if (!spriteImg.complete || !spriteImg.naturalWidth) return;
+
+  const imgW = spriteImg.naturalWidth;
+  const imgH = spriteImg.naturalHeight;
+
+  document.querySelectorAll(".character-card").forEach(card => {
+    const key = card.dataset.character;
+    const canvasEl = card.querySelector(".preview-canvas");
+    if (!canvasEl || !topStandRatios[key]) return;
+
+    const pCtx = canvasEl.getContext("2d");
+    const r = topStandRatios[key];
+
+    const sx = r.rx * imgW;
+    const sy = r.ry * imgH;
+    const sw = r.rw * imgW;
+    const sh = r.rh * imgH;
+
+    pCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+    pCtx.imageSmoothingEnabled = false;
+
+    // 縦横比を崩さず枠内に収める計算
+    const scale = Math.min(canvasEl.width / sw, canvasEl.height / sh) * 0.92;
+    const dw = sw * scale;
+    const dh = sh * scale;
+    const dx = (canvasEl.width - dw) / 2;
+    const dy = (canvasEl.height - dh) / 2;
+
+    pCtx.drawImage(spriteImg, sx, sy, sw, sh, dx, dy, dw, dh);
+  });
+}
+
+// 画像が読み込み終わったらプレビューを描く
+spriteImg.addEventListener("load", drawCharacterPreviews);
+// すでに読み込み済みだった場合も念のため呼ぶ
+if (spriteImg.complete) {
+  drawCharacterPreviews();
+}
 
 function drawPlayer() {
   if (!spriteImg.complete || !spriteImg.naturalWidth) return;
