@@ -1022,17 +1022,14 @@ function drawBackground() {
       ctx.fillRect(x + 12, 211, 8, 2);
     }
 
+      // 陸上トラックの白いレーン
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, ground + 18, W, 3);
+      ctx.fillRect(0, ground + 36, W, 3);
+      ctx.fillRect(0, ground + 54, W, 3);
+    }
     ctx.restore();
-
-// 陸上トラックの白いレーン
-ctx.fillStyle = "#ffffff";
-
-ctx.fillRect(0, ground + 18, W, 3);
-ctx.fillRect(0, ground + 36, W, 3);
-ctx.fillRect(0, ground + 54, W, 3);
 }
-}
-
 
 function drawKspoDome() {
   const remainingDistance = TOTAL_DISTANCE - distance;
