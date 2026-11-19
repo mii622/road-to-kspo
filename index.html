@@ -1844,10 +1844,14 @@ const saveImgBtn = document.getElementById("saveImgBtn");
 
 if (saveImgBtn) {
   saveImgBtn.addEventListener("click", () => {
+    alert("SAVE押せた！");
     if (!latestShareDataUrl) {
       generateShareImage();
     }
-    if (!latestShareDataUrl) return;
+    if (!latestShareDataUrl) {
+      alert("画像データが空だったよ");
+      return;
+    }
 
     const link = document.createElement("a");
     link.href = latestShareDataUrl;
@@ -1860,6 +1864,7 @@ if (saveImgBtn) {
 
 if (shareXBtn) {
   shareXBtn.addEventListener("click", () => {
+    alert("X押せた！");
     const runner = getSelectedRunnerLabel();
     const gameUrl = "https://mii622.github.io/road-to-kspo/";
     const tweetText = [
@@ -1874,7 +1879,7 @@ if (shareXBtn) {
       `?text=${encodeURIComponent(tweetText)}` +
       `&url=${encodeURIComponent(gameUrl)}`;
 
-    window.open(intentUrl, "_blank", "noopener,noreferrer");
+    window.location.href = intentUrl;
   });
 }
 
