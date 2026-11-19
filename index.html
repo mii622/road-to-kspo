@@ -314,6 +314,7 @@ button:active {
   <div id="message">LET'S RUN TO KSPO DOME!</div>
 
   <button id="pause">PAUSE</button>
+  <button id="start" style="display:none;">RETRY</button>
   
 <p class="small">TAP TO JUMP!</p>
 </div>
@@ -432,6 +433,7 @@ function startGame() {
   state = "running";
 
   message.textContent = "GO! RUN TO KSPO!";
+  startBtn.style.display = "none";
 
   pauseBtn.style.display = "inline-block";
   pauseBtn.textContent = "PAUSE";
