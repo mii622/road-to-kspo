@@ -671,10 +671,11 @@ function update(dt) {
   }
 
   // 加速時間を減らす
-  if (boostTimer > 0) {
-    boostTimer = Math.max(0, boostTimer - dt);
-    
-  // 減速時間を減らす
+if (boostTimer > 0) {
+  boostTimer = Math.max(0, boostTimer - dt);
+}
+
+// 減速時間を減らす
 if (hitSlowTimer > 0) {
   hitSlowTimer = Math.max(0, hitSlowTimer - dt);
 }
@@ -1166,7 +1167,6 @@ const characterStyles = {
 };
 
 function drawPlayer() {
-  function drawPlayer() {
   const x = Math.round(player.x);
   const y = Math.round(player.y);
 
@@ -1293,7 +1293,7 @@ function drawPlayer() {
   ctx.fillStyle = "#a75e67";
   ctx.fillRect(x + 40 + lean, y + 25 + bob, 2, 2);
     
-    ctx.restore();
+  ctx.restore();
 }
 
 function drawObstacle(o) {
