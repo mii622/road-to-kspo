@@ -920,10 +920,11 @@ function drawBackground() {
 
     // 3つごとにビルじゃないパーツ（並木や低めエリア）を挟む
     if (i % 3 === 2) {
-      // 木の幹
-      ctx.fillStyle = "#8f5d34";
-      ctx.fillRect(x + 22, ground - 26, 6, 26);
-      ctx.fillRect(x + 52, ground - 22, 6, 22);
+      // 左の木：y が ground - 34 なら、高さも 34 にすると地面まで届く！
+      ctx.fillRect(x + 22, ground - 34, 6, 34);
+
+     // 右の木：y が ground - 30 なら、高さも 30 にすると地面まで届く！
+      ctx.fillRect(x + 52, ground - 30, 6, 30);
 
       // 木の葉（ドットで丸みをつけてパステル系に）
       ctx.fillStyle = "#88c9a1";
