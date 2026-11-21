@@ -1531,7 +1531,9 @@ function drawPlayer() {
 
   const bob = running ? Math.round(Math.abs(Math.sin(runAnimationTime * 10)) * 2) : 0;
 
-  const scale = 1.25; // 1.2 〜 1.4 くらいで好みに合わせてね
+  ctx.save();
+  ctx.imageSmoothingEnabled = false;
+    const scale = 1.25; // 1.2 〜 1.4 くらいで好みに合わせてね
   const drawW = player.w * scale;
   const drawH = player.h * scale;
   const drawX = x - (drawW - player.w) / 2;
@@ -1542,6 +1544,7 @@ function drawPlayer() {
   ctx.drawImage(spriteImg, sx, sy, sw, sh, drawX, drawY, drawW, drawH);
   ctx.restore();
 }
+
 
 // 一番下の段（ニコニコジャンプ3人）の比率座標
 // ※もし上下にちょっとズレてたら ry と rh を微調整してみてね！
