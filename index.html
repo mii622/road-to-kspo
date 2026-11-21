@@ -2109,11 +2109,10 @@ function loop(now) {
       imgEl.src = latestShareDataUrl;
       imgEl.style.display = "block";
     }
-  } catch (err) {
-    alert("画像生成エラー: " + err.message);
+    } catch (err) {
     console.error("シェア画像生成エラー:", err);
   }
-}
+  }
 
 const shareArea = document.getElementById("shareArea");
 const shareXBtn = document.getElementById("shareXBtn");
