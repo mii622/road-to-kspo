@@ -416,13 +416,6 @@ button:active {
 </div>
 
 <script>
-  window.addEventListener("error", (e) => {
-  const errBox = document.createElement("div");
-  errBox.style.cssText = "position:fixed;bottom:8px;left:8px;right:8px;background:#ff4d6d;color:#fff;padding:8px 10px;font-size:13px;z-index:9999;border-radius:6px;text-align:left;word-break:break-all;";
-  errBox.textContent = `ERR: ${e.message} (line ${e.lineno})`;
-  document.body.appendChild(errBox);
-});
-
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
@@ -1911,8 +1904,8 @@ function draw() {
 
   drawKspoDome();
 
-  obstacles.forEach(drawObstacle);
-  items.forEach(drawItem);
+  obstacles.forEach(o => drawObstacle(o, ctx));
+  items.forEach(item => drawItem(item, ctx));
 
   drawPlayer();
 
@@ -1945,13 +1938,6 @@ function draw() {
     ctx.textAlign = "center";
     ctx.fillText("PAUSED", W / 2, 170);
   }
-  // スマホ確認用（あとで消す）
-  ctx.save();
-  ctx.fillStyle = "#263b55";
-  ctx.font = '14px Arial';
-  ctx.textAlign = "left";
-  ctx.fillText(`t:${elapsed.toFixed(1)}s j:${player.jumping?1:0} itm:${collectedCount} hit:${hitCount}`, 12, 350);
-  ctx.restore();
 
 if (state === "finished") {
   ctx.fillStyle = "rgba(38,59,85,0.55)";
