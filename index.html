@@ -1531,7 +1531,7 @@ function drawPlayer() {
 
   const bob = running ? Math.round(Math.abs(Math.sin(runAnimationTime * 10)) * 2) : 0;
 
-  ctx.save();
+  
   ctx.imageSmoothingEnabled = false;
     const scale = 1.25; // 1.2 〜 1.4 くらいで好みに合わせてね
   const drawW = player.w * scale;
@@ -1539,6 +1539,7 @@ function drawPlayer() {
   const drawX = x - (drawW - player.w) / 2;
   const drawY = y + bob - (drawH - player.h);
 
+  ctx.save();
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(spriteImg, sx, sy, sw, sh, drawX, drawY, drawW, drawH);
   ctx.restore();
@@ -1937,6 +1938,13 @@ function draw() {
     ctx.textAlign = "center";
     ctx.fillText("PAUSED", W / 2, 170);
   }
+  // スマホ確認用（あとで消す）
+  ctx.save();
+  ctx.fillStyle = "#263b55";
+  ctx.font = '14px Arial';
+  ctx.textAlign = "left";
+  ctx.fillText(`t:${elapsed.toFixed(1)}s j:${player.jumping?1:0} itm:${collectedCount} hit:${hitCount}`, 12, 350);
+  ctx.restore();
 
 if (state === "finished") {
   ctx.fillStyle = "rgba(38,59,85,0.55)";
