@@ -238,6 +238,55 @@ button:active {
 #characterStart {
   min-width: 180px;
 }
+.rule-guide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+  margin: 12px auto 16px;
+  padding: 10px 16px;
+  max-width: 640px;
+  background: #eaf3fa;
+  border: 2px dashed #afcbda;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.rule-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.rule-label {
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: #526a91;
+  line-height: 1.1;
+}
+
+.rule-icons {
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.rule-badge {
+  font-size: 16px;
+  color: #6b7cff;
+  background: #ffffff;
+  border: 2px solid #c7d7e8;
+  border-radius: 5px;
+  padding: 2px 8px;
+}
+
+.rule-canvas {
+  height: 36px;
+  width: auto;
+  display: block;
+}
 
 @media (max-width: 480px) {
   .character-list {
@@ -304,8 +353,27 @@ button:active {
   </div>
 
 </div>
+  
+    <div id="selectedMessage">YONG SELECTED!</div>
 
-  <div id="selectedMessage">YONG SELECTED!</div>
+  <div id="ruleGuide" class="rule-guide" aria-hidden="true">
+    <div class="rule-item">
+      <div class="rule-label">TAP TO JUMP!</div>
+      <div class="rule-icons">
+        <span class="rule-badge">TAP / SPACE</span>
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-label">GET!</div>
+      <canvas id="getIconsCanvas" class="rule-canvas" width="96" height="36"></canvas>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-label">AVOID!</div>
+      <canvas id="avoidIconsCanvas" class="rule-canvas" width="108" height="36"></canvas>
+    </div>
+  </div>
 
   <button id="characterStart">START</button>
 
@@ -1386,11 +1454,56 @@ function drawCharacterPreviews() {
     pCtx.drawImage(spriteImg, sx, sy, sw, sh, dx, dy, dw, dh);
   });
 }
-// 画像が読み込み終わったらプレビューを描く
-spriteImg.addEventListener("load", drawCharacterPreviews);
-// すでに読み込み済みだった場合も念のため呼ぶ
+  
+function drawRuleIcons() {
+  // GET! アイテム3つ（BOTTLE, TOWEL, FLAG）
+  const getCanvas = document.getElementById("getIconsCanvas");
+  if (getCanvas) {
+    const gCtx = getCanvas.getContext("2d");
+    gCtx.clearRect(0, 0, getCanvas.width, getCanvas.height);
+    gCtx.imageSmoothingEnabled = false;
+
+    const itemNames = ["BOTTLE", "TOWEL", "FLAG"];
+    itemNames.forEach((name, idx) => {
+      gCtx.save();
+      // 3つを横に並べて高さ36pxに収まるように縮小
+      const s = 0.62;
+      gCtx.scale(s, s);
+      drawItem({ name, x: 4 + idx * 48, y: 22 }, gCtx);
+      gCtx.restore();
+    });
+  }
+
+  // AVOID! 障害物3つ（CASE, CABLE, CONE）
+  const avoidCanvas = document.getElementById("avoidIconsCanvas");
+  if (avoidCanvas) {
+    const aCtx = avoidCanvas.getContext("2d");
+    aCtx.clearRect(0, 0, avoidCanvas.width, avoidCanvas.height);
+    aCtx.imageSmoothingEnabled = false;
+
+    const obsList = [
+      { name: "CASE",  x: 2,  y: 2,  s: 0.56 },
+      { name: "CABLE", x: 36, y: 12, s: 0.56 },
+      { name: "CONE",  x: 72, y: 3,  s: 0.56 }
+    ];
+
+    obsList.forEach(o => {
+      aCtx.save();
+      aCtx.scale(o.s, o.s);
+      drawObstacle({ name: o.name, x: o.x / o.s, y: o.y / o.s }, aCtx);
+      aCtx.restore();
+    });
+  }
+}
+spriteImg.addEventListener("load", () => {
+  drawCharacterPreviews();
+  drawRuleIcons();
+  draw();
+});
+
 if (spriteImg.complete) {
   drawCharacterPreviews();
+  drawRuleIcons();
 }
   
 function drawPlayer() {
@@ -1400,12 +1513,7 @@ function drawPlayer() {
   const y = Math.round(player.y);
 
   const key = selectedCharacter || "yonghwa";
-  const frames = runRatios[key] || runRatios.yonghwa;
-
-  const running = state === "running" && !player.jumping;
-  const frameIndex = running ? Math.floor(runAnimationTime * 10) % frames.length : 0;
-  const r = frames[frameIndex];
-
+  const frames = runRatios[key] || runRat
   const imgW = spriteImg.naturalWidth;
   const imgH = spriteImg.naturalHeight;
   const sx = r.rx * imgW;
@@ -1503,284 +1611,284 @@ function drawThreeJumpers(targetCtx, centerX, bottomY, targetHeight) {
   targetCtx.restore();
 }
 
-function drawObstacle(o) {
+
+    function drawObstacle(o, targetCtx = ctx) {
   const x = Math.round(o.x);
   const y = Math.round(o.y);
 
    // アンプ（旧：機材ケース）
   if (o.name === "CASE") {
     // 外枠（濃い紺）
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(x, y, 52, 60);
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(x, y, 52, 60);
 
     // アンプ本体
-    ctx.fillStyle = "#71849a";
-    ctx.fillRect(x + 3, y + 5, 46, 52);
+    targetCtx.fillStyle = "#71849a";
+    targetCtx.fillRect(x + 3, y + 5, 46, 52);
 
     // 上部コントロールパネル
-    ctx.fillStyle = "#dff1ff";
-    ctx.fillRect(x + 6, y + 8, 40, 12);
+    targetCtx.fillStyle = "#dff1ff";
+    targetCtx.fillRect(x + 6, y + 8, 40, 12);
 
     // 丸っぽいツマミ（3つ）
     const knobXs = [10, 19, 28];
     knobXs.forEach((kx, idx) => {
       // ツマミの外枠（丸っぽく上下を1pxずつ削る）
-      ctx.fillStyle = "#263b55";
-      ctx.fillRect(x + kx + 1, y + 10, 4, 8);
-      ctx.fillRect(x + kx, y + 11, 6, 6);
+      targetCtx.fillStyle = "#263b55";
+      targetCtx.fillRect(x + kx + 1, y + 10, 4, 8);
+      targetCtx.fillRect(x + kx, y + 11, 6, 6);
 
       // ツマミの中身
-      ctx.fillStyle = idx === 2 ? "#ff9ab8" : "#6b7cff";
-      ctx.fillRect(x + kx + 1, y + 11, 4, 6);
+      targetCtx.fillStyle = idx === 2 ? "#ff9ab8" : "#6b7cff";
+      targetCtx.fillRect(x + kx + 1, y + 11, 4, 6);
 
       // ツマミのハイライト
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(x + kx + 2, y + 12, 2, 2);
+      targetCtx.fillStyle = "#ffffff";
+      targetCtx.fillRect(x + kx + 2, y + 12, 2, 2);
     });
 
     // パイロットランプ（丸っぽく）
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 39, y + 11, 4, 6);
-    ctx.fillStyle = "#ffd85c";
-    ctx.fillRect(x + 40, y + 12, 2, 4);
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(x + 39, y + 11, 4, 6);
+    targetCtx.fillStyle = "#ffd85c";
+    targetCtx.fillRect(x + 40, y + 12, 2, 4);
 
     // スピーカーグリル（メッシュ部分・真ん中の四角なし）
-    ctx.fillStyle = "#3c4d66";
-    ctx.fillRect(x + 6, y + 23, 40, 31);
+    targetCtx.fillStyle = "#3c4d66";
+    targetCtx.fillRect(x + 6, y + 23, 40, 31);
 
     // 細かいドットメッシュ
-    ctx.fillStyle = "#526a91";
+    targetCtx.fillStyle = "#526a91";
     for (let my = y + 26; my <= y + 50; my += 4) {
       for (let mx = x + 9; mx <= x + 42; mx += 4) {
-        ctx.fillRect(mx, my, 2, 2);
+        targetCtx.fillRect(mx, my, 2, 2);
       }
     }
 
     // コーナー金具
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 3, y + 5, 5, 5);
-    ctx.fillRect(x + 44, y + 5, 5, 5);
-    ctx.fillRect(x + 3, y + 52, 5, 5);
-    ctx.fillRect(x + 44, y + 52, 5, 5);
+    targetCtx.fillStyle = "#ffffff";
+    targetCtx.fillRect(x + 3, y + 5, 5, 5);
+    targetCtx.fillRect(x + 44, y + 5, 5, 5);
+    targetCtx.fillRect(x + 3, y + 52, 5, 5);
+    targetCtx.fillRect(x + 44, y + 52, 5, 5);
 
     // トップハンドル
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 17, y, 18, 6);
-    ctx.fillStyle = "#afcbda";
-    ctx.fillRect(x + 20, y + 2, 12, 2);
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(x + 17, y, 18, 6);
+    targetCtx.fillStyle = "#afcbda";
+    targetCtx.fillRect(x + 20, y + 2, 12, 2);
   }
 
   // 段ボール
   else if (o.name === "CABLE") {
     // 箱の外枠
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(x + 3, y + 9, 50, 33);
-    ctx.fillRect(x + 49, y + 5, 7, 37);
-    ctx.fillRect(x + 7, y + 2, 43, 9);
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(x + 3, y + 9, 50, 33);
+    targetCtx.fillRect(x + 49, y + 5, 7, 37);
+    targetCtx.fillRect(x + 7, y + 2, 43, 9);
 
     // 箱の上面
-    ctx.fillStyle = "#dfb07a";
-    ctx.fillRect(x + 8, y + 5, 40, 5);
-    ctx.fillRect(x + 48, y + 9, 5, 3);
+    targetCtx.fillStyle = "#dfb07a";
+    targetCtx.fillRect(x + 8, y + 5, 40, 5);
+    targetCtx.fillRect(x + 48, y + 9, 5, 3);
 
     // 箱の正面
-    ctx.fillStyle = "#c88d55";
-    ctx.fillRect(x + 5, y + 12, 44, 27);
+    targetCtx.fillStyle = "#c88d55";
+    targetCtx.fillRect(x + 5, y + 12, 44, 27);
 
     // フタの境目ライン
-    ctx.fillStyle = "#8f5d34";
-    ctx.fillRect(x + 5, y + 18, 44, 2);
+    targetCtx.fillStyle = "#8f5d34";
+    targetCtx.fillRect(x + 5, y + 18, 44, 2);
 
     // 右側面
-    ctx.fillStyle = "#a96f43";
-    ctx.fillRect(x + 49, y + 12, 5, 27);
+    targetCtx.fillStyle = "#a96f43";
+    targetCtx.fillRect(x + 49, y + 12, 5, 27);
 
     // ガムテープ
-    ctx.fillStyle = "#e8c596";
-    ctx.fillRect(x + 25, y + 3, 8, 9);
-    ctx.fillRect(x + 25, y + 12, 8, 7);
+    targetCtx.fillStyle = "#e8c596";
+    targetCtx.fillRect(x + 25, y + 3, 8, 9);
+    targetCtx.fillRect(x + 25, y + 12, 8, 7);
 
     // 正面の配送ラベル
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 34, y + 23, 11, 9);
+    targetCtx.fillStyle = "#ffffff";
+    targetCtx.fillRect(x + 34, y + 23, 11, 9);
 
-    ctx.fillStyle = "#71849a";
-    ctx.fillRect(x + 36, y + 25, 7, 2);
-    ctx.fillRect(x + 36, y + 29, 5, 1);
+    targetCtx.fillStyle = "#71849a";
+    targetCtx.fillRect(x + 36, y + 25, 7, 2);
+    targetCtx.fillRect(x + 36, y + 29, 5, 1);
 
     // 箱の角のハイライト
-    ctx.fillStyle = "#f2cca0";
-    ctx.fillRect(x + 6, y + 13, 2, 24);
+    targetCtx.fillStyle = "#f2cca0";
+    targetCtx.fillRect(x + 6, y + 13, 2, 24);
   }
 
   // 三角コーン
   else if (o.name === "CONE") {
     // 底の黒い台座
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(x, y + 51, 42, 7);
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(x, y + 51, 42, 7);
 
     // コーンの輪郭
-    ctx.fillRect(x + 5, y + 43, 32, 8);
-    ctx.fillRect(x + 10, y + 30, 22, 13);
-    ctx.fillRect(x + 14, y + 17, 14, 13);
-    ctx.fillRect(x + 18, y + 7, 6, 10);
-    ctx.fillRect(x + 19, y + 4, 4, 3);
+    targetCtx.fillRect(x + 5, y + 43, 32, 8);
+    targetCtx.fillRect(x + 10, y + 30, 22, 13);
+    targetCtx.fillRect(x + 14, y + 17, 14, 13);
+    targetCtx.fillRect(x + 18, y + 7, 6, 10);
+    targetCtx.fillRect(x + 19, y + 4, 4, 3);
 
     // オレンジ本体
-    ctx.fillStyle = "#f28b48";
-    ctx.fillRect(x + 7, y + 45, 28, 5);
-    ctx.fillRect(x + 12, y + 32, 18, 11);
-    ctx.fillRect(x + 16, y + 19, 10, 11);
-    ctx.fillRect(x + 19, y + 8, 4, 9);
+    targetCtx.fillStyle = "#f28b48";
+    targetCtx.fillRect(x + 7, y + 45, 28, 5);
+    targetCtx.fillRect(x + 12, y + 32, 18, 11);
+    targetCtx.fillRect(x + 16, y + 19, 10, 11);
+    targetCtx.fillRect(x + 19, y + 8, 4, 9);
 
     // 白い反射ライン（くっきり2段）
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x + 12, y + 34, 18, 4);
-    ctx.fillRect(x + 16, y + 21, 10, 4);
+    targetCtx.fillStyle = "#ffffff";
+    targetCtx.fillRect(x + 12, y + 34, 18, 4);
+    targetCtx.fillRect(x + 16, y + 21, 10, 4);
 
     // 台座のハイライト
-    ctx.fillStyle = "#9fd8ff";
-    ctx.fillRect(x + 4, y + 53, 34, 2);
+    targetCtx.fillStyle = "#9fd8ff";
+    targetCtx.fillRect(x + 4, y + 53, 34, 2);
   }
 }
 
-function drawItem(item) {
+function drawItem(item, targetCtx = ctx) {
   const x = Math.round(item.x);
   const y = Math.round(item.y);
 
-  ctx.save();
-  ctx.translate(x, y - 10);
-  ctx.scale(1.8, 1.8);
+  targetCtx.save();
+  targetCtx.translate(x, y - 10);
+  targetCtx.scale(1.8, 1.8);
 
   // ペットボトル（首のくびれ＋ラベルでドリンク感を強調）
   if (item.name === "BOTTLE") {
     // 外枠
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(10, 1, 5, 3);
-    ctx.fillRect(11, 4, 3, 3);
-    ctx.fillRect(6, 7, 13, 16);
-    ctx.fillRect(8, 23, 9, 2);
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(10, 1, 5, 3);
+    targetCtx.fillRect(11, 4, 3, 3);
+    targetCtx.fillRect(6, 7, 13, 16);
+    targetCtx.fillRect(8, 23, 9, 2);
 
     // キャップ（濃い青でアクセント）
-    ctx.fillStyle = "#6b7cff";
-    ctx.fillRect(10, 0, 5, 3);
+    targetCtx.fillStyle = "#6b7cff";
+    targetCtx.fillRect(10, 0, 5, 3);
 
     // 首〜ボトル本体
-    ctx.fillStyle = "#9fd8ff";
-    ctx.fillRect(11, 4, 3, 3);
-    ctx.fillRect(8, 8, 9, 14);
+    targetCtx.fillStyle = "#9fd8ff";
+    targetCtx.fillRect(11, 4, 3, 3);
+    targetCtx.fillRect(8, 8, 9, 14);
 
     // 水のハイライト
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(9, 9, 2, 11);
+    targetCtx.fillStyle = "#ffffff";
+    targetCtx.fillRect(9, 9, 2, 11);
 
     // ラベル帯（白＋ピンクハート）
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(7, 13, 11, 6);
-    ctx.fillStyle = "#ff9ab8";
-    ctx.fillRect(10, 15, 2, 2);
-    ctx.fillRect(13, 15, 2, 2);
-    ctx.fillRect(11, 17, 3, 1)
-    // キラキラ（ちょっとくっきり目印ver）
-   ctx.fillStyle = "#263b55";
-   ctx.fillRect(19, 19, 8, 4);
-   ctx.fillRect(21, 17, 4, 8);
+    targetCtx.fillStyle = "#ffffff";
+    targetCtx.fillRect(7, 13, 11, 6);
+    targetCtx.fillStyle = "#ff9ab8";
+    targetCtx.fillRect(10, 15, 2, 2);
+    targetCtx.fillRect(13, 15, 2, 2);
+    targetCtx.fillRect(11, 17, 3, 1);
 
-   ctx.fillStyle = "#ffd85c";
-   ctx.fillRect(20, 20, 6, 2);
-   ctx.fillRect(22, 18, 2, 6);
-    
+    // キラキラ（ちょっとくっきり目印ver）
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(19, 19, 8, 4);
+    targetCtx.fillRect(21, 17, 4, 8);
+
+    targetCtx.fillStyle = "#ffd85c";
+    targetCtx.fillRect(20, 20, 6, 2);
+    targetCtx.fillRect(22, 18, 2, 6);
   }
 
   // ペンライト（丸いヘッド＋中央ダイヤをくっきり）
   else if (item.name === "TOWEL") {
     // 持ち手
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(12, 18, 6, 11);
-    ctx.fillStyle = "#526a91";
-    ctx.fillRect(13, 19, 3, 9);
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(12, 18, 6, 11);
+    targetCtx.fillStyle = "#526a91";
+    targetCtx.fillRect(13, 19, 3, 9);
 
     // 丸いヘッドの外枠
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(9, 0, 12, 2);
-    ctx.fillRect(5, 2, 20, 2);
-    ctx.fillRect(3, 5, 24, 11);
-    ctx.fillRect(5, 16, 20, 2);
-    ctx.fillRect(9, 18, 12, 2);
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(9, 0, 12, 2);
+    targetCtx.fillRect(5, 2, 20, 2);
+    targetCtx.fillRect(3, 5, 24, 11);
+    targetCtx.fillRect(5, 16, 20, 2);
+    targetCtx.fillRect(9, 18, 12, 2);
 
     // ヘッド本体（明るい水色〜白）
-    ctx.fillStyle = "#dff1ff";
-    ctx.fillRect(10, 2, 10, 2);
-    ctx.fillRect(7, 4, 16, 2);
-    ctx.fillRect(5, 6, 20, 9);
-    ctx.fillRect(7, 15, 16, 2);
+    targetCtx.fillStyle = "#dff1ff";
+    targetCtx.fillRect(10, 2, 10, 2);
+    targetCtx.fillRect(7, 4, 16, 2);
+    targetCtx.fillRect(5, 6, 20, 9);
+    targetCtx.fillRect(7, 15, 16, 2);
 
     // 中央の青いダイヤ（くっきり目立たせる）
-    ctx.fillStyle = "#6b7cff";
-    ctx.fillRect(14, 5, 2, 1);
-    ctx.fillRect(12, 6, 6, 2);
-    ctx.fillRect(10, 8, 10, 3);
-    ctx.fillRect(12, 11, 6, 2);
-    ctx.fillRect(14, 13, 2, 1);
+    targetCtx.fillStyle = "#6b7cff";
+    targetCtx.fillRect(14, 5, 2, 1);
+    targetCtx.fillRect(12, 6, 6, 2);
+    targetCtx.fillRect(10, 8, 10, 3);
+    targetCtx.fillRect(12, 11, 6, 2);
+    targetCtx.fillRect(14, 13, 2, 1);
 
     // ダイヤの中心ハイライト
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(13, 8, 2, 2);
+    targetCtx.fillStyle = "#ffffff";
+    targetCtx.fillRect(13, 8, 2, 2);
 
-   // キラキラ（ちょっとくっきり目印ver）
-   ctx.fillStyle = "#263b55";
-   ctx.fillRect(19, 19, 8, 4);
-   ctx.fillRect(21, 17, 4, 8);
+    // キラキラ（ちょっとくっきり目印ver）
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(19, 19, 8, 4);
+    targetCtx.fillRect(21, 17, 4, 8);
 
-   ctx.fillStyle = "#ffd85c";
-   ctx.fillRect(20, 20, 6, 2);
-   ctx.fillRect(22, 18, 2, 6);
+    targetCtx.fillStyle = "#ffd85c";
+    targetCtx.fillRect(20, 20, 6, 2);
+    targetCtx.fillRect(22, 18, 2, 6);
   }
   
   // 旗（白地に青いハート）
   else if (item.name === "FLAG") {
     // ポール
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(4, 2, 3, 22);
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(4, 2, 3, 22);
 
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(5, 4, 1, 17);
+    targetCtx.fillStyle = "#ffffff";
+    targetCtx.fillRect(5, 4, 1, 17);
 
     // 旗の外枠
-    ctx.fillStyle = "#263b55";
-    ctx.fillRect(7, 3, 17, 13);
-    ctx.fillRect(9, 16, 13, 2);
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(7, 3, 17, 13);
+    targetCtx.fillRect(9, 16, 13, 2);
 
     // 旗本体（白地＋水色っぽい影）
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(9, 5, 13, 9);
-    ctx.fillRect(11, 14, 9, 2);
+    targetCtx.fillStyle = "#ffffff";
+    targetCtx.fillRect(9, 5, 13, 9);
+    targetCtx.fillRect(11, 14, 9, 2);
 
-    ctx.fillStyle = "#dff1ff";
-    ctx.fillRect(9, 12, 13, 2);
-    ctx.fillRect(11, 14, 9, 1);
+    targetCtx.fillStyle = "#dff1ff";
+    targetCtx.fillRect(9, 12, 13, 2);
+    targetCtx.fillRect(11, 14, 9, 1);
 
     // 青いハート（ドット風）
-    ctx.fillStyle = "#6b7cff";
-    ctx.fillRect(12, 7, 2, 2);
-    ctx.fillRect(16, 7, 2, 2);
-    ctx.fillRect(11, 8, 8, 2);
-    ctx.fillRect(12, 10, 6, 1);
-    ctx.fillRect(14, 11, 2, 1);
+    targetCtx.fillStyle = "#6b7cff";
+    targetCtx.fillRect(12, 7, 2, 2);
+    targetCtx.fillRect(16, 7, 2, 2);
+    targetCtx.fillRect(11, 8, 8, 2);
+    targetCtx.fillRect(12, 10, 6, 1);
+    targetCtx.fillRect(14, 11, 2, 1);
 
-   // キラキラ（ちょっとくっきり目印ver）
-   ctx.fillStyle = "#263b55";
-   ctx.fillRect(19, 19, 8, 4);
-   ctx.fillRect(21, 17, 4, 8);
+    // キラキラ（ちょっとくっきり目印ver）
+    targetCtx.fillStyle = "#263b55";
+    targetCtx.fillRect(19, 19, 8, 4);
+    targetCtx.fillRect(21, 17, 4, 8);
 
-   ctx.fillStyle = "#ffd85c";
-   ctx.fillRect(20, 20, 6, 2);
-   ctx.fillRect(22, 18, 2, 6);
+    targetCtx.fillStyle = "#ffd85c";
+    targetCtx.fillRect(20, 20, 6, 2);
+    targetCtx.fillRect(22, 18, 2, 6);
   }
 
-  ctx.restore();
+  targetCtx.restore();
 }
-
 
 function draw() {
   drawBackground();
