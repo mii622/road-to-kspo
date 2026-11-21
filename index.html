@@ -377,7 +377,6 @@ button:active {
       <canvas id="avoidIconsCanvas" class="rule-canvas" width="108" height="36"></canvas>
     </div>
   </div>
-  </div>
 
   <button id="characterStart">START</button>
 
@@ -1517,7 +1516,12 @@ function drawPlayer() {
   const y = Math.round(player.y);
 
   const key = selectedCharacter || "yonghwa";
-  const frames = runRatios[key] || runRat
+  const frames = runRatios[key] || runRatios.yonghwa;
+
+  const running = state === "running" && !player.jumping;
+  const frameIndex = running ? Math.floor(runAnimationTime * 10) % frames.length : 0;
+  const r = frames[frameIndex];
+
   const imgW = spriteImg.naturalWidth;
   const imgH = spriteImg.naturalHeight;
   const sx = r.rx * imgW;
@@ -1527,9 +1531,7 @@ function drawPlayer() {
 
   const bob = running ? Math.round(Math.abs(Math.sin(runAnimationTime * 10)) * 2) : 0;
 
-  ctx.save();
-  ctx.imageSmoothingEnabled = false;
-    const scale = 1.25; // 1.2 〜 1.4 くらいで好みに合わせてね
+  const scale = 1.25; // 1.2 〜 1.4 くらいで好みに合わせてね
   const drawW = player.w * scale;
   const drawH = player.h * scale;
   const drawX = x - (drawW - player.w) / 2;
