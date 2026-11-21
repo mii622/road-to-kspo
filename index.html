@@ -243,7 +243,7 @@ button:active {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 14px 24px;
+  gap: 14px 28px;
   margin: 12px auto 16px;
   padding: 10px 16px;
   max-width: 640px;
@@ -257,6 +257,7 @@ button:active {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
 }
 
@@ -265,21 +266,23 @@ button:active {
   letter-spacing: 1px;
   color: #526a91;
   line-height: 1.1;
+  text-align: center;
 }
 
 .rule-icons {
   height: 36px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
-.rule-badge {
-  font-size: 16px;
+.rule-tap-text {
+  font-size: 20px;
+  letter-spacing: 1px;
   color: #6b7cff;
-  background: #ffffff;
-  border: 2px solid #c7d7e8;
-  border-radius: 5px;
-  padding: 2px 8px;
+  line-height: 36px;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .rule-canvas {
@@ -356,11 +359,11 @@ button:active {
   
     <div id="selectedMessage">YONG SELECTED!</div>
 
-  <div id="ruleGuide" class="rule-guide" aria-hidden="true">
+    <div id="ruleGuide" class="rule-guide" aria-hidden="true">
     <div class="rule-item">
-      <div class="rule-label">TAP TO JUMP!</div>
+      <div class="rule-label">JUMP!</div>
       <div class="rule-icons">
-        <span class="rule-badge">TAP / SPACE</span>
+        <span class="rule-tap-text">TAP TO JUMP!</span>
       </div>
     </div>
 
@@ -373,6 +376,7 @@ button:active {
       <div class="rule-label">AVOID!</div>
       <canvas id="avoidIconsCanvas" class="rule-canvas" width="108" height="36"></canvas>
     </div>
+  </div>
   </div>
 
   <button id="characterStart">START</button>
