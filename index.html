@@ -2013,8 +2013,13 @@ async function finishGame() {
     shareArea.style.display = "block";
   }
 
-  if (document.fonts && document.fonts.ready) {
-    await document.fonts.ready;
+  try {
+    if (document.fonts) {
+      await document.fonts.load('22px "Mulmaru"', "뛰어!");
+      await document.fonts.ready;
+    }
+  } catch (e) {
+    console.warn("フォント読み込み待機スキップ:", e);
   }
 
   draw();
